@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.views import APIView
 from rest_framework.parsers import JSONParser
-from django.core import serializers
+# from django.core import serializers
 from .models import *
 from .serializers import *
 import json
@@ -29,7 +29,7 @@ class Student_List(APIView):
     def post(self, request):
         serial = Student_Serializer(data=request.data)
         if serial.is_valid():
-            Student.objects.create(serial)
+            Student_Serializer().create(serial)
             return Response(serial.data, status=status.HTTP_201_CREATED)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)

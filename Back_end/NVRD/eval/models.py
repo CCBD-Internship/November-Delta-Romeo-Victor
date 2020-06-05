@@ -1,6 +1,11 @@
+# This is an auto-generated Django model module.
+# You'll have to do the following manually to clean this up:
+#   * Rearrange models' order
+#   * Make sure each model has one field with primary_key=True
+#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
+#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
+# Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-
-# Create your models here.
 
 
 class Department(models.Model):
@@ -8,7 +13,7 @@ class Department(models.Model):
 
     class Meta:
         managed = False
-        verbose_name_plural = db_table = 'department'
+        db_table = 'department'
 
 
 class Faculty(models.Model):
@@ -18,13 +23,12 @@ class Faculty(models.Model):
     email = models.CharField(max_length=100)
     phone = models.CharField(max_length=13)
     dept = models.ForeignKey(Department, models.DO_NOTHING, db_column='dept')
-    panel = models.ForeignKey(
-        'Panel', models.DO_NOTHING, blank=True, null=True)
+    panel = models.ForeignKey('Panel', models.DO_NOTHING, blank=True, null=True)
     is_coordinator = models.BooleanField(blank=True, null=True)
 
     class Meta:
         managed = False
-        verbose_name_plural = db_table = 'faculty'
+        db_table = 'faculty'
 
 
 class Panel(models.Model):
@@ -35,7 +39,7 @@ class Panel(models.Model):
 
     class Meta:
         managed = False
-        verbose_name_plural = db_table = 'panel'
+        db_table = 'panel'
 
 
 class PanelReview(models.Model):
@@ -46,13 +50,12 @@ class PanelReview(models.Model):
 
     class Meta:
         managed = False
-        verbose_name_plural = db_table = 'panel_review'
+        db_table = 'panel_review'
         unique_together = (('panel', 'review_number'),)
 
 
 class Review1(models.Model):
-    srn = models.OneToOneField(
-        'Student', models.DO_NOTHING, db_column='srn', primary_key=True)
+    srn = models.OneToOneField('Student', models.DO_NOTHING, db_column='srn', primary_key=True)
     team = models.ForeignKey('TeamFaculty', models.DO_NOTHING)
     fac_id = models.CharField(max_length=50)
     project_work = models.IntegerField()
@@ -63,13 +66,12 @@ class Review1(models.Model):
 
     class Meta:
         managed = False
-        verbose_name_plural = db_table = 'review_1'
+        db_table = 'review_1'
         unique_together = (('srn', 'fac_id'),)
 
 
 class Review2(models.Model):
-    srn = models.OneToOneField(
-        'Student', models.DO_NOTHING, db_column='srn', primary_key=True)
+    srn = models.OneToOneField('Student', models.DO_NOTHING, db_column='srn', primary_key=True)
     team = models.ForeignKey('TeamFaculty', models.DO_NOTHING)
     fac_id = models.CharField(max_length=50)
     project_work = models.IntegerField()
@@ -80,13 +82,12 @@ class Review2(models.Model):
 
     class Meta:
         managed = False
-        verbose_name_plural = db_table = 'review_2'
+        db_table = 'review_2'
         unique_together = (('srn', 'fac_id'),)
 
 
 class Review3(models.Model):
-    srn = models.OneToOneField(
-        'Student', models.DO_NOTHING, db_column='srn', primary_key=True)
+    srn = models.OneToOneField('Student', models.DO_NOTHING, db_column='srn', primary_key=True)
     team = models.ForeignKey('TeamFaculty', models.DO_NOTHING)
     fac_id = models.CharField(max_length=50)
     project_work = models.IntegerField()
@@ -97,13 +98,12 @@ class Review3(models.Model):
 
     class Meta:
         managed = False
-        verbose_name_plural = db_table = 'review_3'
+        db_table = 'review_3'
         unique_together = (('srn', 'fac_id'),)
 
 
 class Review4(models.Model):
-    srn = models.OneToOneField(
-        'Student', models.DO_NOTHING, db_column='srn', primary_key=True)
+    srn = models.OneToOneField('Student', models.DO_NOTHING, db_column='srn', primary_key=True)
     team = models.ForeignKey('TeamFaculty', models.DO_NOTHING)
     fac_id = models.CharField(max_length=50)
     project_work = models.IntegerField()
@@ -114,13 +114,12 @@ class Review4(models.Model):
 
     class Meta:
         managed = False
-        verbose_name_plural = db_table = 'review_4'
+        db_table = 'review_4'
         unique_together = (('srn', 'fac_id'),)
 
 
 class Review5(models.Model):
-    srn = models.OneToOneField(
-        'Student', models.DO_NOTHING, db_column='srn', primary_key=True)
+    srn = models.OneToOneField('Student', models.DO_NOTHING, db_column='srn', primary_key=True)
     team = models.ForeignKey('TeamFaculty', models.DO_NOTHING)
     fac_id = models.CharField(max_length=50)
     project_work = models.IntegerField()
@@ -131,7 +130,7 @@ class Review5(models.Model):
 
     class Meta:
         managed = False
-        verbose_name_plural = db_table = 'review_5'
+        db_table = 'review_5'
         unique_together = (('srn', 'fac_id'),)
 
 
@@ -146,20 +145,19 @@ class Student(models.Model):
 
     class Meta:
         managed = False
-        verbose_name_plural = db_table = 'student'
+        db_table = 'student'
 
 
 class Team(models.Model):
     team_name = models.CharField(max_length=50)
     description = models.CharField(max_length=200, blank=True, null=True)
-    guide = models.ForeignKey(
-        Faculty, models.DO_NOTHING, db_column='guide', blank=True, null=True)
+    guide = models.ForeignKey(Faculty, models.DO_NOTHING, db_column='guide', blank=True, null=True)
     panel = models.ForeignKey(Panel, models.DO_NOTHING, blank=True, null=True)
     team_id = models.BigIntegerField(primary_key=True)
 
     class Meta:
         managed = False
-        verbose_name_plural = db_table = 'team'
+        db_table = 'team'
 
 
 class TeamFaculty(models.Model):
@@ -173,5 +171,5 @@ class TeamFaculty(models.Model):
 
     class Meta:
         managed = False
-        verbose_name_plural = db_table = 'team_faculty'
+        db_table = 'team_faculty'
         unique_together = (('team', 'fac'),)
