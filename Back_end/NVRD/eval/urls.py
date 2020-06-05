@@ -20,9 +20,9 @@ from django.conf.urls import url
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    path('', views.index,name='index'),
-    path( 'login/',auth_views.LoginView.as_view(), name="login"),
+    path('', views.Student_List.as_view(),name='index'),
+    # path( 'login/',auth_views.LoginView.as_view(), name="login"),
     # url('logout/', auth_views.LogoutView, name='logout'),
-    path('student/',views.student,name='student'),
-    path('faculty/',views.faculty,name='faculty')
+    # path('student/',views.student,name='student'),
+    # path('faculty/',views.faculty,name='faculty')
 ]
