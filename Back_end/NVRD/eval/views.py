@@ -29,10 +29,34 @@ class Student_List(APIView):
     def post(self, request):
         serial = Student_Serializer(data=request.data)
         if serial.is_valid():
-            Student_Serializer().create(serial)
+            serial.save()
+            #Student_Serializer().create(serial)
             return Response(serial.data, status=status.HTTP_201_CREATED)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    def put(self, request):
+        serial = Student_Serializer(Student.objects.get(srn=request.data.get("srn")),data=request.data)
+        try:
+            if(serial.is_valid()):
+                serial.save()
+                return Response({"detail":"update successful"}, status=status.HTTP_202_ACCEPTED)
+            else:
+                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request):
+        serial = Student_Serializer(Student.objects.get(srn=request.data.get("srn")),data=request.data)
+        try:
+            if serial.is_valid():
+                Student.objects.get(srn=serial.data.get("srn")).delete()
+                return Response({"detail":"delete successful"}, status=status.HTTP_200_OK)
+            else:
+                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+
 
 def faculty(request):
     return HttpResponse("fac")
