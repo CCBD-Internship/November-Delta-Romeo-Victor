@@ -27,13 +27,25 @@ class Student_List(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
-        serial = Student_Serializer(data=request.data)
-        if serial.is_valid():
-            serial.save()
-            #Student_Serializer().create(serial)
-            return Response(serial.data, status=status.HTTP_201_CREATED)
+        if(type(request.data)==list):
+            response_list=[]
+            for i in request.data:
+                serial = Student_Serializer(data=i)
+                if serial.is_valid():
+                    serial.save()
+                else:
+                    response_list.append({"value":i,"detail":serial.errors})
+            if(response_list==[]):
+                return Response({"detail":"insert successful"}, status=status.HTTP_201_CREATED)
+            else:
+                return Response(response_list,status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            serial = Student_Serializer(data=request.data)
+            if serial.is_valid():
+                serial.save()
+                return Response(serial.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
     
     def put(self, request):
         serial = Student_Serializer(Student.objects.get(srn=request.data.get("srn")),data=request.data)
