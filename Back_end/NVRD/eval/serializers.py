@@ -5,7 +5,7 @@ from django.db import models
 class Student_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Student
-        fields = ('srn','first_name','last_name','email','phone','dept')
+        fields = ('srn','name','email','phone','dept','team_id')
     # def create(self,validated_data):
     #     stud = Student(
     #         srn=validated_data.data.get("srn"),

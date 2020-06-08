@@ -1,10 +1,3 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
 
@@ -18,8 +11,7 @@ class Department(models.Model):
 
 class Faculty(models.Model):
     fac_id = models.CharField(primary_key=True, max_length=50)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
+    name = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
     phone = models.CharField(max_length=13)
     dept = models.ForeignKey(Department, models.DO_NOTHING, db_column='dept')
@@ -65,8 +57,7 @@ class PanelReview(models.Model):
 
 
 class Review1(models.Model):
-    srn = models.OneToOneField(
-        'Student', models.DO_NOTHING, db_column='srn', primary_key=True)
+    srn = models.OneToOneField('Student', models.DO_NOTHING, db_column='srn', primary_key=True)
     fac = models.ForeignKey(Faculty, models.DO_NOTHING)
     project_work = models.IntegerField()
     quality_of_demo = models.IntegerField()
@@ -81,8 +72,7 @@ class Review1(models.Model):
 
 
 class Review2(models.Model):
-    srn = models.OneToOneField(
-        'Student', models.DO_NOTHING, db_column='srn', primary_key=True)
+    srn = models.OneToOneField('Student', models.DO_NOTHING, db_column='srn', primary_key=True)
     fac = models.ForeignKey(Faculty, models.DO_NOTHING)
     project_work = models.IntegerField()
     quality_of_demo = models.IntegerField()
@@ -97,8 +87,7 @@ class Review2(models.Model):
 
 
 class Review3(models.Model):
-    srn = models.OneToOneField(
-        'Student', models.DO_NOTHING, db_column='srn', primary_key=True)
+    srn = models.OneToOneField('Student', models.DO_NOTHING, db_column='srn', primary_key=True)
     fac = models.ForeignKey(Faculty, models.DO_NOTHING)
     project_work = models.IntegerField()
     quality_of_demo = models.IntegerField()
@@ -113,8 +102,7 @@ class Review3(models.Model):
 
 
 class Review4(models.Model):
-    srn = models.OneToOneField(
-        'Student', models.DO_NOTHING, db_column='srn', primary_key=True)
+    srn = models.OneToOneField('Student', models.DO_NOTHING, db_column='srn', primary_key=True)
     fac = models.ForeignKey(Faculty, models.DO_NOTHING)
     project_work = models.IntegerField()
     quality_of_demo = models.IntegerField()
@@ -129,8 +117,7 @@ class Review4(models.Model):
 
 
 class Review5(models.Model):
-    srn = models.OneToOneField(
-        'Student', models.DO_NOTHING, db_column='srn', primary_key=True)
+    srn = models.OneToOneField('Student', models.DO_NOTHING, db_column='srn', primary_key=True)
     fac = models.ForeignKey(Faculty, models.DO_NOTHING)
     project_work = models.IntegerField()
     quality_of_demo = models.IntegerField()
@@ -146,8 +133,7 @@ class Review5(models.Model):
 
 class Student(models.Model):
     srn = models.CharField(primary_key=True, max_length=15)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
+    name = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
     phone = models.CharField(max_length=13)
     dept = models.ForeignKey(Department, models.DO_NOTHING, db_column='dept')
@@ -161,8 +147,8 @@ class Student(models.Model):
 class Team(models.Model):
     team_name = models.CharField(max_length=50)
     description = models.CharField(max_length=200, blank=True, null=True)
-    guide = models.ForeignKey(
-        Faculty, models.DO_NOTHING, db_column='guide', blank=True, null=True)
+    guide = models.ForeignKey(Faculty, models.DO_NOTHING, db_column='guide', blank=True, null=True)
+    panel = models.ForeignKey(Panel, models.DO_NOTHING, blank=True, null=True)
     team_id = models.BigIntegerField(primary_key=True)
 
     class Meta:
