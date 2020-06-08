@@ -17,3 +17,7 @@ class Student_Serializer(serializers.ModelSerializer):
     #     )
     #     stud.save()
     #     return stud
+class Team_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = Team
+        fields = ('srn','name','email','phone','dept','team_id')

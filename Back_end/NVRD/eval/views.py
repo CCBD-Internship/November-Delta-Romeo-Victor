@@ -32,6 +32,8 @@ class Student_List(APIView):
     def post(self, request):
         response_list=[]
         for i in request.data:
+            student_data=
+            team_data=
             serial = Student_Serializer(data=i)
             if serial.is_valid():
                 serial.save()
