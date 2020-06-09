@@ -588,7 +588,7 @@ class Team_List(APIView):
 
     def get(self, request):
         try:
-            Team_as_object = team.objects.filter(
+            Team_as_object = Team.objects.filter(
                     team_id__startswith=request.GET.__getitem__('team_id'))
             content = Team_Serializer(Team_as_object, many=True)
             return Response(content.data)
@@ -679,9 +679,6 @@ class TeamFacultyReview_List(APIView):
         except:
             return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
 
-
-
-
 class marks(APIView):
 
     parser_classes = [JSONParser]
@@ -692,17 +689,16 @@ class marks(APIView):
             team_data={"name":i["team_name"],"description":i["description"],"guide":i["guide"],"panel":i["panel"],"team_id":i["team_id"]}
             team_serial = Team_Serializer(data=team_data)
             if team_serial.is_valid():
-                # team_serial.save()
-                pass
+                team_serial.save()
             else:
-                response_list.append({"value":i,"detail":serial.errors})
+                response_list.append({"value":i,"detail":team_serial.errors})
             if(len(i["srn"])==len(i["name"]) and len(i["name"])==len(i["email"]) and len(i["email"])==len(i["phone"]) and len(i["phone"])==len(i["dept"])):
                 student_data=[{"srn":i["srn"][j],"name":i["name"][j],"email":i["email"][j],"phone":i["phone"][j],"dept":i["dept"][j]} for j in range(len(i["srn"]))]
                 for k in student_data:
                     student_serial = Student_Serializer(data=k)
                     if student_serial.is_valid():
-                        # student_serial.save()
-                        pass
+                        student_serial.save()
+
                     else:
                         response_list.append({"value":i,"detail":student_serial.errors})
             else:
