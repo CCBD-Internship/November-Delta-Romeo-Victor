@@ -2,22 +2,47 @@ from rest_framework import serializers
 from .models import *
 from django.db import models
 
+class Department_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = ('dept')
+
+class Faculty_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = Faculty
+        fields = ('fac_id','name','email','phone','dept','is_active')
+
+class FacultyPanel_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model=FacultyPanel
+        fields=('fac','panel','is_coordinator')
+
+class Panel_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model=Panel
+        fields=('label','is_active','panel_id','ctime')
+
+class PanelReview_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model=PanelReview
+        fields=('review_number','panel','open_time','close_time')
+
+class Review_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model=Review1
+        fields=('srn','fac','project_work','quality_of_demo','project_report','viva_voce','comments') 
+
 class Student_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Student
-        fields = ('srn','name','email','phone','dept','team_id')
-    # def create(self,validated_data):
-    #     stud = Student(
-    #         srn=validated_data.data.get("srn"),
-    #         first_name=validated_data.data.get("first_name"),
-    #         last_name=validated_data.data.get('last_name'),
-    #         email=validated_data.data.get('email'),
-    #         phone=validated_data.data.get('phone'),
-    #         dept = Department.objects.get(dept='computer science')
-    #     )
-    #     stud.save()
-    #     return stud
+        fields = ('srn','name','email','phone','dept','team')
+
 class Team_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Team
-        fields = ('srn','name','email','phone','dept','team_id')
+        fields = ('team_name','description','guide','panel','team_id')
+
+class TeamFacultyReview_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model=TeamFacultyReview
+        fields=('team','fac','review_number','remark') 
