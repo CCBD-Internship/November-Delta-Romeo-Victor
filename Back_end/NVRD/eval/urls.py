@@ -21,18 +21,18 @@ from django.contrib.auth import views as auth_views
 from rest_framework_simplejwt.views import (TokenObtainPairView,TokenRefreshView)
 
 urlpatterns = [
+    path('api/token',TokenObtainPairView.as_view()),
+    path('api/token/refresh',TokenRefreshView.as_view()),
     path('api/<str:user>/<int:panel>/<str:type>/student/',
          views.Student_List.as_view(), name='index'),
-    path('api/<str:user>/student/', views.Student_List.as_view(), name='index'),
+    path('api/<str:user>/student/', views.Student_List.as_view(), name='index')
 
-    path('api/<str:user>/<int:panel>/<str:type>/team/',
-         views.Team_List.as_view(), name='index'),
-    path('api/<str:user>/team/', views.Team_List.as_view(), name='index'),
+#     path('api/<str:user>/<int:panel>/<str:type>/team/',
+#          views.Team_List.as_view(), name='index'),
+#     path('api/<str:user>/team/', views.Team_List.as_view(), name='index'),
 
-    path('api/panel/', views.Panel_List.as_view(), name='index'),
-    path('api/faculty/', views.Faculty_List.as_view(), name='index'),
-    path('api/marks/', views.marks.as_view(), name='index'),
-    path('api/department/', views.Dept_List.as_view(), name='index'),
-    path('api/token',TokenObtainPairView.as_view()),
-    path('api/token/refresh',TokenRefreshView)
+#     path('api/panel/', views.Panel_List.as_view(), name='index'),
+#     path('api/faculty/', views.Faculty_List.as_view(), name='index'),
+#     path('api/marks/', views.marks.as_view(), name='index'),
+#     path('api/department/', views.Dept_List.as_view(), name='index'),
 ]

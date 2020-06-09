@@ -161,3 +161,14 @@ class TeamFacultyReview(models.Model):
         managed = False
         db_table = 'team_faculty_review'
         unique_together = (('team', 'fac', 'review_number'),)
+
+# from django.contrib.auth.models import User
+# # from eval.models import *
+# from rest_framework.authtoken.models import Token
+# for i in Faculty.objects.all():
+#     if(not User.objects.filter(username=i.fac_id).exists()):
+#         User.objects.create_user(last_name=i.name,username=i.fac_id,password=i.fac_id,email=None)
+#         print("hi")
+#     if(not Token.objects.filter(user=User.objects.get(username=i.fac_id)).exists()):
+#         token = Token.objects.create(user=User.objects.get(username=i.fac_id))
+#         print("hey")

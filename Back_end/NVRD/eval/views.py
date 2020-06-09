@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.parsers import JSONParser
 from rest_framework_jwt.utils import jwt_decode_handler
 from django.contrib.auth.models import User
-from rest_framework.authentication import SessionAuthentication,BasicAuthentication
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 # from django.core import serializers
@@ -17,11 +17,12 @@ import json
 #from talk.forms import PostForm
 # Create your views here.
 
+
 class Dept_List(APIView):
 
     parser_classes = [JSONParser]
 
-    def get(self, request,year):
+    def get(self, request, year):
         try:
             dept_as_object = Department.objects.all()
             content = Department_Serializer(dept_as_object, many=True)
@@ -30,40 +31,43 @@ class Dept_List(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
-        response_list=[]
+        response_list = []
         for i in request.data:
             serial = Department_Serializer(data=i)
             if not serial.is_valid():
-                response_list.append({"value":i,"detail":serial.errors})
-        if(response_list==[]):
+                response_list.append({"value": i, "detail": serial.errors})
+        if(response_list == []):
             for i in request.data:
                 if serial.is_valid():
                     serial.save()
-            return Response({"detail":"insert successful"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
         else:
-            return Response(response_list,status=status.HTTP_400_BAD_REQUEST)
-    
+            return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+
     def put(self, request):
-        serial = Department_Serializer(Department.objects.get(dept=request.data.get("dept")),data=request.data)
+        serial = Department_Serializer(Department.objects.get(
+            dept=request.data.get("dept")), data=request.data)
         try:
             if(serial.is_valid()):
                 serial.save()
-                return Response({"detail":"update successful"}, status=status.HTTP_202_ACCEPTED)
+                return Response({"detail": "update successful"}, status=status.HTTP_202_ACCEPTED)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request):
-        serial = Department_Serializer(Department.objects.get(dept=request.data.get("dept")),data=request.data)
+        serial = Department_Serializer(Department.objects.get(
+            dept=request.data.get("dept")), data=request.data)
         try:
             if serial.is_valid():
                 Department.objects.get(dept=serial.data.get("dept")).delete()
-                return Response({"detail":"delete successful"}, status=status.HTTP_200_OK)
+                return Response({"detail": "delete successful"}, status=status.HTTP_200_OK)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class Faculty_List(APIView):
 
@@ -79,41 +83,44 @@ class Faculty_List(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
-        response_list=[]
+        response_list = []
         for i in request.data:
             serial = Faculty_Serializer(data=i)
             if not serial.is_valid():
-                response_list.append({"value":i,"detail":serial.errors})
-        if(response_list==[]):
+                response_list.append({"value": i, "detail": serial.errors})
+        if(response_list == []):
             for i in request.data:
                 serial = Faculty_Serializer(data=i)
                 if serial.is_valid():
                     serial.save()
-            return Response({"detail":"insert successful"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
         else:
-            return Response(response_list,status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+
     def put(self, request):
-        serial = Faculty_Serializer(Faculty.objects.get(fac_id=request.data.get("fac_id")),data=request.data)
+        serial = Faculty_Serializer(Faculty.objects.get(
+            fac_id=request.data.get("fac_id")), data=request.data)
         try:
             if(serial.is_valid()):
                 serial.save()
-                return Response({"detail":"update successful"}, status=status.HTTP_202_ACCEPTED)
+                return Response({"detail": "update successful"}, status=status.HTTP_202_ACCEPTED)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request):
-        serial = Faculty_Serializer(Faculty.objects.get(fac_id=request.data.get("fac_id")),data=request.data)
+        serial = Faculty_Serializer(Faculty.objects.get(
+            fac_id=request.data.get("fac_id")), data=request.data)
         try:
             if serial.is_valid():
                 Faculty.objects.get(fac_id=serial.data.get("fac_id")).delete()
-                return Response({"detail":"delete successful"}, status=status.HTTP_200_OK)
+                return Response({"detail": "delete successful"}, status=status.HTTP_200_OK)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class FacultyPanel_List(APIView):
 
@@ -122,47 +129,52 @@ class FacultyPanel_List(APIView):
     def get(self, request):
         try:
             FacultyPanel_as_object = FacultyPanel.objects.all()
-            content = FacultyPanel_Serializer(FacultyPanel_as_object, many=True)
+            content = FacultyPanel_Serializer(
+                FacultyPanel_as_object, many=True)
             return Response(content.data)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
-        response_list=[]
+        response_list = []
         for i in request.data:
             serial = FacultyPanel_Serializer(data=i)
             if not serial.is_valid():
-                response_list.append({"value":i,"detail":serial.errors})
-        if(response_list==[]):
+                response_list.append({"value": i, "detail": serial.errors})
+        if(response_list == []):
             for i in request.data:
                 serial = FacultyPanel_Serializer(data=i)
                 if serial.is_valid():
                     serial.save()
-            return Response({"detail":"insert successful"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
         else:
-            return Response(response_list,status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+
     def put(self, request):
-        serial = FacultyPanel_Serializer(FacultyPanel.objects.get(fac=request.data.get("fac"),panel=request.data.get("panel")),data=request.data)
+        serial = FacultyPanel_Serializer(FacultyPanel.objects.get(
+            fac=request.data.get("fac"), panel=request.data.get("panel")), data=request.data)
         try:
             if(serial.is_valid()):
                 serial.save()
-                return Response({"detail":"update successful"}, status=status.HTTP_202_ACCEPTED)
+                return Response({"detail": "update successful"}, status=status.HTTP_202_ACCEPTED)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request):
-        serial = FacultyPanel_Serializer(FacultyPanel.objects.get(fac=request.data.get("fac"),panel=request.data.get("panel")),data=request.data)
+        serial = FacultyPanel_Serializer(FacultyPanel.objects.get(
+            fac=request.data.get("fac"), panel=request.data.get("panel")), data=request.data)
         try:
             if serial.is_valid():
-                FacultyPanel.objects.get(fac=request.data.get("fac"),panel=request.data.get("panel")).delete()
-                return Response({"detail":"delete successful"}, status=status.HTTP_200_OK)
+                FacultyPanel.objects.get(fac=request.data.get(
+                    "fac"), panel=request.data.get("panel")).delete()
+                return Response({"detail": "delete successful"}, status=status.HTTP_200_OK)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class Panel_List(APIView):
 
@@ -178,41 +190,45 @@ class Panel_List(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
-        response_list=[]
+        response_list = []
         for i in request.data:
             serial = Panel_Serializer(data=i)
             if not serial.is_valid():
-                response_list.append({"value":i,"detail":serial.errors})
-        if(response_list==[]):
+                response_list.append({"value": i, "detail": serial.errors})
+        if(response_list == []):
             for i in request.data:
                 serial = Panel_Serializer(data=i)
                 if serial.is_valid():
                     serial.save()
-            return Response({"detail":"insert successful"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
         else:
-            return Response(response_list,status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+
     def put(self, request):
-        serial = Panel_Serializer(Panel.objects.get(panel_id=request.data.get("panel_id")),data=request.data)
+        serial = Panel_Serializer(Panel.objects.get(
+            panel_id=request.data.get("panel_id")), data=request.data)
         try:
             if(serial.is_valid()):
                 serial.save()
-                return Response({"detail":"update successful"}, status=status.HTTP_202_ACCEPTED)
+                return Response({"detail": "update successful"}, status=status.HTTP_202_ACCEPTED)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request):
-        serial = Panel_Serializer(Panel.objects.get(panel_id=request.data.get("panel_id")),data=request.data)
+        serial = Panel_Serializer(Panel.objects.get(
+            panel_id=request.data.get("panel_id")), data=request.data)
         try:
             if serial.is_valid():
-                Panel.objects.get(panel_id=serial.data.get("panel_id")).delete()
-                return Response({"detail":"delete successful"}, status=status.HTTP_200_OK)
+                Panel.objects.get(
+                    panel_id=serial.data.get("panel_id")).delete()
+                return Response({"detail": "delete successful"}, status=status.HTTP_200_OK)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class PanelReview_List(APIView):
 
@@ -228,44 +244,49 @@ class PanelReview_List(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
-        response_list=[]
+        response_list = []
         for i in request.data:
             serial = PanelReview_Serializer(data=i)
             if not serial.is_valid():
-                response_list.append({"value":i,"detail":serial.errors})
-        if(response_list==[]):
+                response_list.append({"value": i, "detail": serial.errors})
+        if(response_list == []):
             for i in request.data:
                 serial = PanelReview_Serializer(data=i)
                 if serial.is_valid():
                     serial.save()
-            return Response({"detail":"insert successful"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
         else:
-            return Response(response_list,status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+
     def put(self, request):
-        serial = PanelReview_Serializer(PanelReview.objects.get(panel=request.data.get("panel"),review_number=request.data.get("review_number")),data=request.data)
+        serial = PanelReview_Serializer(PanelReview.objects.get(panel=request.data.get(
+            "panel"), review_number=request.data.get("review_number")), data=request.data)
         try:
             if(serial.is_valid()):
                 serial.save()
-                return Response({"detail":"update successful"}, status=status.HTTP_202_ACCEPTED)
+                return Response({"detail": "update successful"}, status=status.HTTP_202_ACCEPTED)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request):
-        serial = PanelReview_Serializer(PanelReview.objects.get(panel=request.data.get("panel"),review_number=request.data.get("review_number")),data=request.data)
+        serial = PanelReview_Serializer(PanelReview.objects.get(panel=request.data.get(
+            "panel"), review_number=request.data.get("review_number")), data=request.data)
         try:
             if serial.is_valid():
-                PanelReview.objects.get(panel=request.data.get("panel"),review_number=request.data.get("review_number")).delete()
-                return Response({"detail":"delete successful"}, status=status.HTTP_200_OK)
+                PanelReview.objects.get(panel=request.data.get(
+                    "panel"), review_number=request.data.get("review_number")).delete()
+                return Response({"detail": "delete successful"}, status=status.HTTP_200_OK)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class Review1_List(APIView):
     parser_classes = [JSONParser]
+
     def get(self, request):
         try:
             if 'srn' in request.GET:
@@ -279,44 +300,49 @@ class Review1_List(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
-        response_list=[]
+        response_list = []
         for i in request.data:
             serial = Review1_Serializer(data=i)
             if not serial.is_valid():
-                response_list.append({"value":i,"detail":serial.errors})
-        if(response_list==[]):
+                response_list.append({"value": i, "detail": serial.errors})
+        if(response_list == []):
             for i in request.data:
                 serial = Review1_Serializer(data=i)
                 if serial.is_valid():
                     serial.save()
-            return Response({"detail":"insert successful"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
         else:
-            return Response(response_list,status=status.HTTP_400_BAD_REQUEST)
-    
+            return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+
     def put(self, request):
-        serial = Review1_Serializer(Review1.objects.get(srn=request.data.get("srn"),fac=request.data.get('fac')),data=request.data)
+        serial = Review1_Serializer(Review1.objects.get(srn=request.data.get(
+            "srn"), fac=request.data.get('fac')), data=request.data)
         try:
             if(serial.is_valid()):
                 serial.save()
-                return Response({"detail":"update successful"}, status=status.HTTP_202_ACCEPTED)
+                return Response({"detail": "update successful"}, status=status.HTTP_202_ACCEPTED)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request):
-        serial = Review1_Serializer(Review1.objects.get(srn=request.data.get("srn"),fac=request.data.get('fac')),data=request.data)
+        serial = Review1_Serializer(Review1.objects.get(srn=request.data.get(
+            "srn"), fac=request.data.get('fac')), data=request.data)
         try:
             if serial.is_valid():
-                Review1.objects.get(srn=request.data.get("srn"),fac=request.data.get('fac')).delete()
-                return Response({"detail":"delete successful"}, status=status.HTTP_200_OK)
+                Review1.objects.get(srn=request.data.get(
+                    "srn"), fac=request.data.get('fac')).delete()
+                return Response({"detail": "delete successful"}, status=status.HTTP_200_OK)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class Review2_List(APIView):
     parser_classes = [JSONParser]
+
     def get(self, request):
         try:
             if 'srn' in request.GET:
@@ -330,44 +356,49 @@ class Review2_List(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
-        response_list=[]
+        response_list = []
         for i in request.data:
             serial = Review2_Serializer(data=i)
             if not serial.is_valid():
-                response_list.append({"value":i,"detail":serial.errors})
-        if(response_list==[]):
+                response_list.append({"value": i, "detail": serial.errors})
+        if(response_list == []):
             for i in request.data:
                 serial = Review2_Serializer(data=i)
                 if serial.is_valid():
                     serial.save()
-            return Response({"detail":"insert successful"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
         else:
-            return Response(response_list,status=status.HTTP_400_BAD_REQUEST)
-    
+            return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+
     def put(self, request):
-        serial = Review2_Serializer(Review2.objects.get(srn=request.data.get("srn"),fac=request.data.get('fac')),data=request.data)
+        serial = Review2_Serializer(Review2.objects.get(srn=request.data.get(
+            "srn"), fac=request.data.get('fac')), data=request.data)
         try:
             if(serial.is_valid()):
                 serial.save()
-                return Response({"detail":"update successful"}, status=status.HTTP_202_ACCEPTED)
+                return Response({"detail": "update successful"}, status=status.HTTP_202_ACCEPTED)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request):
-        serial = Review2_Serializer(Review2.objects.get(srn=request.data.get("srn"),fac=request.data.get('fac')),data=request.data)
+        serial = Review2_Serializer(Review2.objects.get(srn=request.data.get(
+            "srn"), fac=request.data.get('fac')), data=request.data)
         try:
             if serial.is_valid():
-                Review2.objects.get(srn=request.data.get("srn"),fac=request.data.get('fac')).delete()
-                return Response({"detail":"delete successful"}, status=status.HTTP_200_OK)
+                Review2.objects.get(srn=request.data.get(
+                    "srn"), fac=request.data.get('fac')).delete()
+                return Response({"detail": "delete successful"}, status=status.HTTP_200_OK)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class Review3_List(APIView):
     parser_classes = [JSONParser]
+
     def get(self, request):
         try:
             if 'srn' in request.GET:
@@ -381,44 +412,49 @@ class Review3_List(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
-        response_list=[]
+        response_list = []
         for i in request.data:
             serial = Review3_Serializer(data=i)
             if not serial.is_valid():
-                response_list.append({"value":i,"detail":serial.errors})
-        if(response_list==[]):
+                response_list.append({"value": i, "detail": serial.errors})
+        if(response_list == []):
             for i in request.data:
                 serial = Review3_Serializer(data=i)
                 if serial.is_valid():
                     serial.save()
-            return Response({"detail":"insert successful"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
         else:
-            return Response(response_list,status=status.HTTP_400_BAD_REQUEST)
-    
+            return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+
     def put(self, request):
-        serial = Review3_Serializer(Review3.objects.get(srn=request.data.get("srn"),fac=request.data.get('fac')),data=request.data)
+        serial = Review3_Serializer(Review3.objects.get(srn=request.data.get(
+            "srn"), fac=request.data.get('fac')), data=request.data)
         try:
             if(serial.is_valid()):
                 serial.save()
-                return Response({"detail":"update successful"}, status=status.HTTP_202_ACCEPTED)
+                return Response({"detail": "update successful"}, status=status.HTTP_202_ACCEPTED)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request):
-        serial = Review3_Serializer(Review3.objects.get(srn=request.data.get("srn"),fac=request.data.get('fac')),data=request.data)
+        serial = Review3_Serializer(Review3.objects.get(srn=request.data.get(
+            "srn"), fac=request.data.get('fac')), data=request.data)
         try:
             if serial.is_valid():
-                Review3.objects.get(srn=request.data.get("srn"),fac=request.data.get('fac')).delete()
-                return Response({"detail":"delete successful"}, status=status.HTTP_200_OK)
+                Review3.objects.get(srn=request.data.get(
+                    "srn"), fac=request.data.get('fac')).delete()
+                return Response({"detail": "delete successful"}, status=status.HTTP_200_OK)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class Review4_List(APIView):
     parser_classes = [JSONParser]
+
     def get(self, request):
         try:
             if 'srn' in request.GET:
@@ -432,44 +468,49 @@ class Review4_List(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
-        response_list=[]
+        response_list = []
         for i in request.data:
             serial = Review4_Serializer(data=i)
             if not serial.is_valid():
-                response_list.append({"value":i,"detail":serial.errors})
-        if(response_list==[]):
+                response_list.append({"value": i, "detail": serial.errors})
+        if(response_list == []):
             for i in request.data:
                 serial = Review4_Serializer(data=i)
                 if serial.is_valid():
                     serial.save()
-            return Response({"detail":"insert successful"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
         else:
-            return Response(response_list,status=status.HTTP_400_BAD_REQUEST)
-    
+            return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+
     def put(self, request):
-        serial = Review4_Serializer(Review4.objects.get(srn=request.data.get("srn"),fac=request.data.get('fac')),data=request.data)
+        serial = Review4_Serializer(Review4.objects.get(srn=request.data.get(
+            "srn"), fac=request.data.get('fac')), data=request.data)
         try:
             if(serial.is_valid()):
                 serial.save()
-                return Response({"detail":"update successful"}, status=status.HTTP_202_ACCEPTED)
+                return Response({"detail": "update successful"}, status=status.HTTP_202_ACCEPTED)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request):
-        serial = Review4_Serializer(Review4.objects.get(srn=request.data.get("srn"),fac=request.data.get('fac')),data=request.data)
+        serial = Review4_Serializer(Review4.objects.get(srn=request.data.get(
+            "srn"), fac=request.data.get('fac')), data=request.data)
         try:
             if serial.is_valid():
-                Review4.objects.get(srn=request.data.get("srn"),fac=request.data.get('fac')).delete()
-                return Response({"detail":"delete successful"}, status=status.HTTP_200_OK)
+                Review4.objects.get(srn=request.data.get(
+                    "srn"), fac=request.data.get('fac')).delete()
+                return Response({"detail": "delete successful"}, status=status.HTTP_200_OK)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class Review5_List(APIView):
     parser_classes = [JSONParser]
+
     def get(self, request):
         try:
             if 'srn' in request.GET:
@@ -483,49 +524,54 @@ class Review5_List(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
-        response_list=[]
+        response_list = []
         for i in request.data:
             serial = Review5_Serializer(data=i)
             if not serial.is_valid():
-                response_list.append({"value":i,"detail":serial.errors})
-        if(response_list==[]):
+                response_list.append({"value": i, "detail": serial.errors})
+        if(response_list == []):
             for i in request.data:
                 serial = Review5_Serializer(data=i)
                 if serial.is_valid():
                     serial.save()
-            return Response({"detail":"insert successful"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
         else:
-            return Response(response_list,status=status.HTTP_400_BAD_REQUEST)
-    
+            return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+
     def put(self, request):
-        serial = Review5_Serializer(Review5.objects.get(srn=request.data.get("srn"),fac=request.data.get('fac')),data=request.data)
+        serial = Review5_Serializer(Review5.objects.get(srn=request.data.get(
+            "srn"), fac=request.data.get('fac')), data=request.data)
         try:
             if(serial.is_valid()):
                 serial.save()
-                return Response({"detail":"update successful"}, status=status.HTTP_202_ACCEPTED)
+                return Response({"detail": "update successful"}, status=status.HTTP_202_ACCEPTED)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request):
-        serial = Review5_Serializer(Review5.objects.get(srn=request.data.get("srn"),fac=request.data.get('fac')),data=request.data)
+        serial = Review5_Serializer(Review5.objects.get(srn=request.data.get(
+            "srn"), fac=request.data.get('fac')), data=request.data)
         try:
             if serial.is_valid():
-                Review5.objects.get(srn=request.data.get("srn"),fac=request.data.get('fac')).delete()
-                return Response({"detail":"delete successful"}, status=status.HTTP_200_OK)
+                Review5.objects.get(srn=request.data.get(
+                    "srn"), fac=request.data.get('fac')).delete()
+                return Response({"detail": "delete successful"}, status=status.HTTP_200_OK)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class Student_List(APIView):
     parser_classes = [JSONParser]
     permission_classes = [IsAuthenticated]
-    def get(self, request,type,user,panel=0):
+
+    def get(self, request, user, type=None, panel=None):
         try:
-            if(user==User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"])):
-                if(panel==0 and Faculty.objects.get(fac_id=user).is_admin==True):
+            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+                if(panel == None and type == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     if 'srn' in request.GET:
                         student_as_object = Student.objects.filter(
                             srn__startswith=request.GET.__getitem__('srn'))
@@ -533,54 +579,90 @@ class Student_List(APIView):
                         student_as_object = Student.objects.all()
                     content = Student_Serializer(student_as_object, many=True)
                     return Response(content.data)
-                elif(FacultyPanel.objects.filter(fac=user,panel=panel).exists()):
-                    if(type=='coord' and FacultyPanel.objects.get(fac_id=user,panel=panel).is_coordinator):
-                        student_as_object = Student.objects.filter(team_id__in = Team.objects.filter(panel_id=1))
-                    # elif(type=='eval'):
-                    #     student_as_object = Student.objects.filter(team_id__in = Team.objects.filter(panel_id=1))
+                elif(FacultyPanel.objects.filter(fac=user, panel=panel).exists()):
+                    if(type == 'coord' and FacultyPanel.objects.get(fac_id=user, panel=panel).is_coordinator):
+                        student_as_object = Student.objects.filter(
+                            team_id__in=Team.objects.filter(panel_id=1))
+                        if 'srn' in request.GET:
+                            student_as_object = Student.objects.filter(team_id__in=Team.objects.filter(
+                                panel_id=1)).filter(srn__startswith=request.GET.__getitem__('srn'))
+                        else:
+                            student_as_object = Student.objects.filter(
+                                team_id__in=Team.objects.filter(panel_id=1))
+                        content = Student_Serializer(
+                            student_as_object, many=True)
+                        return Response(content.data, status=status.HTTP_200_OK)
+                    else:
+                        return Response(status=status.HTTP_403_FORBIDDEN)
                 else:
-                    return Response(status=status.HTTP_401_UNAUTHORIZED)
+                    return Response(status=status.HTTP_403_FORBIDDEN)
             else:
-                return Response(status=status.HTTP_401_UNAUTHORIZED)
+                return Response(status=status.HTTP_400_BAD_REQUEST)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def post(self, request):
-        response_list=[]
-        for i in request.data:
-            serial = Student_Serializer(data=i)
-            if not serial.is_valid():
-                response_list.append({"value":i,"detail":serial.errors})
-        if(response_list==[]):
-            for i in request.data:
-                serial = Student_Serializer(data=i)
-                if serial.is_valid():
-                    serial.save()
-            return Response({"detail":"insert successful"}, status=status.HTTP_201_CREATED)
-        else:
-            return Response(response_list,status=status.HTTP_400_BAD_REQUEST)
-    
-    def put(self, request):
-        serial = Student_Serializer(Student.objects.get(srn=request.data.get("srn")),data=request.data)
+    def post(self, request, user, type=None, panel=None):
         try:
-            if(serial.is_valid()):
-                serial.save()
-                return Response({"detail":"update successful"}, status=status.HTTP_202_ACCEPTED)
+            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+                if(panel == None and type == None and Faculty.objects.get(fac_id=user).is_admin == True):
+                    response_list = []
+                    for i in request.data:
+                        serial = Student_Serializer(data=i)
+                        if not serial.is_valid():
+                            response_list.append(
+                                {"value": i, "detail": serial.errors})
+                    if(response_list == []):
+                        for i in request.data:
+                            serial = Student_Serializer(data=i)
+                            serial.save()
+                        return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
+                    else:
+                        return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response(status=status.HTTP_403_FORBIDDEN)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, user, type=None, panel=None):
+        try:
+            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+                if(panel == None and Faculty.objects.get(fac_id=user).is_admin == True):
+                    response_list = []
+                    for i in request.data:
+                        serial = Student_Serializer(Student.objects.get(
+                            srn=request.data.get("srn")), data=i)
+                        if not serial.is_valid():
+                            response_list.append(
+                                {"value": i, "detail": serial.errors})
+                    if(response_list == []):
+                        for i in request.data:
+                            serial = Student_Serializer(Student.objects.get(
+                                srn=request.data.get("srn")), data=i)
+                            serial.save()
+                        return Response({"detail": "update successful"}, status=status.HTTP_202_ACCEPTED)
+                    else:
+                        return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response(status=status.HTTP_403_FORBIDDEN)
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request):
-        serial = Student_Serializer(Student.objects.get(srn=request.data.get("srn")),data=request.data)
+        serial = Student_Serializer(Student.objects.get(
+            srn=request.data.get("srn")), data=request.data)
         try:
             if serial.is_valid():
                 Student.objects.get(srn=serial.data.get("srn")).delete()
-                return Response({"detail":"delete successful"}, status=status.HTTP_200_OK)
+                return Response({"detail": "delete successful"}, status=status.HTTP_200_OK)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class Team_List(APIView):
 
@@ -589,121 +671,133 @@ class Team_List(APIView):
     def get(self, request):
         try:
             Team_as_object = Team.objects.filter(
-                    team_id__startswith=request.GET.__getitem__('team_id'))
+                team_id__startswith=request.GET.__getitem__('team_id'))
             content = Team_Serializer(Team_as_object, many=True)
             return Response(content.data)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
-        response_list=[]
+        response_list = []
         for i in request.data:
             serial = Team_Serializer(data=i)
             if not serial.is_valid():
-                response_list.append({"value":i,"detail":serial.errors})
-        if(response_list==[]):
+                response_list.append({"value": i, "detail": serial.errors})
+        if(response_list == []):
             for i in request.data:
                 if serial.is_valid():
                     serial.save()
-            return Response({"detail":"insert successful"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
         else:
-            return Response(response_list,status=status.HTTP_400_BAD_REQUEST)
-    
-    
+            return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+
     def put(self, request):
-        serial = Team_Serializer(Team.objects.get(srn=request.data.get("team_id")),data=request.data)
+        serial = Team_Serializer(Team.objects.get(
+            srn=request.data.get("team_id")), data=request.data)
         try:
             if(serial.is_valid()):
                 serial.save()
-                return Response({"detail":"update successful"}, status=status.HTTP_202_ACCEPTED)
+                return Response({"detail": "update successful"}, status=status.HTTP_202_ACCEPTED)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request):
-        serial = Team_Serializer(Team.objects.get(team_id=request.data.get("team_id")),data=request.data)
+        serial = Team_Serializer(Team.objects.get(
+            team_id=request.data.get("team_id")), data=request.data)
         try:
             if serial.is_valid():
                 Team.objects.get(team_id=serial.data.get("team_id")).delete()
-                return Response({"detail":"delete successful"}, status=status.HTTP_200_OK)
+                return Response({"detail": "delete successful"}, status=status.HTTP_200_OK)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class TeamFacultyReview_List(APIView):
     parser_classes = [JSONParser]
+
     def get(self, request):
         try:
             TeamFacultyReview_as_object = TeamFacultyReview.objects.all()
-            content = TeamFacultyReview_Serializer(TeamFacultyReview_as_object, many=True)
+            content = TeamFacultyReview_Serializer(
+                TeamFacultyReview_as_object, many=True)
             return Response(content.data)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
-        response_list=[]
+        response_list = []
         for i in request.data:
             serial = TeamFacultyReview_Serializer(data=i)
             if not serial.is_valid():
-                response_list.append({"value":i,"detail":serial.errors})
-        if(response_list==[]):
+                response_list.append({"value": i, "detail": serial.errors})
+        if(response_list == []):
             for i in request.data:
                 serial = TeamFacultyReview_Serializer(data=i)
                 if serial.is_valid():
                     serial.save()
-            return Response({"detail":"insert successful"}, status=status.HTTP_201_CREATED)
+            return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
         else:
-            return Response(response_list,status=status.HTTP_400_BAD_REQUEST)
-    
+            return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+
     def put(self, request):
-        serial = TeamFacultyReview_Serializer(TeamFacultyReview.objects.get(team=request.data.get("team"),fac=request.data.get('fac'),review_number=request.data.get('review_number')),data=request.data)
+        serial = TeamFacultyReview_Serializer(TeamFacultyReview.objects.get(team=request.data.get(
+            "team"), fac=request.data.get('fac'), review_number=request.data.get('review_number')), data=request.data)
         try:
             if(serial.is_valid()):
                 serial.save()
-                return Response({"detail":"update successful"}, status=status.HTTP_202_ACCEPTED)
+                return Response({"detail": "update successful"}, status=status.HTTP_202_ACCEPTED)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request):
-        serial = TeamFacultyReview_Serializer(TeamFacultyReview.objects.get(team=request.data.get("team"),fac=request.data.get('fac'),review_number=request.data.get('review_number')),data=request.data)
+        serial = TeamFacultyReview_Serializer(TeamFacultyReview.objects.get(team=request.data.get(
+            "team"), fac=request.data.get('fac'), review_number=request.data.get('review_number')), data=request.data)
         try:
             if serial.is_valid():
-                TeamFacultyReview.objects.get(team=request.data.get("team"),fac=request.data.get('fac'),review_number=request.data.get('review_number')).delete()
-                return Response({"detail":"delete successful"}, status=status.HTTP_200_OK)
+                TeamFacultyReview.objects.get(team=request.data.get("team"), fac=request.data.get(
+                    'fac'), review_number=request.data.get('review_number')).delete()
+                return Response({"detail": "delete successful"}, status=status.HTTP_200_OK)
             else:
-                return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class marks(APIView):
 
     parser_classes = [JSONParser]
 
     def post(self, request):
-        response_list=[]
+        response_list = []
         for i in request.data:
-            team_data={"name":i["team_name"],"description":i["description"],"guide":i["guide"],"panel":i["panel"],"team_id":i["team_id"]}
+            team_data = {"name": i["team_name"], "description": i["description"],
+                         "guide": i["guide"], "panel": i["panel"], "team_id": i["team_id"]}
             team_serial = Team_Serializer(data=team_data)
             if team_serial.is_valid():
                 team_serial.save()
             else:
-                response_list.append({"value":i,"detail":team_serial.errors})
-            if(len(i["srn"])==len(i["name"]) and len(i["name"])==len(i["email"]) and len(i["email"])==len(i["phone"]) and len(i["phone"])==len(i["dept"])):
-                student_data=[{"srn":i["srn"][j],"name":i["name"][j],"email":i["email"][j],"phone":i["phone"][j],"dept":i["dept"][j]} for j in range(len(i["srn"]))]
+                response_list.append(
+                    {"value": i, "detail": team_serial.errors})
+            if(len(i["srn"]) == len(i["name"]) and len(i["name"]) == len(i["email"]) and len(i["email"]) == len(i["phone"]) and len(i["phone"]) == len(i["dept"])):
+                student_data = [{"srn": i["srn"][j], "name":i["name"][j], "email":i["email"][j],
+                                 "phone":i["phone"][j], "dept":i["dept"][j]} for j in range(len(i["srn"]))]
                 for k in student_data:
                     student_serial = Student_Serializer(data=k)
                     if student_serial.is_valid():
                         student_serial.save()
 
                     else:
-                        response_list.append({"value":i,"detail":student_serial.errors})
+                        response_list.append(
+                            {"value": i, "detail": student_serial.errors})
             else:
-                response_list.append({"values":i,"detail":"mismatch data"})
-        if(response_list==[]):
-            return Response({"detail":"insert successful"}, status=status.HTTP_201_CREATED)
+                response_list.append({"values": i, "detail": "mismatch data"})
+        if(response_list == []):
+            return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
         else:
-            return Response(response_list,status=status.HTTP_400_BAD_REQUEST)
+            return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
