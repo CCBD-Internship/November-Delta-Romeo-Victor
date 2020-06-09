@@ -1,13 +1,11 @@
 from django.db import models
 
-
 class Department(models.Model):
     dept = models.CharField(primary_key=True, max_length=50)
 
     class Meta:
         managed = False
         db_table = 'department'
-
 
 class Faculty(models.Model):
     fac_id = models.CharField(primary_key=True, max_length=50)
@@ -21,7 +19,6 @@ class Faculty(models.Model):
         managed = False
         db_table = 'faculty'
 
-
 class FacultyPanel(models.Model):
     fac = models.OneToOneField(Faculty, models.DO_NOTHING, primary_key=True)
     panel = models.ForeignKey('Panel', models.DO_NOTHING)
@@ -31,7 +28,6 @@ class FacultyPanel(models.Model):
         managed = False
         db_table = 'faculty_panel'
         unique_together = (('fac', 'panel'),)
-
 
 class Panel(models.Model):
     label = models.CharField(max_length=100)
@@ -43,7 +39,6 @@ class Panel(models.Model):
         managed = False
         db_table = 'panel'
 
-
 class PanelReview(models.Model):
     review_number = models.IntegerField()
     panel = models.OneToOneField(Panel, models.DO_NOTHING, primary_key=True)
@@ -54,7 +49,6 @@ class PanelReview(models.Model):
         managed = False
         db_table = 'panel_review'
         unique_together = (('panel', 'review_number'),)
-
 
 class Review1(models.Model):
     srn = models.OneToOneField('Student', models.DO_NOTHING, db_column='srn', primary_key=True)
@@ -70,7 +64,6 @@ class Review1(models.Model):
         db_table = 'review_1'
         unique_together = (('srn', 'fac'),)
 
-
 class Review2(models.Model):
     srn = models.OneToOneField('Student', models.DO_NOTHING, db_column='srn', primary_key=True)
     fac = models.ForeignKey(Faculty, models.DO_NOTHING)
@@ -84,7 +77,6 @@ class Review2(models.Model):
         managed = False
         db_table = 'review_2'
         unique_together = (('srn', 'fac'),)
-
 
 class Review3(models.Model):
     srn = models.OneToOneField('Student', models.DO_NOTHING, db_column='srn', primary_key=True)
@@ -100,7 +92,6 @@ class Review3(models.Model):
         db_table = 'review_3'
         unique_together = (('srn', 'fac'),)
 
-
 class Review4(models.Model):
     srn = models.OneToOneField('Student', models.DO_NOTHING, db_column='srn', primary_key=True)
     fac = models.ForeignKey(Faculty, models.DO_NOTHING)
@@ -114,7 +105,6 @@ class Review4(models.Model):
         managed = False
         db_table = 'review_4'
         unique_together = (('srn', 'fac'),)
-
 
 class Review5(models.Model):
     srn = models.OneToOneField('Student', models.DO_NOTHING, db_column='srn', primary_key=True)
@@ -130,7 +120,6 @@ class Review5(models.Model):
         db_table = 'review_5'
         unique_together = (('srn', 'fac'),)
 
-
 class Student(models.Model):
     srn = models.CharField(primary_key=True, max_length=15)
     name = models.CharField(max_length=100)
@@ -143,7 +132,6 @@ class Student(models.Model):
         managed = False
         db_table = 'student'
 
-
 class Team(models.Model):
     team_name = models.CharField(max_length=50)
     description = models.CharField(max_length=200, blank=True, null=True)
@@ -154,7 +142,6 @@ class Team(models.Model):
     class Meta:
         managed = False
         db_table = 'team'
-
 
 class TeamFacultyReview(models.Model):
     team = models.OneToOneField(Team, models.DO_NOTHING, primary_key=True)
