@@ -5,6 +5,11 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.views import APIView
 from rest_framework.parsers import JSONParser
+from rest_framework_jwt.utils import jwt_decode_handler
+from django.contrib.auth.models import User
+from rest_framework.authentication import SessionAuthentication,BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
+
 # from django.core import serializers
 from .models import *
 from .serializers import *
@@ -16,7 +21,7 @@ class Dept_List(APIView):
 
     parser_classes = [JSONParser]
 
-    def get(self, request):
+    def get(self, request,year):
         try:
             dept_as_object = Department.objects.all()
             content = Department_Serializer(dept_as_object, many=True)
@@ -516,15 +521,27 @@ class Review5_List(APIView):
 
 class Student_List(APIView):
     parser_classes = [JSONParser]
-    def get(self, request):
+    permission_classes = [IsAuthenticated]
+    def get(self, request,type,user,panel=0):
         try:
-            if 'srn' in request.GET:
-                student_as_object = Student.objects.filter(
-                    srn__startswith=request.GET.__getitem__('srn'))
+            if(user==User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"])):
+                if(panel==0 and Faculty.objects.get(fac_id=user).is_admin==True):
+                    if 'srn' in request.GET:
+                        student_as_object = Student.objects.filter(
+                            srn__startswith=request.GET.__getitem__('srn'))
+                    else:
+                        student_as_object = Student.objects.all()
+                    content = Student_Serializer(student_as_object, many=True)
+                    return Response(content.data)
+                elif(FacultyPanel.objects.filter(fac=user,panel=panel).exists()):
+                    if(type=='coord' and FacultyPanel.objects.get(fac_id=user,panel=panel).is_coordinator):
+                        student_as_object = Student.objects.filter(team_id__in = Team.objects.filter(panel_id=1))
+                    # elif(type=='eval'):
+                    #     student_as_object = Student.objects.filter(team_id__in = Team.objects.filter(panel_id=1))
+                else:
+                    return Response(status=status.HTTP_401_UNAUTHORIZED)
             else:
-                student_as_object = Student.objects.all()
-            content = Student_Serializer(student_as_object, many=True)
-            return Response(content.data)
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
