@@ -18,14 +18,15 @@ from django.urls import path
 from . import views
 from django.conf.urls import url
 from django.contrib.auth import views as auth_views
-from rest_framework_simplejwt.views import (TokenObtainPairView,TokenRefreshView)
 
 urlpatterns = [
-    path('api/token',TokenObtainPairView.as_view()),
-    path('api/token/refresh',TokenRefreshView.as_view()),
+    path('api/token/',views.LoginView.as_view()),
+    path('api/token/refresh',views.RefreshView.as_view()),
+    #path('api/token/refresh',views.TokenRefresh.as_view()),
     path('api/<str:user>/<int:panel>/<str:type>/student/',
          views.Student_List.as_view(), name='index'),
-    path('api/<str:user>/student/', views.Student_List.as_view(), name='index')
+    path('api/<str:user>/student/', views.Student_List.as_view(), name='index'),
+    #path('api/blacklist',TokenBlacklist.as_view()),
 
 #     path('api/<str:user>/<int:panel>/<str:type>/team/',
 #          views.Team_List.as_view(), name='index'),
@@ -35,4 +36,7 @@ urlpatterns = [
 #     path('api/faculty/', views.Faculty_List.as_view(), name='index'),
 #     path('api/marks/', views.marks.as_view(), name='index'),
 #     path('api/department/', views.Dept_List.as_view(), name='index'),
+    path('api/team/', views.Team_List.as_view(), name='index'),
+    path('api/Blacklist/', views.TokenBlackList.as_view())
+
 ]
