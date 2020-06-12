@@ -583,41 +583,37 @@ class Student_List(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, user, type=None, panel=None):
-        # try:
-        if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
-            if(panel == None and type == None and Faculty.objects.get(fac_id=user).is_admin == True):
-                if 'srn' in request.GET:
-                    student_as_object = Student.objects.filter(
-                        srn__startswith=request.GET.__getitem__('srn'))
-                else:
-                    student_as_object = Student.objects.all()
-                content = Student_Serializer(student_as_object, many=True)
-                token = RefreshToken(
-                    request.META["HTTP_AUTHORIZATION"].split()[1])
-                print('hi')
-                token.blacklist()
-                return Response(content.data)
-            elif(FacultyPanel.objects.filter(fac=user, panel=panel).exists()):
-                if(type == 'coord' and FacultyPanel.objects.get(fac=user, panel=int(panel)).is_coordinator):
-                    student_as_object = Student.objects.filter(
-                        team_id__in=Team.objects.filter(panel_id=1))
+        try:
+            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+                if(panel == None and type == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     if 'srn' in request.GET:
-                        student_as_object = Student.objects.filter(team_id__in=Team.objects.filter(
-                            panel_id=1)).filter(srn__startswith=request.GET.__getitem__('srn'))
+                        student_as_object = Student.objects.filter(
+                            srn__startswith=request.GET.__getitem__('srn'))
                     else:
+                        student_as_object = Student.objects.all()
+                    content = Student_Serializer(student_as_object, many=True)
+                    return Response(content.data)
+                elif(FacultyPanel.objects.filter(fac=user, panel=panel).exists()):
+                    if(type == 'coord' and FacultyPanel.objects.get(fac=user, panel=int(panel)).is_coordinator):
                         student_as_object = Student.objects.filter(
                             team_id__in=Team.objects.filter(panel_id=1))
-                    content = Student_Serializer(
-                        student_as_object, many=True)
-                    return Response(content.data, status=status.HTTP_200_OK)
+                        if 'srn' in request.GET:
+                            student_as_object = Student.objects.filter(team_id__in=Team.objects.filter(
+                                panel_id=1)).filter(srn__startswith=request.GET.__getitem__('srn'))
+                        else:
+                            student_as_object = Student.objects.filter(
+                                team_id__in=Team.objects.filter(panel_id=1))
+                        content = Student_Serializer(
+                            student_as_object, many=True)
+                        return Response(content.data, status=status.HTTP_200_OK)
+                    else:
+                        return Response(status=status.HTTP_403_FORBIDDEN)
                 else:
                     return Response(status=status.HTTP_403_FORBIDDEN)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
-        else:
+        except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        # except:
-        #     return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, user, type=None, panel=None):
         try:
@@ -632,44 +628,72 @@ class Student_List(APIView):
                     if(response_list == []):
                         for i in request.data:
                             serial = Student_Serializer(data=i)
-                            serial.save()
+                            if serial.is_valid():
+                                serial.save()
                         return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
                     else:
                         return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    return Response(status=status.HTTP_403_FORBIDDEN)
+                    return Response({"detail": "only project administrator can insert"}, status=status.HTTP_403_FORBIDDEN)
             else:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+                return Response(status=status.HTTP_403_FORBIDDEN)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, user, type=None, panel=None):
         try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
-                if(panel == None and Faculty.objects.get(fac_id=user).is_admin == True):
+                if(panel == None and type == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     response_list = []
                     for i in request.data:
                         serial = Student_Serializer(Student.objects.get(
-                            srn=request.data.get("srn")), data=i)
+                            srn=i["srn"]), data=i)
                         if not serial.is_valid():
                             response_list.append(
                                 {"value": i, "detail": serial.errors})
                     if(response_list == []):
                         for i in request.data:
                             serial = Student_Serializer(Student.objects.get(
-                                srn=request.data.get("srn")), data=i)
-                            serial.save()
+                                srn=i["srn"]), data=i)
+                            if serial.is_valid():
+                                serial.save()
                         return Response({"detail": "update successful"}, status=status.HTTP_202_ACCEPTED)
                     else:
                         return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    return Response(status=status.HTTP_403_FORBIDDEN)
+                    return Response({"detail": "only project administrator can update"}, status=status.HTTP_403_FORBIDDEN)
             else:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+                return Response(status=status.HTTP_403_FORBIDDEN)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request):
+    def delete(self, request, user, type=None, panel=None):
+        try:
+            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+                if(panel == None and type == None and Faculty.objects.get(fac_id=user).is_admin == True):
+                    response_list = []
+                    for i in request.data:
+                        serial = Student_Serializer(Student.objects.get(
+                            srn=i["srn"]), data=i)
+                        if not serial.is_valid():
+                            response_list.append(
+                                {"value": i, "detail": serial.errors})
+                    if(response_list == []):
+                        for i in request.data:
+                            serial = Student_Serializer(Student.objects.get(
+                                srn=i["srn"]), data=i)
+                            if serial.is_valid():
+                                Student.objects.get(srn=i["srn"]).delete()
+                        return Response({"detail": "delete successful"}, status=status.HTTP_202_ACCEPTED)
+                    else:
+                        return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response({"detail": "only project administrator can delete"}, status=status.HTTP_403_FORBIDDEN)
+            else:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
         serial = Student_Serializer(Student.objects.get(
             srn=request.data.get("srn")), data=request.data)
         try:
@@ -847,7 +871,7 @@ class LoginView(APIView):
             user = User.objects.get(username=request.data["username"])
             if(user.check_password(request.data["password"])):
                 token = RefreshToken.for_user(user)
-                return Response({'refresh': str(token), 'access': str(token.access_token), 'user': request.data["username"],'name': str(user.get_full_name())}, status=status.HTTP_200_OK)
+                return Response({'refresh': str(token), 'access': str(token.access_token), 'user': request.data["username"], 'name': str(user.get_full_name())}, status=status.HTTP_200_OK)
             else:
                 return Response({"detail": "incorrect password"}, status=status.HTTP_401_UNAUTHORIZED)
         else:
@@ -859,11 +883,9 @@ class RefreshView(APIView):
         try:
             if("refresh" in request.data):
                 token = RefreshToken(request.data["refresh"])
-                if(not token.check_exp(claim='exp',current_time=timezone.now())):
-                    return Response({"access":str(token.access_token)},status=status.HTTP_200_OK)
+                if(not token.check_exp(claim='exp', current_time=timezone.now())):
+                    return Response({"access": str(token.access_token)}, status=status.HTTP_200_OK)
             else:
-                return Response({"detail":"token invalid or expired, re-login to proceed"},status=status.HTTP_401_UNAUTHORIZED)
+                return Response({"detail": "token invalid or expired, re-login to proceed"}, status=status.HTTP_401_UNAUTHORIZED)
         except:
-            return Response({"detail":"token invalid or expired, re-login to proceed"},status=status.HTTP_400_BAD_REQUEST)
-            
-
+            return Response({"detail": "token invalid or expired, re-login to proceed"}, status=status.HTTP_400_BAD_REQUEST)

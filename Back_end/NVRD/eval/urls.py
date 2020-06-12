@@ -21,7 +21,7 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('api/token/',views.LoginView.as_view()),
-    path('api/token/refresh',views.RefreshView.as_view()),
+    path('api/token/refresh/',views.RefreshView.as_view()),
     #path('api/token/refresh',views.TokenRefresh.as_view()),
     path('api/<str:user>/<int:panel>/<str:type>/student/',
          views.Student_List.as_view(), name='index'),
