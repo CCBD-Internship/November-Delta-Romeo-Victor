@@ -60,7 +60,8 @@ class Panel(models.Model):
 
     year_code = models.CharField(max_length=10)
     panel_id = models.CharField(max_length=10)
-    is_active = models.BooleanField(blank=True, null=True, default=True)
+    panel_name = models.CharField(max_length=100, blank=True, null=True)
+    is_active = models.BooleanField(default=True)
     ctime = models.DateTimeField(default=timezone.now)
     id = models.AutoField(primary_key=True)
 
@@ -73,7 +74,7 @@ class Panel(models.Model):
 class PanelReview(models.Model):
 
     review_number = models.IntegerField()
-    panel = models.ForeignKey('Panel', models.CASCADE)
+    panel_id = models.ForeignKey('Panel', models.CASCADE)
     open_time = models.DateTimeField()
     close_time = models.DateTimeField()
     id = models.AutoField(primary_key=True)
@@ -81,12 +82,11 @@ class PanelReview(models.Model):
     class Meta:
         managed = True
         #db_table = 'panel_review'
-        unique_together = (('panel', 'review_number'),)
+        unique_together = (('panel_id', 'review_number'),)
 
 
 class Review1(models.Model):
-    srn = models.OneToOneField(
-        'Student', models.CASCADE, to_field='srn', primary_key=True)
+    srn = models.ForeignKey('Student', models.CASCADE)
     fac_id = models.ForeignKey(
         Faculty, models.DO_NOTHING, null=True, blank=True)
     project_work = models.IntegerField()
@@ -94,6 +94,7 @@ class Review1(models.Model):
     project_report = models.IntegerField()
     viva_voce = models.IntegerField()
     comments = models.CharField(max_length=200, blank=True, null=True)
+    id = models.AutoField(primary_key=True)
 
     class Meta:
         managed = True
@@ -102,8 +103,7 @@ class Review1(models.Model):
 
 
 class Review2(models.Model):
-    srn = models.OneToOneField(
-        'Student', models.CASCADE, to_field='srn', primary_key=True)
+    srn = models.ForeignKey('Student', models.CASCADE)
     fac_id = models.ForeignKey(
         Faculty, models.DO_NOTHING, null=True, blank=True)
     project_work = models.IntegerField()
@@ -111,6 +111,7 @@ class Review2(models.Model):
     project_report = models.IntegerField()
     viva_voce = models.IntegerField()
     comments = models.CharField(max_length=200, blank=True, null=True)
+    id = models.AutoField(primary_key=True)
 
     class Meta:
         managed = True
@@ -119,8 +120,7 @@ class Review2(models.Model):
 
 
 class Review3(models.Model):
-    srn = models.OneToOneField(
-        'Student', models.CASCADE, to_field='srn', primary_key=True)
+    srn = models.ForeignKey('Student', models.CASCADE)
     fac_id = models.ForeignKey(
         Faculty, models.DO_NOTHING, null=True, blank=True)
     project_work = models.IntegerField()
@@ -128,6 +128,7 @@ class Review3(models.Model):
     project_report = models.IntegerField()
     viva_voce = models.IntegerField()
     comments = models.CharField(max_length=200, blank=True, null=True)
+    id = models.AutoField(primary_key=True)
 
     class Meta:
         managed = True
@@ -136,8 +137,7 @@ class Review3(models.Model):
 
 
 class Review4(models.Model):
-    srn = models.OneToOneField(
-        'Student', models.CASCADE, to_field='srn', primary_key=True)
+    srn = models.ForeignKey('Student', models.CASCADE)
     fac_id = models.ForeignKey(
         Faculty, models.DO_NOTHING, null=True, blank=True)
     project_work = models.IntegerField()
@@ -145,6 +145,7 @@ class Review4(models.Model):
     project_report = models.IntegerField()
     viva_voce = models.IntegerField()
     comments = models.CharField(max_length=200, blank=True, null=True)
+    id = models.AutoField(primary_key=True)
 
     class Meta:
         managed = True
@@ -153,8 +154,7 @@ class Review4(models.Model):
 
 
 class Review5(models.Model):
-    srn = models.OneToOneField(
-        'Student', models.CASCADE, to_field='srn', primary_key=True)
+    srn = models.ForeignKey('Student', models.CASCADE)
     fac_id = models.ForeignKey(
         Faculty, models.DO_NOTHING, null=True, blank=True)
     project_work = models.IntegerField()
@@ -162,6 +162,7 @@ class Review5(models.Model):
     project_report = models.IntegerField()
     viva_voce = models.IntegerField()
     comments = models.CharField(max_length=200, blank=True, null=True)
+    id = models.AutoField(primary_key=True)
 
     class Meta:
         managed = True
@@ -198,9 +199,10 @@ class Student(models.Model):
 class Team(models.Model):
     year_code = models.CharField(max_length=10)
     team_id = models.CharField(max_length=10)
+    team_name = models.CharField(max_length=100, blank=True, null=True)
     description = models.CharField(max_length=200, blank=True, null=True)
     guide = models.ForeignKey(
-        Faculty, models.DO_NOTHING, db_column='guide', blank=True, null=True)
+        Faculty, models.DO_NOTHING, blank=True, null=True)
     panel = models.ForeignKey(Panel, models.DO_NOTHING, blank=True, null=True)
     id = models.AutoField(primary_key=True)
 
@@ -211,7 +213,7 @@ class Team(models.Model):
 
 
 class TeamFacultyReview(models.Model):
-    team = models.ForeignKey(Team, models.DO_NOTHING)
+    team_id = models.ForeignKey(Team, models.DO_NOTHING)
     fac_id = models.ForeignKey(
         Faculty, models.DO_NOTHING, null=True, blank=True)
     review_number = models.IntegerField()
@@ -227,7 +229,7 @@ class TeamFacultyReview(models.Model):
         ]
         managed = True
         #db_table = 'team_faculty_review'
-        unique_together = (('team', 'fac_id', 'review_number'),)
+        unique_together = (('team_id', 'fac_id', 'review_number'),)
 
 # from django.contrib.auth.models import User
 # # from eval.models import *
