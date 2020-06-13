@@ -10,12 +10,14 @@ class Department_Serializer(serializers.ModelSerializer):
 class Faculty_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Faculty
-        fields = ('fac_id','name','email','phone','dept','is_active')
+        # fields = ('fac_id','name','email','phone','dept','is_active')
+        fields = '__all__'
 
 class FacultyPanel_Serializer(serializers.ModelSerializer):
     class Meta:
         model = FacultyPanel
-        fields = ('fac','panel','is_cordinator')
+        depth=2
+        fields = ('fac','panel','is_coordinator')
 
 class Panel_Serializer(serializers.ModelSerializer):
     class Meta:

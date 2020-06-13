@@ -140,15 +140,40 @@ class FacultyPanel_List(APIView):
 
     parser_classes = [JSONParser]
 
-    def get(self, request):
-        try:
-            FacultyPanel_as_object = FacultyPanel.objects.all()
-            content = FacultyPanel_Serializer(
-                FacultyPanel_as_object, many=True)
-            return Response(content.data)
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
+    def get(self, request, user, panel=None):
+        # try:
+            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+                if(panel == None and Faculty.objects.get(fac_id=user).is_admin == True):
+                    if 'fac_id' in request.GET and "panel_id" in request.GET:
+                        facultypanel_as_object = FacultyPanel.objects.filter(
+                            fac__startswith=request.GET.__getitem__('fac_id'), panel__startswith=request.GET.__getitem__('panel_id'))
+                    elif 'fac_id' in request.GET:
+                        facultypanel_as_object = FacultyPanel.objects.filter(
+                            fac__startswith=request.GET.__getitem__('fac_id'))
+                    elif 'panel_id' in request.GET:
+                        facultypanel_as_object = FacultyPanel.objects.filter(
+                            fac__startswith=request.GET.__getitem__('panel_id'))
+                    else:
+                        facultypanel_as_object = FacultyPanel.objects.all()
+                    content = FacultyPanel_Serializer(
+                        facultypanel_as_object, many=True)
+                    return Response(content.data)
+                elif(FacultyPanel.objects.filter(fac=user, panel=panel).exists()):
+                    if 'fac_id' in request.GET:
+                        facultypanel_as_object = FacultyPanel.objects.filter(
+                            fac__startswith=request.GET.__getitem__('fac_id'),panel=panel)
+                    else:
+                        facultypanel_as_object = FacultyPanel.objects.filter(
+                            panel=panel)
+                    content = FacultyPanel_Serializer(
+                        facultypanel_as_object, many=True)
+                    return Response(content.data, status=status.HTTP_200_OK)
+                else:
+                    return Response(status=status.HTTP_403_FORBIDDEN)
+            else:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+        # except:
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
     def post(self, request):
         response_list = []
         for i in request.data:
@@ -582,10 +607,10 @@ class Student_List(APIView):
     parser_classes = [JSONParser]
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, user, type=None, panel=None):
+    def get(self, request, user, panel=None):
         try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
-                if(panel == None and type == None and Faculty.objects.get(fac_id=user).is_admin == True):
+                if(panel == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     if 'srn' in request.GET:
                         student_as_object = Student.objects.filter(
                             srn__startswith=request.GET.__getitem__('srn'))
@@ -594,20 +619,15 @@ class Student_List(APIView):
                     content = Student_Serializer(student_as_object, many=True)
                     return Response(content.data)
                 elif(FacultyPanel.objects.filter(fac=user, panel=panel).exists()):
-                    if(type == 'coord' and FacultyPanel.objects.get(fac=user, panel=int(panel)).is_coordinator):
-                        student_as_object = Student.objects.filter(
-                            team_id__in=Team.objects.filter(panel_id=1))
-                        if 'srn' in request.GET:
-                            student_as_object = Student.objects.filter(team_id__in=Team.objects.filter(
-                                panel_id=1)).filter(srn__startswith=request.GET.__getitem__('srn'))
-                        else:
-                            student_as_object = Student.objects.filter(
-                                team_id__in=Team.objects.filter(panel_id=1))
-                        content = Student_Serializer(
-                            student_as_object, many=True)
-                        return Response(content.data, status=status.HTTP_200_OK)
+                    if 'srn' in request.GET:
+                        student_as_object = Student.objects.filter(team_id__in=Team.objects.filter(
+                            panel_id=panel)).filter(srn__startswith=request.GET.__getitem__('srn'))
                     else:
-                        return Response(status=status.HTTP_403_FORBIDDEN)
+                        student_as_object = Student.objects.filter(
+                            team_id__in=Team.objects.filter(panel_id=panel))
+                    content = Student_Serializer(
+                        student_as_object, many=True)
+                    return Response(content.data, status=status.HTTP_200_OK)
                 else:
                     return Response(status=status.HTTP_403_FORBIDDEN)
             else:
@@ -618,7 +638,7 @@ class Student_List(APIView):
     def post(self, request, user, type=None, panel=None):
         try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
-                if(panel == None and type == None and Faculty.objects.get(fac_id=user).is_admin == True):
+                if(panel == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     response_list = []
                     for i in request.data:
                         serial = Student_Serializer(data=i)
@@ -640,10 +660,10 @@ class Student_List(APIView):
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request, user, type=None, panel=None):
+    def put(self, request, user, panel=None):
         try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
-                if(panel == None and type == None and Faculty.objects.get(fac_id=user).is_admin == True):
+                if(panel == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     response_list = []
                     for i in request.data:
                         serial = Student_Serializer(Student.objects.get(
@@ -667,10 +687,10 @@ class Student_List(APIView):
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, user, type=None, panel=None):
+    def delete(self, request, user, panel=None):
         try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
-                if(panel == None and type == None and Faculty.objects.get(fac_id=user).is_admin == True):
+                if(panel == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     response_list = []
                     for i in request.data:
                         serial = Student_Serializer(Student.objects.get(
@@ -693,17 +713,6 @@ class Student_List(APIView):
                 return Response(status=status.HTTP_403_FORBIDDEN)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        serial = Student_Serializer(Student.objects.get(
-            srn=request.data.get("srn")), data=request.data)
-        try:
-            if serial.is_valid():
-                Student.objects.get(srn=serial.data.get("srn")).delete()
-                return Response({"detail": "delete successful"}, status=status.HTTP_200_OK)
-            else:
-                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
-        except:
-            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class Team_List(APIView):
@@ -812,11 +821,12 @@ class TeamFacultyReview_List(APIView):
             return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class marks(APIView):
+class Team_Student_CSV(APIView):
 
     parser_classes = [JSONParser]
 
     def post(self, request):
+
         response_list = []
         for i in request.data:
             team_data = {"name": i["team_name"], "description": i["description"],

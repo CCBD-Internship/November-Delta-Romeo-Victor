@@ -20,22 +20,22 @@ from django.conf.urls import url
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    path('api/token/',views.LoginView.as_view()),
-    path('api/token/refresh/',views.RefreshView.as_view()),
-    #path('api/token/refresh',views.TokenRefresh.as_view()),
-    path('api/<str:user>/<int:panel>/<str:type>/student/',
+    path('api/token/', views.LoginView.as_view()),
+    path('api/token/refresh/', views.RefreshView.as_view()),
+    path('api/<str:user>/<int:panel>/student/',
          views.Student_List.as_view(), name='index'),
     path('api/<str:user>/student/', views.Student_List.as_view(), name='index'),
-    #path('api/blacklist',TokenBlacklist.as_view()),
+    path('api/<str:user>/<int:panel>/faculty-panel/',views.FacultyPanel_List.as_view()),
+    path('api/<str:user>/faculty-panel/',views.FacultyPanel_List.as_view()),
 
-#     path('api/<str:user>/<int:panel>/<str:type>/team/',
-#          views.Team_List.as_view(), name='index'),
-#     path('api/<str:user>/team/', views.Team_List.as_view(), name='index'),
+    #     path('api/<str:user>/<int:panel>/<str:type>/team/',
+    #          views.Team_List.as_view(), name='index'),
+    #     path('api/<str:user>/team/', views.Team_List.as_view(), name='index'),
 
-#     path('api/panel/', views.Panel_List.as_view(), name='index'),
-#     path('api/faculty/', views.Faculty_List.as_view(), name='index'),
-#     path('api/marks/', views.marks.as_view(), name='index'),
-#     path('api/department/', views.Dept_List.as_view(), name='index'),
+    #     path('api/panel/', views.Panel_List.as_view(), name='index'),
+    #     path('api/faculty/', views.Faculty_List.as_view(), name='index'),
+    #     path('api/marks/', views.marks.as_view(), name='index'),
+    #     path('api/department/', views.Dept_List.as_view(), name='index'),
     path('api/team/', views.Team_List.as_view(), name='index'),
     path('api/Blacklist/', views.TokenBlackList.as_view())
 
