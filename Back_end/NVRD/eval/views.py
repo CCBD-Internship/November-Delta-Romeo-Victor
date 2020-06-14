@@ -326,7 +326,7 @@ class FacultyPanel_List(APIView):
                                     d.update(
                                         {"is_coordinator": i["is_coordinator"]})
                                 serial = FacultyPanel_Serializer(f,
-                                    data=d, partial=True)
+                                                                 data=d, partial=True)
                                 if not serial.is_valid():
                                     response_list.append(
                                         {"value": i, "detail": serial.errors})
@@ -339,9 +339,9 @@ class FacultyPanel_List(APIView):
                     if(response_list == []):
                         for i in request.data:
                             p = Panel.objects.filter(
-                                    panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]).first()
+                                panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]).first()
                             f = FacultyPanel.objects.filter(
-                                    panel_id=p, fac_id=i["fac_id"]).first().delete()
+                                panel_id=p, fac_id=i["fac_id"]).first().delete()
                         return Response({"detail": "delete successful"}, status=status.HTTP_201_CREATED)
                     else:
                         return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
@@ -1030,6 +1030,9 @@ class LoginView(APIView):
 
 
 class RefreshView(APIView):
+    parser_classes = [JSONParser]
+    permission_classes = (AllowAny,)
+
     def post(self, request, *args, **kwargs):
         try:
             if("refresh" in request.data):
@@ -1040,3 +1043,28 @@ class RefreshView(APIView):
                 return Response({"detail": "token invalid or expired, re-login to proceed"}, status=status.HTTP_401_UNAUTHORIZED)
         except:
             return Response({"detail": "token invalid or expired, re-login to proceed"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChangePassword(APIView):
+    parser_classes = [JSONParser]
+
+    def post(self, request, user):
+        try:
+            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+                U=User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"])
+                if("new_password" in request.data and "confirm_password" in request.data and "old_password" in request.data):
+                    if(U.check_password(request.data["old_password"])):
+                        if((request.data["new_password"] == request.data["confirm_password"]) and (request.data["new_password"] != "") and (request.data["new_password"] != "")):
+                            U.set_password(request.data["new_password"])
+                            U.save()
+                            return Response({"detail": "password change successful"}, status=status.HTTP_200_OK)
+                        else:
+                            return Response({"detail": "passwords not matching or blank"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+                    else:
+                        return Response({"detail": "previous password not valid"}, status=status.HTTP_403_FORBIDDEN)
+                else:       
+                    return Response({"detail": "attributes not sufficient"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({"detail": "user credentials do not match"}, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response({"detail": "change password unsuccessful"}, status=status.HTTP_400_BAD_REQUEST)
