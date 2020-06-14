@@ -22,10 +22,10 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('api/token/', views.LoginView.as_view()),
     path('api/token/refresh/', views.RefreshView.as_view()),
-    path('api/<str:user>/<int:panel>/student/',
+    path('api/<str:user>/<str:panel_year_code>-<str:panel_id>/student/',
          views.Student_List.as_view(), name='index'),
     path('api/<str:user>/student/', views.Student_List.as_view(), name='index'),
-    path('api/<str:user>/<int:panel>/faculty-panel/',views.FacultyPanel_List.as_view()),
+    path('api/<str:user>/<str:panel_year_code>-<str:panel_id>/faculty-panel/',views.FacultyPanel_List.as_view()),
     path('api/<str:user>/faculty-panel/',views.FacultyPanel_List.as_view()),
 
     #     path('api/<str:user>/<int:panel>/<str:type>/team/',

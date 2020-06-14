@@ -13,16 +13,16 @@ class Faculty_Serializer(serializers.ModelSerializer):
         # fields = ('fac_id','name','email','phone','dept','is_active')
         fields = '__all__'
 
-class FacultyPanel_Serializer(serializers.ModelSerializer):
-    class Meta:
-        model = FacultyPanel
-        depth=2
-        fields = ('fac','panel','is_coordinator')
-
 class Panel_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Panel
-        fields = ('label','is_active','panel_id','ctime')
+        # fields = ('label','is_active','panel_id','ctime')
+        fields = '__all__'
+
+class FacultyPanel_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = FacultyPanel
+        fields = '__all__'
 
 class PanelReview_Serializer(serializers.ModelSerializer):
     class Meta:
@@ -57,7 +57,8 @@ class Review5_Serializer(serializers.ModelSerializer):
 class Student_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Student
-        fields = ('srn','name','email','phone','dept')
+        # fields = ('srn','name','email','phone','dept')
+        fields = '__all__'
 
 class Team_Serializer(serializers.ModelSerializer):
     class Meta:

@@ -58,7 +58,7 @@ class FacultyPanel(models.Model):
 
 class Panel(models.Model):
 
-    year_code = models.CharField(max_length=10)
+    panel_year_code = models.CharField(max_length=10)
     panel_id = models.CharField(max_length=10)
     panel_name = models.CharField(max_length=100, blank=True, null=True)
     is_active = models.BooleanField(default=True)
@@ -68,7 +68,7 @@ class Panel(models.Model):
     class Meta:
         managed = True
         #db_table = 'panel'
-        unique_together = (('year_code', 'panel_id'),)
+        unique_together = (('panel_year_code', 'panel_id'),)
 
 
 class PanelReview(models.Model):
@@ -197,7 +197,7 @@ class Student(models.Model):
 
 
 class Team(models.Model):
-    year_code = models.CharField(max_length=10)
+    team_year_code = models.CharField(max_length=10)
     team_id = models.CharField(max_length=10)
     team_name = models.CharField(max_length=100, blank=True, null=True)
     description = models.CharField(max_length=200, blank=True, null=True)
@@ -208,7 +208,7 @@ class Team(models.Model):
 
     class Meta:
         managed = True
-        unique_together = (('year_code', 'team_id'),)
+        unique_together = (('team_year_code', 'team_id'),)
         #db_table = 'team'
 
 

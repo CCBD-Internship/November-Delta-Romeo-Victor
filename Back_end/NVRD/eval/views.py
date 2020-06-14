@@ -140,79 +140,217 @@ class FacultyPanel_List(APIView):
 
     parser_classes = [JSONParser]
 
-    def get(self, request, user, panel=None):
-        # try:
+    def get(self, request, user, panel_year_code=None, panel_id=None):
+        try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
-                if(panel == None and Faculty.objects.get(fac_id=user).is_admin == True):
-                    if 'fac_id' in request.GET and "panel_id" in request.GET:
-                        facultypanel_as_object = FacultyPanel.objects.filter(
-                            fac__startswith=request.GET.__getitem__('fac_id'), panel__startswith=request.GET.__getitem__('panel_id'))
-                    elif 'fac_id' in request.GET:
-                        facultypanel_as_object = FacultyPanel.objects.filter(
-                            fac__startswith=request.GET.__getitem__('fac_id'))
-                    elif 'panel_id' in request.GET:
-                        facultypanel_as_object = FacultyPanel.objects.filter(
-                            fac__startswith=request.GET.__getitem__('panel_id'))
-                    else:
-                        facultypanel_as_object = FacultyPanel.objects.all()
-                    content = FacultyPanel_Serializer(
-                        facultypanel_as_object, many=True)
-                    return Response(content.data)
-                elif(FacultyPanel.objects.filter(fac=user, panel=panel).exists()):
+                if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
+                    facultypanel_as_object = FacultyPanel.objects.all()
                     if 'fac_id' in request.GET:
-                        facultypanel_as_object = FacultyPanel.objects.filter(
-                            fac__startswith=request.GET.__getitem__('fac_id'),panel=panel)
-                    else:
-                        facultypanel_as_object = FacultyPanel.objects.filter(
-                            panel=panel)
+                        facultypanel_as_object = facultypanel_as_object.filter(
+                            fac_id__startswith=request.GET['fac_id'])
+                    if 'panel_year_code' in request.GET:
+                        facultypanel_as_object = facultypanel_as_object.filter(
+                            panel_id__in=Panel.objects.filter(year_code__startswith=request.GET['panel_year_code']))
+                    if 'panel_id' in request.GET:
+                        facultypanel_as_object = facultypanel_as_object.filter(
+                            panel_id__in=Panel.objects.filter(panel_id__startswith=request.GET['panel_id']))
                     content = FacultyPanel_Serializer(
                         facultypanel_as_object, many=True)
-                    return Response(content.data, status=status.HTTP_200_OK)
+                    response_list = []
+                    for i in content.data:
+                        f = Faculty.objects.get(fac_id=i["fac_id"])
+                        p = p = Panel.objects.get(id=i["panel_id"])
+                        l = {"fac_id": f.fac_id, "name": f.name, "email": f.email, "phone": f.phone, "panel_year_code": p.panel_year_code,
+                             "panel_id": p.panel_id, "panel_name": p.panel_name, "is_coordinator": i["is_coordinator"]}
+                        response_list.append(l)
+                    return Response(response_list, status=status.HTTP_200_OK)
+                elif(FacultyPanel.objects.filter(fac_id=user, panel_id=Panel.objects.filter(panel_year_code=panel_year_code, panel_id=panel_id).first()).exists()):
+                    facultypanel_as_object = facultypanel_as_object = FacultyPanel.objects.filter(
+                        fac_id=user, panel_id=Panel.objects.filter(panel_year_code=panel_year_code, panel_id=panel_id).first())
+                    if 'fac_id' in request.GET:
+                        facultypanel_as_object = facultypanel_as_object.filter(
+                            fac_id__startswith=request.GET['fac_id'])
+                    content = FacultyPanel_Serializer(
+                        facultypanel_as_object, many=True)
+                    response_list = []
+                    for i in content.data:
+                        f = Faculty.objects.get(fac_id=i["fac_id"])
+                        p = Panel.objects.get(id=i["panel_id"])
+                        l = {"fac_id": f.fac_id, "name": f.name, "email": f.email, "phone": f.phone, "panel_year_code": p.panel_year_code,
+                             "panel_id": p.panel_id, "panel_name": p.panel_name, "is_coordinator": i["is_coordinator"]}
+                        response_list.append(l)
+                    return Response(response_list, status=status.HTTP_200_OK)
                 else:
                     return Response(status=status.HTTP_403_FORBIDDEN)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
-        # except:
-        #     return Response(status=status.HTTP_400_BAD_REQUEST)
-    def post(self, request):
-        response_list = []
-        for i in request.data:
-            serial = FacultyPanel_Serializer(data=i)
-            if not serial.is_valid():
-                response_list.append({"value": i, "detail": serial.errors})
-        if(response_list == []):
-            for i in request.data:
-                serial = FacultyPanel_Serializer(data=i)
-                if serial.is_valid():
-                    serial.save()
-            return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
-        else:
-            return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
-
-    def put(self, request):
-        serial = FacultyPanel_Serializer(FacultyPanel.objects.get(
-            fac=request.data.get("fac"), panel=request.data.get("panel")), data=request.data)
-        try:
-            if(serial.is_valid()):
-                serial.save()
-                return Response({"detail": "update successful"}, status=status.HTTP_202_ACCEPTED)
-            else:
-                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request):
-        serial = FacultyPanel_Serializer(FacultyPanel.objects.get(
-            fac=request.data.get("fac"), panel=request.data.get("panel")), data=request.data)
+    def post(self, request, user, panel_year_code=None, panel_id=None):
         try:
-            if serial.is_valid():
-                FacultyPanel.objects.get(fac=request.data.get(
-                    "fac"), panel=request.data.get("panel")).delete()
-                return Response({"detail": "delete successful"}, status=status.HTTP_200_OK)
+            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+                if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
+                    serial_list = []
+                    response_list = []
+                    for i in request.data:
+                        if("panel_year_code" in i and "panel_id" in i and "fac_id" in i):
+                            if(Panel.objects.filter(panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]).exists()):
+                                p = Panel.objects.filter(
+                                    panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]).first()
+                                d = {"panel_id": p.id, "fac_id": i["fac_id"]}
+                                if("is_coordinator" in i):
+                                    d.update(
+                                        {"is_coordinator": i["is_coordinator"]})
+                                serial = FacultyPanel_Serializer(
+                                    data=d, partial=True)
+                                if not serial.is_valid():
+                                    response_list.append(
+                                        {"value": i, "detail": serial.errors})
+                                else:
+                                    serial_list.append(serial)
+                            else:
+                                response_list.append(
+                                    {"value": i, "detail": "panel does not exist"})
+                        else:
+                            response_list.append(
+                                {"value": i, "detail": "attribute error"})
+                    if(response_list == []):
+                        for i in serial_list:
+                            i.save()
+                        return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
+                    else:
+                        return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response(status=status.HTTP_403_FORBIDDEN)
             else:
-                return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response(status=status.HTTP_403_FORBIDDEN)
         except:
-            return Response(serial.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, user, panel_year_code=None, panel_id=None):
+        try:
+            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+                if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
+                    serial_list = []
+                    response_list = []
+                    for i in request.data:
+                        if("panel_year_code" in i and "panel_id" in i and "fac_id" in i):
+                            if(Panel.objects.filter(panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]).exists()):
+                                p = Panel.objects.filter(
+                                    panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]).first()
+                                if(FacultyPanel.objects.filter(panel_id=p, fac_id=i["fac_id"]).exists()):
+                                    f = FacultyPanel.objects.filter(
+                                        panel_id=p, fac_id=i["fac_id"]).first()
+                                    d = {"panel_id": p.id,
+                                         "fac_id": i["fac_id"]}
+
+                                    if("is_coordinator" in i):
+                                        d.update(
+                                            {"is_coordinator": i["is_coordinator"]})
+                                    serial = FacultyPanel_Serializer(f,
+                                                                     data=d, partial=True)
+                                    if not serial.is_valid():
+                                        response_list.append(
+                                            {"value": i, "detail": serial.errors})
+                                    else:
+                                        serial_list.append(serial)
+                                else:
+                                    response_list.append(
+                                        {"value": i, "detail": "faculty does not belong to the panel"})
+                            else:
+                                response_list.append(
+                                    {"value": i, "detail": "panel does not exist"})
+                        else:
+                            response_list.append(
+                                {"value": i, "detail": "attribute error"})
+                    if(response_list == []):
+                        for i in serial_list:
+                            i.save()
+                        return Response({"detail": "update successful"}, status=status.HTTP_201_CREATED)
+                    else:
+                        return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+                elif(FacultyPanel.objects.filter(fac_id=user, is_coordinator=True, panel_id=Panel.objects.filter(panel_year_code=panel_year_code, panel_id=panel_id).first()).exists()):
+                    response_list = []
+                    serial_list = []
+                    p = Panel.objects.filter(
+                        panel_year_code=panel_year_code, panel_id=panel_id).first()
+                    for i in request.data:
+                        if("fac_id" in i):
+                            if(FacultyPanel.objects.filter(panel_id=p, fac_id=i["fac_id"]).exists()):
+                                f = FacultyPanel.objects.filter(
+                                    panel_id=p, fac_id=i["fac_id"]).first()
+                                d = {"panel_id": p.id, "fac_id": i["fac_id"]}
+                                if("is_coordinator" in i):
+                                    d.update(
+                                        {"is_coordinator": i["is_coordinator"]})
+                                serial = FacultyPanel_Serializer(f,
+                                                                 data=d, partial=True)
+                                print(serial)
+                                if not serial.is_valid():
+                                    response_list.append(
+                                        {"value": i, "detail": serial.errors})
+                                else:
+                                    serial_list.append(serial)
+                            else:
+                                response_list.append(
+                                    {"value": i, "detail": "faculty does not belong to the panel"})
+                        else:
+                            response_list.append(
+                                {"value": i, "detail": "attribute error"})
+                    if(response_list == []):
+                        for i in serial_list:
+                            i.save()
+                        return Response({"detail": "update successful"}, status=status.HTTP_201_CREATED)
+                else:
+                    return Response(status=status.HTTP_403_FORBIDDEN)
+            else:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, user, panel_year_code=None, panel_id=None):
+        try:
+            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+                if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
+                    response_list = []
+                    for i in request.data:
+                        if("panel_year_code" in i and "panel_id" in i and "fac_id" in i):
+                            if(Panel.objects.filter(panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]).exists()):
+                                p = Panel.objects.filter(
+                                    panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]).first()
+                                f = FacultyPanel.objects.filter(
+                                    panel_id=p, fac_id=i["fac_id"]).first()
+                                d = {"panel_id": p.id, "fac_id": i["fac_id"]}
+                                if("is_coordinator" in i):
+                                    d.update(
+                                        {"is_coordinator": i["is_coordinator"]})
+                                serial = FacultyPanel_Serializer(f,
+                                    data=d, partial=True)
+                                if not serial.is_valid():
+                                    response_list.append(
+                                        {"value": i, "detail": serial.errors})
+                            else:
+                                response_list.append(
+                                    {"value": i, "detail": "panel does not exist"})
+                        else:
+                            response_list.append(
+                                {"value": i, "detail": "attribute error"})
+                    if(response_list == []):
+                        for i in request.data:
+                            p = Panel.objects.filter(
+                                    panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]).first()
+                            f = FacultyPanel.objects.filter(
+                                    panel_id=p, fac_id=i["fac_id"]).first().delete()
+                        return Response({"detail": "delete successful"}, status=status.HTTP_201_CREATED)
+                    else:
+                        return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response(status=status.HTTP_403_FORBIDDEN)
+            else:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class Panel_List(APIView):
@@ -607,24 +745,26 @@ class Student_List(APIView):
     parser_classes = [JSONParser]
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, user, panel=None):
+    def get(self, request, user, panel_year_code=None, panel_id=None):
         try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
-                if(panel == None and Faculty.objects.get(fac_id=user).is_admin == True):
+                if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     if 'srn' in request.GET:
                         student_as_object = Student.objects.filter(
                             srn__startswith=request.GET.__getitem__('srn'))
                     else:
                         student_as_object = Student.objects.all()
                     content = Student_Serializer(student_as_object, many=True)
-                    return Response(content.data)
-                elif(FacultyPanel.objects.filter(fac=user, panel=panel).exists()):
+                    return Response(content.data, status=status.HTTP_200_OK)
+                elif(FacultyPanel.objects.filter(fac_id=user, panel_id=Panel.objects.filter(panel_year_code=panel_year_code, panel_id=panel_id).first()).exists()):
+                    id = Panel.objects.filter(
+                        panel_year_code=panel_year_code, panel_id=panel_id).first().id
                     if 'srn' in request.GET:
                         student_as_object = Student.objects.filter(team_id__in=Team.objects.filter(
-                            panel_id=panel)).filter(srn__startswith=request.GET.__getitem__('srn'))
+                            panel_id=id)).filter(srn__startswith=request.GET.__getitem__('srn'))
                     else:
                         student_as_object = Student.objects.filter(
-                            team_id__in=Team.objects.filter(panel_id=panel))
+                            team_id__in=Team.objects.filter(panel_id=id))
                     content = Student_Serializer(
                         student_as_object, many=True)
                     return Response(content.data, status=status.HTTP_200_OK)
@@ -635,21 +775,22 @@ class Student_List(APIView):
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def post(self, request, user, type=None, panel=None):
+    def post(self, request, user, panel_year_code=None, panel_id=None):
         try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
-                if(panel == None and Faculty.objects.get(fac_id=user).is_admin == True):
+                if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     response_list = []
+                    serial_list = []
                     for i in request.data:
                         serial = Student_Serializer(data=i)
                         if not serial.is_valid():
                             response_list.append(
                                 {"value": i, "detail": serial.errors})
+                        else:
+                            serial_list.append(serial)
                     if(response_list == []):
-                        for i in request.data:
-                            serial = Student_Serializer(data=i)
-                            if serial.is_valid():
-                                serial.save()
+                        for i in serial_list:
+                            i.save()
                         return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
                     else:
                         return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
@@ -660,23 +801,23 @@ class Student_List(APIView):
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request, user, panel=None):
+    def put(self, request, user, panel_year_code=None, panel_id=None):
         try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
-                if(panel == None and Faculty.objects.get(fac_id=user).is_admin == True):
+                if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     response_list = []
+                    serial_list = []
                     for i in request.data:
                         serial = Student_Serializer(Student.objects.get(
                             srn=i["srn"]), data=i)
                         if not serial.is_valid():
                             response_list.append(
                                 {"value": i, "detail": serial.errors})
+                        else:
+                            serial_list.append(serial)
                     if(response_list == []):
-                        for i in request.data:
-                            serial = Student_Serializer(Student.objects.get(
-                                srn=i["srn"]), data=i)
-                            if serial.is_valid():
-                                serial.save()
+                        for i in serial_list:
+                            i.save()
                         return Response({"detail": "update successful"}, status=status.HTTP_202_ACCEPTED)
                     else:
                         return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
@@ -687,10 +828,10 @@ class Student_List(APIView):
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, user, panel=None):
+    def delete(self, request, user, panel_year_code=None, panel_id=None):
         try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
-                if(panel == None and Faculty.objects.get(fac_id=user).is_admin == True):
+                if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     response_list = []
                     for i in request.data:
                         serial = Student_Serializer(Student.objects.get(
