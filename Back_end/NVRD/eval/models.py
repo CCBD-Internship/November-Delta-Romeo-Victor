@@ -175,7 +175,7 @@ class Student(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()
     phone = models.CharField(max_length=13)
-    dept = models.ForeignKey(Department, models.DO_NOTHING, db_column='dept')
+    dept = models.ForeignKey(Department, models.DO_NOTHING)
     team = models.ForeignKey('Team', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
