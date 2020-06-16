@@ -63,7 +63,7 @@ class Student_Serializer(serializers.ModelSerializer):
 class Team_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Team
-        fields = ('team_id','team_name','panel','guide')
+        fields = '__all__'
         
 class TeamFacultyReview_Serializer(serializers.ModelSerializer):
     class Meta:

@@ -41,7 +41,7 @@ class FacultyPanel(models.Model):
     fac_id = models.ForeignKey('Faculty', models.CASCADE)
     panel_id = models.ForeignKey('Panel', models.CASCADE)
     is_coordinator = models.BooleanField(default=False)
-    id = models.AutoField(primary_key=True)
+    id = models.AutoField(db_column="id",primary_key=True)
 
     class Meta:
         managed = True
@@ -58,12 +58,12 @@ class FacultyPanel(models.Model):
 
 class Panel(models.Model):
 
-    panel_year_code = models.CharField(max_length=10)
-    panel_id = models.CharField(max_length=10)
-    panel_name = models.CharField(max_length=100, blank=True, null=True)
+    panel_year_code = models.CharField(db_column="panel_year_code",max_length=10)
+    panel_id = models.CharField(db_column="panel_id",max_length=10)
+    panel_name = models.CharField(db_column="panel_name",max_length=100, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     ctime = models.DateTimeField(default=timezone.now)
-    id = models.AutoField(primary_key=True)
+    id = models.AutoField(db_column="id",primary_key=True)
 
     class Meta:
         managed = True
@@ -74,10 +74,10 @@ class Panel(models.Model):
 class PanelReview(models.Model):
 
     review_number = models.IntegerField()
-    panel_id = models.ForeignKey('Panel', models.CASCADE)
+    panel_id = models.ForeignKey('Panel', models.CASCADE,db_column="panel_id")
     open_time = models.DateTimeField()
     close_time = models.DateTimeField()
-    id = models.AutoField(primary_key=True)
+    id = models.AutoField(db_column="id",primary_key=True)
 
     class Meta:
         managed = True
@@ -88,13 +88,13 @@ class PanelReview(models.Model):
 class Review1(models.Model):
     srn = models.ForeignKey('Student', models.CASCADE)
     fac_id = models.ForeignKey(
-        Faculty, models.DO_NOTHING, null=True, blank=True)
+        Faculty, models.DO_NOTHING, null=True, blank=True,db_column="fac_id")
     project_work = models.IntegerField()
     quality_of_demo = models.IntegerField()
     project_report = models.IntegerField()
     viva_voce = models.IntegerField()
     comments = models.CharField(max_length=200, blank=True, null=True)
-    id = models.AutoField(primary_key=True)
+    id = models.AutoField(db_column="id",primary_key=True)
 
     class Meta:
         managed = True
@@ -105,13 +105,13 @@ class Review1(models.Model):
 class Review2(models.Model):
     srn = models.ForeignKey('Student', models.CASCADE)
     fac_id = models.ForeignKey(
-        Faculty, models.DO_NOTHING, null=True, blank=True)
+        Faculty, models.DO_NOTHING, null=True, blank=True,db_column="fac_id")
     project_work = models.IntegerField()
     quality_of_demo = models.IntegerField()
     project_report = models.IntegerField()
     viva_voce = models.IntegerField()
     comments = models.CharField(max_length=200, blank=True, null=True)
-    id = models.AutoField(primary_key=True)
+    id = models.AutoField(db_column="id",primary_key=True)
 
     class Meta:
         managed = True
@@ -122,13 +122,13 @@ class Review2(models.Model):
 class Review3(models.Model):
     srn = models.ForeignKey('Student', models.CASCADE)
     fac_id = models.ForeignKey(
-        Faculty, models.DO_NOTHING, null=True, blank=True)
+        Faculty, models.DO_NOTHING, null=True, blank=True,db_column="fac_id")
     project_work = models.IntegerField()
     quality_of_demo = models.IntegerField()
     project_report = models.IntegerField()
     viva_voce = models.IntegerField()
     comments = models.CharField(max_length=200, blank=True, null=True)
-    id = models.AutoField(primary_key=True)
+    id = models.AutoField(db_column="id",primary_key=True)
 
     class Meta:
         managed = True
@@ -139,13 +139,13 @@ class Review3(models.Model):
 class Review4(models.Model):
     srn = models.ForeignKey('Student', models.CASCADE)
     fac_id = models.ForeignKey(
-        Faculty, models.DO_NOTHING, null=True, blank=True)
+        Faculty, models.DO_NOTHING, null=True, blank=True,db_column="fac_id")
     project_work = models.IntegerField()
     quality_of_demo = models.IntegerField()
     project_report = models.IntegerField()
     viva_voce = models.IntegerField()
     comments = models.CharField(max_length=200, blank=True, null=True)
-    id = models.AutoField(primary_key=True)
+    id = models.AutoField(db_column="id",primary_key=True)
 
     class Meta:
         managed = True
@@ -156,13 +156,13 @@ class Review4(models.Model):
 class Review5(models.Model):
     srn = models.ForeignKey('Student', models.CASCADE)
     fac_id = models.ForeignKey(
-        Faculty, models.DO_NOTHING, null=True, blank=True)
+        Faculty, models.DO_NOTHING, null=True, blank=True,db_column="fac_id")
     project_work = models.IntegerField()
     quality_of_demo = models.IntegerField()
     project_report = models.IntegerField()
     viva_voce = models.IntegerField()
     comments = models.CharField(max_length=200, blank=True, null=True)
-    id = models.AutoField(primary_key=True)
+    id = models.AutoField(db_column="id",primary_key=True)
 
     class Meta:
         managed = True
@@ -176,7 +176,7 @@ class Student(models.Model):
     email = models.EmailField()
     phone = models.CharField(max_length=13)
     dept = models.ForeignKey(Department, models.DO_NOTHING)
-    team = models.ForeignKey('Team', models.DO_NOTHING, blank=True, null=True)
+    team_id = models.ForeignKey('Team', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = True
@@ -197,14 +197,14 @@ class Student(models.Model):
 
 
 class Team(models.Model):
-    team_year_code = models.CharField(max_length=10)
-    team_id = models.CharField(max_length=10)
+    team_year_code = models.CharField(db_column="team_year_code",max_length=10)
+    team_id = models.CharField(db_column="team_id",max_length=10)
     team_name = models.CharField(max_length=100, blank=True, null=True)
     description = models.CharField(max_length=200, blank=True, null=True)
     guide = models.ForeignKey(
         Faculty, models.DO_NOTHING, blank=True, null=True)
-    panel = models.ForeignKey(Panel, models.DO_NOTHING, blank=True, null=True)
-    id = models.AutoField(primary_key=True)
+    panel_id = models.ForeignKey(Panel, models.DO_NOTHING, blank=True, null=True)
+    id = models.AutoField(db_column="id",primary_key=True)
 
     class Meta:
         managed = True
@@ -218,7 +218,7 @@ class TeamFacultyReview(models.Model):
         Faculty, models.DO_NOTHING, null=True, blank=True)
     review_number = models.IntegerField()
     remark = models.CharField(max_length=200, blank=True, null=True)
-    id = models.AutoField(primary_key=True)
+    id = models.AutoField(db_column="id",primary_key=True)
 
     class Meta:
         constraints = [
