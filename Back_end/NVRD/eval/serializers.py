@@ -32,27 +32,27 @@ class PanelReview_Serializer(serializers.ModelSerializer):
 class Review1_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Review1
-        fields = ('srn','fac','project_work','quality_of_demo','project_report','viva_voce','comments')
+        fields = ('fac','project_work','quality_of_demo','project_report','viva_voce','comments')
 
 class Review2_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Review2
-        fields = ('srn','fac','project_work','quality_of_demo','project_report','viva_voce','comments')
+        fields = ('fac','project_work','quality_of_demo','project_report','viva_voce','comments')
 
 class Review3_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Review3
-        fields = ('srn','fac','project_work','quality_of_demo','project_report','viva_voce','comments')
+        fields = ('fac','project_work','quality_of_demo','project_report','viva_voce','comments')
 
 class Review4_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Review4
-        fields = ('srn','fac','project_work','quality_of_demo','project_report','viva_voce','comments')
+        fields = ('fac','project_work','quality_of_demo','project_report','viva_voce','comments')
 
 class Review5_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Review5
-        fields = ('srn','fac','project_work','quality_of_demo','project_report','viva_voce','comments')
+        fields = ('fac','project_work','quality_of_demo','project_report','viva_voce','comments')
 
 class Student_Serializer(serializers.ModelSerializer):
     class Meta:
