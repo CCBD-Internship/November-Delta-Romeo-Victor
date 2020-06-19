@@ -35,11 +35,13 @@ urlpatterns = [
     path('api/<str:user>/team/', views.Team_List.as_view(), name='index'),
     path('api/<str:user>/<str:panel_year_code>-<str:panel_id>/faculty-panel/',views.FacultyPanel_List.as_view()),
     path('api/<str:user>/faculty-panel/',views.FacultyPanel_List.as_view()),
-    path('api/<str:user>/<str:panel_year_code>-<str:panel_id>/<int:review_number>/panel-review/',views.PanelReview_List.as_view(),name='index'),
+    path('api/<str:user>/<str:panel_year_code>-<str:panel_id>/panel-review/',views.PanelReview_List.as_view(),name='index'),
     path('api/<str:user>/faculty/', views.Faculty_List.as_view(), name='index'),
     path('api/<str:user>/panel/', views.Panel_List.as_view(), name='index'),
     path('api/<str:user>/marks_view/', views.GeneralMarksView.as_view()),
     path('api/<str:user>/faculty/',views.Faculty_List.as_view()),
+    path('api/<str:user>/team_bulk/',views.Team_Student_CSV.as_view()),
+    path('api/<str:user>/department/', views.Dept_List.as_view(), name='index'),
 
     #     path('api/<str:user>/<int:panel>/<str:type>/team/',
     #          views.Team_List.as_view(), name='index'),
@@ -48,7 +50,6 @@ urlpatterns = [
     #     path('api/panel/', views.Panel_List.as_view(), name='index'),
     #     path('api/faculty/', views.Faculty_List.as_view(), name='index'),
     #     path('api/marks/', views.marks.as_view(), name='index'),
-    #     path('api/department/', views.Dept_List.as_view(), name='index'),
-    path('api/Blacklist/', views.TokenBlackList.as_view())
+    # path('api/Blacklist/', views.TokenBlackList.as_view())
 
 ]

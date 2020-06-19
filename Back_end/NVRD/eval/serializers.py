@@ -32,27 +32,27 @@ class PanelReview_Serializer(serializers.ModelSerializer):
 class Review1_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Review1
-        fields = ('fac','project_work','quality_of_demo','project_report','viva_voce','comments')
+        fields = '__all__'
 
 class Review2_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Review2
-        fields = ('fac','project_work','quality_of_demo','project_report','viva_voce','comments')
+        fields = '__all__'
 
 class Review3_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Review3
-        fields = ('fac','project_work','quality_of_demo','project_report','viva_voce','comments')
+        fields = '__all__'
 
 class Review4_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Review4
-        fields = ('fac','project_work','quality_of_demo','project_report','viva_voce','comments')
+        fields = '__all__'
 
 class Review5_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Review5
-        fields = ('fac','project_work','quality_of_demo','project_report','viva_voce','comments')
+        fields = '__all__'
 
 class Student_Serializer(serializers.ModelSerializer):
     class Meta:
