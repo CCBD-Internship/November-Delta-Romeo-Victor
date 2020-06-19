@@ -27,7 +27,7 @@ class FacultyPanel_Serializer(serializers.ModelSerializer):
 class PanelReview_Serializer(serializers.ModelSerializer):
     class Meta:
         model = PanelReview
-        fields = ('review number','panel','o_time','c_time')
+        fields = '__all__'
 
 class Review1_Serializer(serializers.ModelSerializer):
     class Meta:

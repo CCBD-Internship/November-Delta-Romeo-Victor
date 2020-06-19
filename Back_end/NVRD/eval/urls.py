@@ -38,9 +38,9 @@ urlpatterns = [
     path('api/<str:user>/<str:panel_year_code>-<str:panel_id>/panel-review/',views.PanelReview_List.as_view(),name='index'),
     path('api/<str:user>/faculty/', views.Faculty_List.as_view(), name='index'),
     path('api/<str:user>/panel/', views.Panel_List.as_view(), name='index'),
-    path('api/<str:user>/marks_view/', views.GeneralMarksView.as_view()),
+    path('api/<str:user>/marks-view/', views.GeneralMarksView.as_view()),
     path('api/<str:user>/faculty/',views.Faculty_List.as_view()),
-    path('api/<str:user>/team_bulk/',views.Team_Student_CSV.as_view()),
+    path('api/<str:user>/team-bulk/',views.Team_Student_CSV.as_view()),
     path('api/<str:user>/department/', views.Dept_List.as_view(), name='index'),
 
     #     path('api/<str:user>/<int:panel>/<str:type>/team/',
