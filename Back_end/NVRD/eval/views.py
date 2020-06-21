@@ -1522,7 +1522,7 @@ class GenerateFacultyPanel(APIView):
     parser_classes = [JSONParser]
 
     def post(self, request, user):
-        # try:
+        try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
                 if(Faculty.objects.get(fac_id=user).is_admin == True):
                     if(len(request.data["panel_year_code"]) == len(request.data["panel_id"])):
@@ -1550,5 +1550,5 @@ class GenerateFacultyPanel(APIView):
                         return Response({"detail": "bad input"}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     return Response(status=status.HTTP_403_FORBIDDEN)
-        # except:
-        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
