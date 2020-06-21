@@ -40,6 +40,7 @@ urlpatterns = [
     path('api/<str:user>/<str:panel_year_code>-<str:panel_id>/panel/', views.Panel_List.as_view(), name='index'),
     path('api/<str:user>/panel/', views.Panel_List.as_view(), name='index'),
     path('api/<str:user>/marks-view/', views.GeneralMarksView.as_view()),
+    path('api/<str:user>/<str:panel_year_code>-<str:panel_id>/<int:review_number>/<str:team_year_code>-<str:team_id>/marks-view/', views.EvaluatorMarksView.as_view()),
     path('api/<str:user>/faculty/',views.Faculty_List.as_view()),
     path('api/<str:user>/team-bulk/',views.Team_Student_CSV.as_view()),
     path('api/<str:user>/department/', views.Dept_List.as_view(), name='index'),
