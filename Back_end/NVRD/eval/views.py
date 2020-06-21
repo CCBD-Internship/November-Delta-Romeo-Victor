@@ -19,6 +19,7 @@ from .models import *
 from .serializers import *
 import json
 import datetime
+from django.shortcuts import render
 # Create your views here.
 
 # from django_cron import CronJobBase, Schedule
@@ -32,6 +33,8 @@ import datetime
 #     def do(self):
 #         pass    # do your thing here
 
+def indexpage(request):
+    return render(request,"eval/index.html")
 
 def add_one_panel(panel_year_code, serializer_list=None):
     if serializer_list and serializer_list != []:
@@ -1294,39 +1297,36 @@ class TeamFacultyReview_List(APIView):
                          status=status.HTTP_403_FORBIDDEN)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
     def post(self, request, user, panel_year_code, panel_id):
         try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
                 accept = []
                 fail = []
                 for i in request.data:
-                    if(panel_id == i["panel_id"] and panel_year_code == i["panel_year_code"]):
-                        p_id = Panel.objects.filter(
-                            panel_id=panel_id, panel_year_code=panel_year_code).first().id
-                        if FacultyPanel.objects.filter(fac_id=user, panel_id=p_id).first().is_coordinator == True:
-                            if Team.objects.filter(team_year_code=i["team_year_code"], team_id=i["team_id"]).first().guide.fac_id in i["fac"]:
+                    p_id = Panel.objects.filter(
+                        panel_id=panel_id, panel_year_code=panel_year_code).first().id
+                    if FacultyPanel.objects.filter(fac_id=user, panel_id=p_id).first().is_coordinator == True:
+                        if Team.objects.filter(team_year_code=i["team_year_code"], team_id=i["team_id"]).first().guide.fac_id in i["fac"]:
+                            if Team.objects.filter(team_year_code=i["team_year_code"], team_id=i["team_id"],panel_id=p_id).exists():
                                 for teach in i["fac"]:
                                     if FacultyPanel.objects.filter(panel_id=p_id, fac_id=teach).exists():
                                         t_id = Team.objects.filter(
                                             team_year_code=i["team_year_code"], team_id=i["team_id"]).first()
                                         row = TeamFacultyReview_Serializer(data={"team_id": t_id.id, "fac_id": teach, "review_number": i["review_number"],
-                                                                                 "remarks": "Unreviewed", "id": str(i["team_year_code"])+'_'+str(i["team_id"])+'_'+str(teach)+'_'+str(i["review_number"])})
+                                                                                "remarks": "Unreviewed", "id": str(i["team_year_code"])+'_'+str(i["team_id"])+'_'+str(teach)+'_'+str(i["review_number"])})
                                         if row.is_valid():
                                             accept.append(row)
                                         else:
                                             fail.append(
                                                 {"value": i, "detail": row.errors})
                                     else:
-                                        return Response({"detail": "prof aint in this panel"}, status=status.HTTP_400_BAD_REQUEST)
-
+                                        fail.append({"value": i,"detail": "team is not present in the panel"})
                             else:
-                                return Response({"detail": "guide aint here man"}, status=status.HTTP_400_BAD_REQUEST)
-
+                                fail.append({"value": i,"detail": "team is not present in the panel"})
                         else:
-                            return Response({"detail": "you aint a coord for thiss panel bruv"}, status=status.HTTP_400_BAD_REQUEST)
+                            fail.append({"value": i,"detail": "guide is not present in faculty_list"})
                     else:
-                        return Response({"detail": "he aint in this panel dude"}, status=status.HTTP_400_BAD_REQUEST)
+                        fail.append({"value": i,"detail": "user is not the panel coordinator"})
                 if fail == []:
                     for i in accept:
                         if i.is_valid:
@@ -1372,7 +1372,7 @@ class TeamFacultyReview_List(APIView):
                 else:
                     return Response(fail, status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response({"detail": "Identify youself"}, status=status.HTTP_401_UNAUTHORIZED)
+                return Response(status=status.HTTP_403_FORBIDDEN)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -1382,26 +1382,30 @@ class TeamFacultyReview_List(APIView):
                 accept = []
                 fail = []
                 for i in request.data:
-                    if(panel_id == i["panel_id"] and panel_year_code == i["panel_year_code"]):
-                        p_id = Panel.objects.filter(
-                            panel_id=panel_id, panel_year_code=panel_year_code).first().id
-                        if FacultyPanel.objects.filter(fac_id=user, id=p_id).first().is_coordinator == True:
-                            td = Team.objects.filter(
-                                team_id=i["team_id"], team_year_code=i["team_year_code"]).first().id
-                            if TeamFacultyReview.objects.filter(team_id=td, fac_id=i["fac_id"]).first().exists():
-                                if Team.filter(team_year_code=i["team_year_code"], team_id=i["team_id"]).first().guide.fac_id == i["fac_id"]:
-                                    row = TeamFacultyReview.objects.filter(
-                                        team_id=td, fac_id=i["fac_id"]).first()
-                                    accept.append(row)
-                                else:
-                                    fail.append(
-                                        {"value": i, "detail": "cant remove guide mofo"})
+                    p_id = Panel.objects.filter(
+                        panel_id=panel_id, panel_year_code=panel_year_code).first().id
+                    if FacultyPanel.objects.filter(fac_id=user, panel_id=p_id).first().is_coordinator == True:
+                        if Team.objects.filter(team_year_code=i["team_year_code"], team_id=i["team_id"]).first().guide.fac_id in i["fac"]:
+                            if Team.objects.filter(team_year_code=i["team_year_code"], team_id=i["team_id"],panel_id=p_id).exists():
+                                for teach in i["fac"]:
+                                    if FacultyPanel.objects.filter(panel_id=p_id, fac_id=teach).exists():
+                                        t_id = Team.objects.filter(
+                                            team_year_code=i["team_year_code"], team_id=i["team_id"]).first()
+                                        row = TeamFacultyReview_Serializer(data={"team_id": t_id.id, "fac_id": teach, "review_number": i["review_number"],
+                                                                                "remarks": "Unreviewed", "id": str(i["team_year_code"])+'_'+str(i["team_id"])+'_'+str(teach)+'_'+str(i["review_number"])})
+                                        if row.is_valid():
+                                            accept.append(row)
+                                        else:
+                                            fail.append(
+                                                {"value": i, "detail": row.errors})
+                                    else:
+                                        fail.append({"value": i,"detail": "team is not present in the panel"})
                             else:
-                                fail.append({"value": i})
+                                fail.append({"value": i,"detail": "team is not present in the panel"})
                         else:
-                            return Response({"detail": "you aint a coord for thiss panel bruv"}, status=status.HTTP_400_BAD_REQUEST)
+                            fail.append({"value": i,"detail": "guide is not present in faculty_list"})
                     else:
-                        return Response({"detail": "he aint in this panel dude"}, status=status.HTTP_400_BAD_REQUEST)
+                        fail.append({"value": i,"detail": "user is not the panel coordinator"})
                 if fail == []:
                     for i in accept:
                         if i.is_valid:
@@ -1453,8 +1457,6 @@ class TeamFacultyReview_List(APIView):
 
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
 class Team_Student_CSV(APIView):
 
     parser_classes = [JSONParser]

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DEPARTMENT</title>
+</head>
+<body>
+<div id="msg">
+  <button onclick="dept_get(this)">DEPARTMENT GET</button>
+  <p></p>
+  <h1>GET TOKEN</h1>
+  <input type="text" id="username"/>
+  <input type="password" id="password"/>
+  <button onclick="get_token(this)">SUBMIT</button>
+  <p></p>
+  <h1>FACULTY LIST</h1>
+  <input type="text" id="facid" placeholder="Faculty ID" />
+  <button onclick="faculty_get(this)">GET</button>
+  <p id="facmsg-get"></p>
+  <h2>POST</h2>
+  <input type="text" id="verify" placeholder="Enter Admin Id">
+  <form name="facpost" onsubmit="event.preventDefault()">
+    <input type="text" id="fac_id" placeholder="facid" /> <br/>   
+    <input type="text" id="name" placeholder="name" />    <br/>
+    <input type="email" id="email" placeholder="email" />  <br/>  
+    <input type="text" id="phone" placeholder="phone" />    <br/>
+    <select id="fac_type">
+      <option value="assistant_prof">assistant_prof</option>
+      <option value="associate_prof">associate_prof</option>
+      <option value="professor">professor</option>
+    </select><br/>
+    is_active?
+    <input type="checkbox" id="is_active" value="true" /><br/>
+    is_admin?
+    <input type="checkbox" id="is_admin" value="false" /><br/>
+    <input type="text" id="dept" placeholder="DEPARTMENT"></form><br/>
+    <button onclick="faculty_post(this)">SUBMIT</button>
+  </form>
+  <p id="facmsg-post"></p>
+
+  <h2>PUT</h2>
+  <input type="text" id="verify-put" placeholder="Enter Admin Id">
+  <form name="facput" onsubmit="event.preventDefault()">
+    <input type="text" id="facid-put" placeholder="facid" /> <br/>   
+    <input type="email" id="email-put" placeholder="email" />  <br/> 
+    <button onclick="faculty_put(this)">SUBMIT</button>
+  </form>
+  <p id="facmsg-put"></p>
+</div>
+<script>
+  var token=null,factoken=null
+  function dept_get(ele){
+    var xhttp=new XMLHttpRequest()
+    xhttp.onreadystatechange=function(){
+      if(this.readyState == 4 && this.status == 200){
+        let data=JSON.parse(this.responseText)
+        for(let i=0;i<data.length;i++)
+          ele.nextElementSibling.innerHTML+=data[i].dept+"<br/>"
+    }
+  }
+    xhttp.open("GET","/api/department/", true);
+    xhttp.send()
+  }
+  function get_token(ele){
+    var xhttp=new XMLHttpRequest()
+    xhttp.onreadystatechange=function(){
+      if(this.readyState == 4 && this.status == 200){
+        let data=JSON.parse(this.responseText)
+        token=data["access"]
+        factoken=token
+        for(let i in data)
+          ele.nextElementSibling.innerHTML+="<strong>"+i+"</strong>"+" = "+data[i]+"<br/>"
+    }
+  }
+    let username=document.getElementById("username").value
+    let password=document.getElementById("password").value
+    xhttp.open("POST","/api/token/", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send("username="+username+"&password="+password);
+  }
+
+  function faculty_get(ele){
+    var xhttp=new XMLHttpRequest()
+    xhttp.onreadystatechange=function(){
+      if(this.readyState == 4 && this.status == 200){
+        let data=JSON.parse(this.responseText)
+        for(let j in data){
+          for(let i in data[j])
+          document.getElementById("facmsg-get").innerHTML+="<strong>"+i+"</strong>"+" = "+data[j][i]+"<br/>"
+          document.getElementById('facmsg-get').innerHTML+="<br/><br/>"   
+        }
+    } 
+  }
+    let facid=document.getElementById("facid").value
+    xhttp.open("GET","/api/"+facid+"/faculty", true);
+    if(!token){
+      alert("Please Get A token First")
+      return
+    }
+    xhttp.setRequestHeader("Authorization", "Bearer "+token);
+    xhttp.send();
+  }
+  function faculty_post(ele){
+    var xhttp=new XMLHttpRequest()
+    xhttp.onreadystatechange=function(){
+      if(this.readyState == 4 && this.status == 201){
+        let data=JSON.parse(this.responseText)
+        document.getElementById("facmsg-post").innerHTML="<strong>details</strong>: "+data["detail"]
+      } 
+    }
+    var jsonarray={}
+    let arr=document.forms["facpost"].firstElementChild
+    while(arr){
+      if(arr.type!="checkbox")
+        jsonarray[arr.id]=arr.value
+      else
+        jsonarray[arr.id]=arr.checked
+      arr=arr.nextElementSibling
+    }
+    var facid=document.getElementById("verify").value
+    xhttp.open("POST","/api/"+facid+"/faculty/", true);
+    xhttp.setRequestHeader("Authorization", "Bearer "+factoken);
+    xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+    xhttp.send(JSON.stringify([jsonarray]));
+  }
+  function faculty_put(ele){
+    var xhttp=new XMLHttpRequest()
+    xhttp.onreadystatechange=function(){
+      if(this.readyState == 4 && this.status == 201){
+        let data=JSON.parse(this.responseText)
+        document.getElementById("facmsg-put").innerHTML="<strong>details</strong>: "+data["detail"]
+      } 
+    }
+    var jsonarray={}
+    jsonarray["fac_id"]=document.getElementById("facid-put").value
+    jsonarray["email"]=document.getElementById("email-put").value
+    var facid=document.getElementById("verify-put").value
+    xhttp.open("PUT","/api/"+facid+"/faculty/", true);
+    xhttp.setRequestHeader("Authorization", "Bearer "+factoken);
+    xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+    xhttp.send(JSON.stringify([jsonarray]));
+  }
+</script>
+</body>
+</html>
