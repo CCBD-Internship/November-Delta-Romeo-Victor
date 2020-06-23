@@ -395,7 +395,7 @@ class Panel_List(APIView):
     parser_classes = [JSONParser]
 
     def get(self, request, user, panel_id=None, panel_year_code=None):
-        # try:
+        try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
                 # admin
                 if(Faculty.objects.get(fac_id=user).is_admin == True):
@@ -410,33 +410,6 @@ class Panel_List(APIView):
                     if 'active' in request.GET:
                         panel_as_object = panel_as_object.filter(
                             is_active=request.GET['active'])
-                    if 'cord' in request.GET:
-                        if(FacultyPanel.objects.get(fac_id=user).is_coordinator == True):
-                            pp = [i.panel_id.panel_id for i in FacultyPanel.objects.filter(
-                                fac_id=user, is_coordinator=True)]
-                            panel_as_object = panel_as_object.filter(
-                                panel_id__in=pp)
-                        else:
-                            return Response(status=status.HTTP_403_FORBIDDEN)
-                    content = Panel_Serializer(panel_as_object, many=True)
-                    response_list = []
-                    for i in content.data:
-                        response_list.append(i)
-                    return Response(response_list, status=status.HTTP_200_OK)
-                elif(Faculty.objects.get(fac_id=user).is_admin == False and Faculty.objects.get(fac_id=user).exists()):
-                    panel_as_object = Panel.objects.filter(
-                        id__in=[i.panel_id for i in FacultyPanel.objects.filter(fac_id=user)])
-                    if 'time' in request.GET:
-                        panel_as_object = panel_as_object.filter(
-                            fac_id__gte=request.GET['time'])
-                    if 'active' in request.GET:
-                        panel_as_object = panel_as_object.filter(
-                            panel_id__in=Panel.objects.filter(is_active=request.GET['active']))
-                    if 'cord' in request.GET:
-                        panel_as_object = panel_as_object.filter(
-                            panel_id__in=FacultyPanel.objects.filter(fac_id=user, is_coordinator=True))
-                    else:
-                        return Response(status=status.HTTP_403_FORBIDDEN)
                     content = Panel_Serializer(panel_as_object, many=True)
                     response_list = []
                     for i in content.data:
@@ -446,8 +419,8 @@ class Panel_List(APIView):
                     return Response(status=status.HTTP_403_FORBIDDEN)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
-        # except:
-        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, user, panel_year_code=None, panel_id=None):
         try:
