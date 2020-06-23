@@ -589,7 +589,7 @@ class PanelReview_List(APIView):
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
                 p = Panel.objects.filter(
                     panel_id=panel_id, panel_year_code=panel_year_code).first()
-                if(FacultyPanel.objects.filter(fac_id=user, panel_id=p, is_coordinator=True).exists()):
+                if(FacultyPanel.objects.filter(fac_id=user, panel_id=p.id, is_coordinator=True).exists()):
                     PanelReview_as_object = PanelReview.objects.filter(
                         panel_id=p).order_by("review_number")
                     content = list(PanelReview_as_object.values())
