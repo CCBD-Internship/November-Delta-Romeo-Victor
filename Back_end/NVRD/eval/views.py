@@ -134,8 +134,9 @@ class Faculty_List(APIView):
                     response_list = []
                     for i in request.data:
                         if(Faculty.objects.filter(fac_id=i["fac_id"]).exists()):
-                            serial = Faculty_Serializer(Faculty.objects.filter(
-                                fac_id=i.get("fac_id")).first(), data=i, partial=True)
+                            f=Faculty.objects.filter(
+                                fac_id=i.get("fac_id")).first()
+                            serial = Faculty_Serializer(f, data=i, partial=True)
                             # if "email" in i:
                             #     u = User.objects.get(id=user)
                             #     u.set_email(i["email"])
@@ -149,7 +150,19 @@ class Faculty_List(APIView):
                             response_list.append(
                                 {"value": i, "detail": "faculty does not exist"})
                     if(response_list == []):
-                        for i in valid_list:
+                        for i,j in zip(valid_list,request.data):
+                            f=Faculty.objects.filter(
+                                fac_id=j.get("fac_id")).first()
+                            if("is_active" in j and Faculty.objects.get(fac_id=j["fac_id"]).is_active==True and j["is_active"]==False):
+                                teams_under=Team.objects.filter(guide=f)
+                                facpan=FacultyPanel.objects.filter(fac_id=f,panel_id__in=Panel.objects.filter(is_active=True))
+                                for fp in facpan:
+                                    fp.delete()
+                                for tm in teams_under:
+                                    if(tm.panel_id==None or tm.panel_id.is_active==True):
+                                        tm.guide=None
+                                        tm.panel_id=None
+                                        tm.save()
                             if i.is_valid():
                                 i.save()
                         return Response({"detail": "update successful"}, status=status.HTTP_201_CREATED)
