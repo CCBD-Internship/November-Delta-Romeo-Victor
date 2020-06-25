@@ -35,7 +35,7 @@ from django.shortcuts import render
 
 
 def indexpage(request):
-    return render(request, "eval/index.html")
+    return render(request, "eval/main.html")
 
 
 def add_one_panel(panel_year_code, serializer_list=None):
@@ -1238,7 +1238,7 @@ class Team_Student_CSV(APIView):
 # (TokenObtainPairView,TokenRefreshView)
 
 
-class MyPanel_List(APIView):
+class AboutMe_List(APIView):
 
     parser_classes = [JSONParser]
 
@@ -1246,6 +1246,8 @@ class MyPanel_List(APIView):
         try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
                 fp = FacultyPanel.objects.filter(fac_id=user)
+                res={}
+                res["user"]=Faculty.objects.filter(fac_id=user).values()[0]
                 l = list(fp.values())
                 for i in l:
                     p = Panel.objects.get(id=i.pop("panel_id_id"))
@@ -1253,7 +1255,8 @@ class MyPanel_List(APIView):
                     i["is_active"] = p.is_active
                     i["panel_year_code"] = p.panel_year_code
                     i["panel_id"] = p.panel_id
-                return Response(l, status=status.HTTP_200_OK)
+                res["panels"]=l
+                return Response(res, status=status.HTTP_200_OK)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
