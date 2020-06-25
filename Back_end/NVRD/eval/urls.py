@@ -46,9 +46,10 @@ urlpatterns = [
     path('api/<str:user>/department/', views.Dept_List.as_view(), name='index'),
     path('api/<str:user>/aboutme/',views.AboutMe_List.as_view()),
     path('api/<str:user>/<str:panel_year_code>-<str:panel_id>/team-faculty-review/',views.TeamFacultyReview_List.as_view()),
-	path('home/',views.indexpage),
+	path('<str:user>/home/',views.home),
     path('api/<str:user>/generate-faculty-panel/',views.GenerateFacultyPanel.as_view()),
-    
+    path('login/',views.loginpage),
+    path('logout/', views.logoutUser, name="logout"),
     #     path('api/<str:user>/<int:panel>/<str:type>/team/',
     #          views.Team_List.as_view(), name='index'),
     #     path('api/<str:user>/team/', views.Team_List.as_view(), name='index'),
