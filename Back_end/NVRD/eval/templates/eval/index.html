@@ -1,3 +1,4 @@
+{% csrf_token %}
 <!DOCTYPE html>
 <html>
 
@@ -6,6 +7,7 @@
 </head>
 
 <body>
+
 {% comment %} {% if IsAuthenticated %} {% endcomment %}
   <div id="msg">
     <button onclick="dept_get(this)">DEPARTMENT GET</button>
@@ -16,6 +18,7 @@
     <p id="facmsg-get"></p>
     <h2>POST</h2>
     <form name="facpost" onsubmit="event.preventDefault()">
+
       <input type="text" id="fac_id" placeholder="facid" /> <br />
       <input type="text" id="name" placeholder="name" /> <br />
       <input type="email" id="email" placeholder="email" /> <br />
@@ -46,8 +49,22 @@
     <a href="/logout">logout</a>
   </div>
   <script>
-    
-    token=getcookie('token')
+    function getCookie(cname) {
+      var name = cname + "=";
+      var decodedCookie = decodeURIComponent(document.cookie);
+      var ca = decodedCookie.split(';');
+      for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
+      }
+      return "";
+    }
+    var token=getCookie('token')
     var facid = window.location.href.split('/')[3]
     console.log(facid)
     function dept_get(ele) {
@@ -101,6 +118,7 @@
       }
       xhttp.open("POST", "/api/" + facid + "/faculty/", true);
       xhttp.setRequestHeader("Authorization", "Bearer " + token);
+      xhttp.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
       xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");
       xhttp.send(JSON.stringify([jsonarray]));
     }
