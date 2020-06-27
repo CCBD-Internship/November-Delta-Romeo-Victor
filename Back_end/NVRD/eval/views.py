@@ -34,9 +34,17 @@ from django.shortcuts import render
 #         pass    # do your thing here
 
 
-def indexpage(request):
+def indexpage(request,user):
     return render(request, "eval/main.html")
 
+def indexJS(request,user):
+    return render(request, "eval/scripts/main.js")
+
+def admin_studentHTML(request,user):
+    return render(request, "eval/containers/admin_student.html")
+
+def admin_studentJS(request,user):
+    return render(request, "eval/scripts/admin_student.js")
 
 def add_one_panel(panel_year_code, serializer_list=None):
     if serializer_list and serializer_list != []:
@@ -1257,6 +1265,8 @@ class AboutMe_List(APIView):
                     i["panel_id"] = p.panel_id
                 res["panels"]=l
                 return Response(res, status=status.HTTP_200_OK)
+            else:
+                return Response(status=status.HTTP_403_FORBIDDEN)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
