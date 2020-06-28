@@ -53,6 +53,8 @@ urlpatterns = [
          views.TeamFacultyReview_List.as_view()),
     path('api/<str:user>/generate-faculty-panel/',
          views.GenerateFacultyPanel.as_view()),
+    path('login/', views.loginpage),
+    path('logout/', views.logoutUser, name="logout"),
 
     #     path('api/<str:user>/<int:panel>/<str:type>/team/',
     #          views.Team_List.as_view(), name='index'),
@@ -66,13 +68,13 @@ urlpatterns = [
 ]
 
 # frontend HTML
-urlpatterns+=[
+urlpatterns += [
     path('<str:user>/home/', views.indexpage),
-    path('<str:user>/home/admin_studentHTML/', views.admin_studentHTML),
+    path('<str:user>/home/Admin/student/HTML/', views.admin_studentHTML),
 ]
 
 # frontend JS
-urlpatterns+=[
-    path('<str:user>/home/admin_studentJS/', views.admin_studentJS),
-    path('<str:user>/home/main.js/',views.indexJS),
+urlpatterns += [
+    path('<str:user>/home/Admin/student/JS/', views.admin_studentJS),
+    path('<str:user>/home/main.js/', views.indexJS),
 ]

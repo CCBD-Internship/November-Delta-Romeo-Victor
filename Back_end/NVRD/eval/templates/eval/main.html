@@ -10,28 +10,27 @@
     <script id='coordinator_JS'></script>
     <script id='evaluator_JS'></script>
     <script type="text/javascript" id='main_JS'>
-        function loadJS() {
+        function loadJS(url) {
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
-                    admin_JS = document.getElementById("admin_JS")
-                    head.innerHTML=""
-                    elem = document.createElement('script')
+                    elem = returnCurrentJS()
                     elem.innerHTML = this.responseText;
-                    head.appendChild(elem)
                 }
             };
-            xhttp.open("GET", "admin_studentJS/", true);
+            xhttp.open("GET", url + 'JS/', true);
             xhttp.send();
         }
-        function loadDoc() {
+        function loadHTML(url) {
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
-                    document.getElementById("admin_HTML").innerHTML = this.responseText;
+                    elem = returnCurrentHTML()
+                    elem.innerHTML = this.responseText;
+                    refresher()
                 }
             };
-            xhttp.open("GET", "admin_studentHTML/", true);
+            xhttp.open("GET", url + 'HTML/', true);
             xhttp.send();
         }
         var Tree = { "Admin": [], "Coordinator": [], "Evaluator": [] }
@@ -43,8 +42,7 @@
         var Coordinator_BC = []
         var Evaluator_BC = []
         var currenttab;
-        function returnCurrentHTML()
-        {
+        function returnCurrentHTML() {
             var lst = NaN
             if (currenttab == "Admin")
                 lst = document.getElementById("admin_HTML")
@@ -54,8 +52,7 @@
                 lst = document.getElementById("evaluator_HTML")
             return lst;
         }
-        function returnCurrentJS()
-        {
+        function returnCurrentJS() {
             var lst = NaN
             if (currenttab == "Admin")
                 lst = document.getElementById("admin_JS")
@@ -65,7 +62,7 @@
                 lst = document.getElementById("evaluator_JS")
             return lst;
         }
-        function returnCurrentTab() {
+        function returnCurrentList() {
             var lst = NaN
             if (currenttab == "Admin")
                 lst = Admin_BC
@@ -75,12 +72,45 @@
                 lst = Evaluator_BC
             return lst;
         }
+        function refresher() {
+            if (currenttab == "Admin") {
+                admin_refresh()
+            }
+            else if (currenttab == "Coordinator") {
+                coordinator_refresh()
+            }
+            else if (currenttab == "Evaluator") {
+                evaluator_refresh()
+            }
+        }
+        function refreshLoader(xhttp) {
+            xhttp.onloadstart = function (e) {
+                p = document.getElementById("progress")
+                p.setAttribute('style', 'width:' + 0 + '%')
+                p.setAttribute('aria-valuemax', e.total)
+                p.setAttribute('aria-valuenow', '0')
+            }
+            xhttp.onprogress = function (e) {
+                p = document.getElementById("progress")
+                p.setAttribute('style', 'width:' + e.loaded + '%')
+                p.setAttribute('aria-valuemax', e.total)
+                p.setAttribute('aria-value', e.loaded)
+            }
+            xhttp.onloadend = function (e) {
+                setTimeout(function () {
+                    p = document.getElementById("progress")
+                    p.setAttribute('style', 'display:none')
+                    p.setAttribute('aria-valuemax', e.total)
+                    p.setAttribute('aria-value', e.loaded)
+                }, 750)
+            }
+        }
         window.addEventListener('hashchange', function (e) {
             if (window.location.hash != "") {
                 spl = window.location.hash.split("#")[1].split('/')
                 spl.pop()
                 currenttab = spl[0]
-                var lst = returnCurrentTab()
+                var lst = returnCurrentList()
                 var len = lst.length
                 for (let i = 0; i < len; i++) {
                     lst.pop()
@@ -116,13 +146,13 @@
                     navbarGenerate()
                 }
             }
-            token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNTkzMjY0NjYwLCJqdGkiOiI5YWU1Mzk0YTEzMTU0YzczYmFjZDMzMjljMzk5MjAzOSIsInVzZXJfaWQiOjJ9.foXlT0sK9fvzyxLc6CPBUzxy0vDZFaekBOxhqZaQz50"
-            xhttp.open("GET", "/api/kvs1/aboutme/", true);
+            token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNTkzMzc0MzIzLCJqdGkiOiIxYTVkZjhhOTFlY2I0ZTFhYWEzNGQyZTVlMzE3MzE1MyIsInVzZXJfaWQiOjF9.TK7rTH9gZVb5gtJr-OvAcFXJbOc0092SypSOjXlN6qo"
+            xhttp.open("GET", "/api/prof1/aboutme/", true);
             xhttp.setRequestHeader("Authorization", "Bearer " + token);
             xhttp.send()
         }
         function crumbMaker() {
-            lst = returnCurrentTab()
+            lst = returnCurrentList()
             NVRDbreadcrumb = document.getElementById(id = "NVRDbreadcrumb")
             len = NVRDbreadcrumb.children.length
             for (let i = 0; i < len; i++) {
@@ -154,7 +184,7 @@
             window.location.hash = urlstr;
         }
         function crumbPopper(e) {
-            lst = returnCurrentTab()
+            lst = returnCurrentList()
             ind = lst.indexOf(e.target.innerHTML)
             len = lst.length
             for (let i = ind + 1; i < len; i++)
@@ -162,29 +192,47 @@
             crumbMaker()
         }
         function crumbPusher(e) {
-            lst = returnCurrentTab()
+            lst = returnCurrentList()
             lst.push(e.target.innerHTML)
             crumbMaker()
         }
         function listMaker() {
-            lst = returnCurrentTab()
+            lst = returnCurrentList()
             obj = Tree;
             for (let i = 0; i < lst.length; i++) {
                 obj = obj[lst[i]]
             }
-            NVRDlist = document.getElementById("NVRDlist")
-            len = NVRDlist.children.length
-            for (let i = 0; i < len; i++) {
-                NVRDlist.removeChild(NVRDlist.children[0])
-            }
+            if (Object.keys(obj).length > 0) {
+                returnCurrentHTML().innerHTML = ""
+                document.getElementById('NVRDlist').setAttribute('style', 'display:inline')
+                NVRDlist = document.getElementById("NVRDlist")
+                len = NVRDlist.children.length
+                for (let i = 0; i < len; i++) {
+                    NVRDlist.removeChild(NVRDlist.children[0])
+                }
 
-            for (let i = 0; i < Object.keys(obj).length; i++) {
-                elem = document.createElement("button")
-                elem.setAttribute('class', 'list-group-item list-group-item-action');
-                elem.addEventListener('click', crumbPusher)
-                elem.innerHTML = Object.keys(obj)[i]
-                NVRDlist.appendChild(elem)
+                for (let i = 0; i < Object.keys(obj).length; i++) {
+                    elem = document.createElement("button")
+                    elem.setAttribute('class', 'list-group-item list-group-item-action');
+                    elem.addEventListener('click', crumbPusher)
+                    elem.innerHTML = Object.keys(obj)[i]
+                    NVRDlist.appendChild(elem)
+                }
             }
+            else {
+                document.getElementById("admin_HTML").setAttribute('style', 'display:none')
+                document.getElementById("coordinator_HTML").setAttribute('style', 'display:none')
+                document.getElementById("evaluator_HTML").setAttribute('style', 'display:none')
+                document.getElementById('NVRDlist').setAttribute('style', 'display:none')
+                returnCurrentHTML().setAttribute('style', 'display:inline')
+                console.log(urlGenerate())
+                loadJS(urlGenerate())
+                loadHTML(urlGenerate())
+            }
+        }
+        function urlGenerate() {
+            var lst = returnCurrentList()
+            return ("/" + User.fac_id + "/home/" + lst.join("/") + '/')
         }
         function onClickNavbar(e) {
             NVRDnavbar = document.getElementById('NVRDnavbar').children;
@@ -200,8 +248,6 @@
             crumbMaker()
         }
         function navbarGenerate() {
-            loadJS()
-            loadDoc()
             NVRDnavbar = document.getElementById("NVRDnavbar")
             if (Object.keys(Tree.Admin).length > 0) {
                 elem = document.createElement('a')
@@ -251,6 +297,10 @@
             <li class="breadcrumb-item active">Data</li> -->
         </ol>
     </nav>
+    <div class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" role="progressbar"
+            aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="display:none" id="progress"></div>
+    </div>
     <div class="list-group" id="NVRDlist">
         <!-- <button type="button" class="list-group-item list-group-item-action active">
             Cras justo odio
@@ -273,6 +323,12 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
+
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js">
+    </script> -->
 </body>
 
 </html>

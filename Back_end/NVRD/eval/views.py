@@ -14,6 +14,9 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import (
     TokenObtainPairView, TokenRefreshView)
 from django.utils import timezone
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 # from django.core import serializers
 from .models import *
 from .serializers import *
@@ -33,6 +36,43 @@ from django.shortcuts import render
 #     def do(self):
 #         pass    # do your thing here
 
+@login_required(login_url='/login/')
+def home(request, user):
+    args = {}
+    fac = Faculty.objects.get(fac_id=user)
+    args["is_admin"] = fac.is_admin
+    return render(request, "eval/index.html", args)
+
+from django.views.decorators.csrf import ensure_csrf_cookie
+@ensure_csrf_cookie
+def loginpage(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+    else:
+        context = {}
+        if request.method == 'POST':
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            # user = authenticate(request, username=username, password=password)
+            # if user is not None:
+            user = User.objects.get(username=username)
+            if(user.check_password(password)):
+                # {'refresh': str(token), 'access': str(token.access_token), 'user': request.data["username"], 'name': str(user.get_full_name())}
+                token = RefreshToken.for_user(user)
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                response = redirect('/'+username+'/home')
+                response.set_cookie('token',str(token.access_token))
+                return response
+            return render(request, 'eval/login.html', context)
+
+        return render(request, 'eval/login.html', context)
+
+
+def logoutUser(request):
+    logout(request)
+    response = redirect('/login')
+    response.delete_cookie('token')
+    return response
 
 def indexpage(request,user):
     return render(request, "eval/main.html")
@@ -713,7 +753,7 @@ class Student_List(APIView):
                             i.save()
                         return Response({"detail": "insert successful", "assumption": null_set_list}, status=status.HTTP_201_CREATED)
                     else:
-                        response_list.extent(null_set_list)
+                        response_list.extend(null_set_list)
                         return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     return Response({"detail": "only project administrator can insert"}, status=status.HTTP_403_FORBIDDEN)
