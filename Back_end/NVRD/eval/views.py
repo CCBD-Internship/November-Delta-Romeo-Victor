@@ -1,3 +1,4 @@
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.response import Response
@@ -18,14 +19,37 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 # from django.core import serializers
-from .models import *
-from .serializers import *
+from .models import Department
+from .models import Faculty
+from .models import FacultyPanel
+from .models import Panel
+from .models import PanelReview
+from .models import Review1
+from .models import Review2
+from .models import Review3
+from .models import Review4
+from .models import Review5
+from .models import Student
+from .models import Team
+from .models import TeamFacultyReview
+
+from .serializers import Department_Serializer
+from .serializers import Faculty_Serializer
+from .serializers import FacultyPanel_Serializer
+from .serializers import Panel_Serializer
+from .serializers import PanelReview_Serializer
+from .serializers import Review1_Serializer
+from .serializers import Review2_Serializer
+from .serializers import Review3_Serializer
+from .serializers import Review4_Serializer
+from .serializers import Review5_Serializer
+from .serializers import Student_Serializer
+from .serializers import Team_Serializer
+from .serializers import TeamFacultyReview_Serializer
+
 import json
 import datetime
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
 
-from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 # from django_cron import CronJobBase, Schedule
@@ -39,6 +63,7 @@ from django.contrib.auth.decorators import login_required
 #     def do(self):
 #         pass    # do your thing here
 
+
 @login_required(login_url='/login/')
 def home(request, user):
     args = {}
@@ -46,7 +71,7 @@ def home(request, user):
     args["is_admin"] = fac.is_admin
     return render(request, "eval/index.html", args)
 
-from django.views.decorators.csrf import ensure_csrf_cookie
+
 @ensure_csrf_cookie
 def loginpage(request):
     if request.user.is_authenticated:
@@ -62,14 +87,14 @@ def loginpage(request):
             if(user.check_password(password)):
                 # {'refresh': str(token), 'access': str(token.access_token), 'user': request.data["username"], 'name': str(user.get_full_name())}
                 token = RefreshToken.for_user(user)
-                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                login(request, user,
+                      backend='django.contrib.auth.backends.ModelBackend')
                 response = redirect('/'+username+'/home')
-                response.set_cookie('token',str(token.access_token))
+                response.set_cookie('token', str(token.access_token))
                 return response
             return render(request, 'eval/login.html', context)
 
         return render(request, 'eval/login.html', context)
-<<<<<<< HEAD
 
 
 def logoutUser(request):
@@ -78,25 +103,22 @@ def logoutUser(request):
     response.delete_cookie('token')
     return response
 
-def indexpage(request,user):
+
+def indexpage(request, user):
     return render(request, "eval/main.html")
 
-def indexJS(request,user):
+
+def indexJS(request, user):
     return render(request, "eval/scripts/main.js")
 
-def admin_studentHTML(request,user):
+
+def admin_studentHTML(request, user):
     return render(request, "eval/containers/admin_student.html")
 
-def admin_studentJS(request,user):
+
+def admin_studentJS(request, user):
     return render(request, "eval/scripts/admin_student.js")
-=======
 
-
-def logoutUser(request):
-    logout(request)
-    response = redirect('/login')
-    return response
->>>>>>> test
 
 def add_one_panel(panel_year_code, serializer_list=None):
     if serializer_list and serializer_list != []:
