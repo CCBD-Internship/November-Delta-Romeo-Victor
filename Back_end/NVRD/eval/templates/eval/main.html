@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>NVRD-PLogger</title>
     <link rel="stylesheet" href="https://bootswatch.com/4/flatly/bootstrap.css">
     <script id='admin_JS'></script>
     <script id='coordinator_JS'></script>
@@ -19,6 +19,8 @@
                 }
             };
             xhttp.open("GET", url + 'JS/', true);
+            xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+            xhttp.setRequestHeader("sessionid", getCookie("sessionid"));
             xhttp.send();
         }
         function loadHTML(url) {
@@ -31,12 +33,14 @@
                 }
             };
             xhttp.open("GET", url + 'HTML/', true);
+            xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+            xhttp.setRequestHeader("sessionid", getCookie("sessionid"));
             xhttp.send();
         }
         var Tree = { "Admin": [], "Coordinator": [], "Evaluator": [] }
-        var evalview = { 1: { student: [], team: [] }, 2: { student: [], team: [] }, 3: { student: [], team: [] }, 4: { student: [], team: [] }, 5: { student: [], team: [] }, "team": [], "student": [], "faculty-panel": [] }
-        var coordview = { "department": [], "faculty-panel": [], "team-faculty-review": [] }
-        var adminview = { "department": [], "faculty": [], "panel": [], "faculty-panel": [], "team": [], "student": [], "marks-view": [] }
+        var evalview = { 1: { "Student": [], "Team": [] }, 2: { "Student": [], "Team": [] }, 3: { "Student": [], "Team": [] }, 4: { "Student": [], "Team": [] }, 5: { "Student": [], "Team": [] }, "Team": [], "Student": [], "Faculty-Panel": [] }
+        var coordview = { "Department": [], "Faculty-Panel": [], "Team-Faculty-Review": [] }
+        var adminview = { "Department": [], "Faculty": [], "Panel": [], "Faculty-panel": [], "Team": [], "Student": [], "Marks-View": [] }
         var User;
         var Admin_BC = []
         var Coordinator_BC = []
@@ -146,9 +150,10 @@
                     navbarGenerate()
                 }
             }
-            token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNTkzMzc0MzIzLCJqdGkiOiIxYTVkZjhhOTFlY2I0ZTFhYWEzNGQyZTVlMzE3MzE1MyIsInVzZXJfaWQiOjF9.TK7rTH9gZVb5gtJr-OvAcFXJbOc0092SypSOjXlN6qo"
-            xhttp.open("GET", "/api/7474/aboutme/", true);
-            xhttp.setRequestHeader("Authorization", "Bearer " + token);
+            xhttp.open("GET", "/api/" + getCookie("username") + "/aboutme/", true);
+            xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
+            xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+            xhttp.setRequestHeader("sessionid", getCookie("sessionid"));
             xhttp.send()
         }
         function crumbMaker() {
@@ -225,14 +230,13 @@
                 document.getElementById("evaluator_HTML").setAttribute('style', 'display:none')
                 document.getElementById('NVRDlist').setAttribute('style', 'display:none')
                 returnCurrentHTML().setAttribute('style', 'display:inline')
-                console.log(urlGenerate())
                 loadJS(urlGenerate())
                 loadHTML(urlGenerate())
             }
         }
         function urlGenerate() {
             var lst = returnCurrentList()
-            return ("/" + User.fac_id + "/home/" + lst.join("/") + '/')
+            return "/" + getCookie("username") + ("/home/" + lst.join("/") + '/').toLowerCase()
         }
         function onClickNavbar(e) {
             NVRDnavbar = document.getElementById('NVRDnavbar').children;
@@ -271,35 +275,54 @@
                 NVRDnavbar.appendChild(elem)
             }
         }
+        function getCookie(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
     </script>
 </head>
 
 <body onload="setTree()">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <a class="navbar-brand" href="#">NVRD</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
-            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav" id='NVRDnavbar'>
-                <!-- <a class="nav-item nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
+    <div class="sticky-top">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <a class="navbar-brand" href="#">NVRD</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav" id='NVRDnavbar'>
+                    <!-- <a class="nav-item nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
             <a class="nav-item nav-link" href="#">Features</a>
             <a class="nav-item nav-link" href="#">Pricing</a>
             <a class="nav-item nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a> -->
+
+                </div>
             </div>
-        </div>
-    </nav>
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb" id="NVRDbreadcrumb">
-            <!-- <li class="breadcrumb-item"><a href="#">Home</a></li>
+        </nav>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" id="NVRDbreadcrumb">
+                <!-- <li class="breadcrumb-item"><a href="#">Home</a></li>
             <li class="breadcrumb-item"><a href="#">Library</a></li>
             <li class="breadcrumb-item active">Data</li> -->
-        </ol>
-    </nav>
-    <div class="progress">
-        <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" role="progressbar"
-            aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="display:none" id="progress"></div>
+            </ol>
+        </nav>
+        <div class="progress fixed-bottom" id="progressParent">
+            <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning"
+                style="position:relative;top:25px" role="progressbar" aria-valuenow="75" aria-valuemin="0"
+                aria-valuemax="100" style="display:none" id="progress">
+            </div>
+        </div>
     </div>
     <div class="list-group" id="NVRDlist">
         <!-- <button type="button" class="list-group-item list-group-item-action active">
@@ -323,12 +346,16 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
 
-    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
-    </script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js">
-    </script> -->
+
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script> -->
 </body>
 
 </html>

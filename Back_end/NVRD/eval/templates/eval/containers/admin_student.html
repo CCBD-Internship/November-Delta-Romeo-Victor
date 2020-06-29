@@ -1,50 +1,93 @@
-<div>
-  <button id="refresh" onclick="student_refresh()" class="btn btn-primary btn-lg btn-outline-success btn-success "><svg
-      width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-repeat" fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg">
-      <path fill-rule="evenodd"
-        d="M2.854 7.146a.5.5 0 0 0-.708 0l-2 2a.5.5 0 1 0 .708.708L2.5 8.207l1.646 1.647a.5.5 0 0 0 .708-.708l-2-2zm13-1a.5.5 0 0 0-.708 0L13.5 7.793l-1.646-1.647a.5.5 0 0 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0 0-.708z" />
-      <path fill-rule="evenodd"
-        d="M8 3a4.995 4.995 0 0 0-4.192 2.273.5.5 0 0 1-.837-.546A6 6 0 0 1 14 8a.5.5 0 0 1-1.001 0 5 5 0 0 0-5-5zM2.5 7.5A.5.5 0 0 1 3 8a5 5 0 0 0 9.192 2.727.5.5 0 1 1 .837.546A6 6 0 0 1 2 8a.5.5 0 0 1 .501-.5z" />
-    </svg></button>
-  <button onclick="student_delete()" class="btn btn-primary btn-lg btn-outline-danger btn-danger"><svg width="1em"
-      height="1em" viewBox="0 0 16 16" class="bi bi-trash" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
-      <path fill-rule="evenodd"
-        d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
-    </svg></button>
-  <button type="button" class="btn btn-info" data-toggle="modal" data-target="#studentPostModal"
-    onclick="student_post()"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus-square-fill"
-      fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-      <path fill-rule="evenodd"
-        d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4a.5.5 0 0 0-1 0v3.5H4a.5.5 0 0 0 0 1h3.5V12a.5.5 0 0 0 1 0V8.5H12a.5.5 0 0 0 0-1H8.5V4z" />
-    </svg></button>
+<!-- <div class="pull-right"> -->
+<nav class="navbar navbar-dark bg-info justify-content-end">
+  <div class="btn-group">
+    <button type="button" class="btn btn-lg btn-light dropdown-toggle" data-toggle="dropdown"
+      aria-haspopup="true" aria-expanded="false">
+      <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-search" fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd"
+          d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z" />
+        <path fill-rule="evenodd"
+          d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z" />
+      </svg>
+    </button>
+    <div class="dropdown-menu">
+      <form class="px-4 py-3" id="student_search_A" name="student_search_form_A" novalidate>
+        <div class="form-group">
+          <!-- <label>SRN</label> -->
+          <input type="srn" class="form-control" id="student_search_srn_A" placeholder="srn">
+        </div>
+        <div class="form-group">
+          <!-- <label>Name</label> -->
+          <input type="name" class="form-control" id="student_search_name_A" placeholder="name">
+        </div>
+        <button onclick=student_search_A() class="btn btn-primary">Search</button>
+      </form>
+    </div>
+
+    <button type="button" style="visibility: hidden"></button>
+
+    <button type="button" class="btn btn-lg btn-success active" data-toggle="modal" id="refresh"
+      onclick="student_refresh_A()"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-clockwise"
+        fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd"
+          d="M3.17 6.706a5 5 0 0 1 7.103-3.16.5.5 0 1 0 .454-.892A6 6 0 1 0 13.455 5.5a.5.5 0 0 0-.91.417 5 5 0 1 1-9.375.789z" />
+        <path fill-rule="evenodd"
+          d="M8.147.146a.5.5 0 0 1 .707 0l2.5 2.5a.5.5 0 0 1 0 .708l-2.5 2.5a.5.5 0 1 1-.707-.708L10.293 3 8.147.854a.5.5 0 0 1 0-.708z" />
+      </svg></button>
+
+    <button type="button" style="visibility: hidden"></button>
+
+    <button type="button" class="btn btn-lg btn-danger active" data-toggle="modal" onclick="student_delete_A()"><svg
+        width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash" fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+        <path fill-rule="evenodd"
+          d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+      </svg></button>
+
+    <button type="button" style="visibility: hidden"></button>
+
+    <button type="button" class="btn btn-lg btn-warning active" data-toggle="modal"
+      onclick="insert_dept_options_A('dept-stu_post_A');" data-target="#studentPostModal_A"><svg width="1em"
+        height="1em" viewBox="0 0 16 16" class="bi bi-plus-square-fill" fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd"
+          d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4a.5.5 0 0 0-1 0v3.5H4a.5.5 0 0 0 0 1h3.5V12a.5.5 0 0 0 1 0V8.5H12a.5.5 0 0 0 0-1H8.5V4z" />
+      </svg></button>
+
+</nav>
+<!-- </div> -->
+
+<div class="overflow-auto">
+  <table id="table" class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="row" style="text-align:right"><input id="student_boxes_main_A"
+            class="form-check-input position-static" type="checkbox" /></th>
+        <th scope="col">SRN</th>
+        <th scope="col">Name</th>
+        <th scope="col">Email</th>
+        <th scope="col">Phone</th>
+        <th scope="col">Team-Year-Code</th>
+        <th scope="col">Team-ID</th>
+        <th scope="col">Department</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody id="student_body_A">
+    </tbody>
+  </table>
 </div>
 
-<table id="table" class="table">
-  <thead>
-    <tr>
-      <th scope="col"></th>
-      <th scope="col">SRN</th>
-      <th scope="col">Name</th>
-      <th scope="col">Email</th>
-      <th scope="col">Phone</th>
-      <th scope="col">team-yr</th>
-      <th scope="col">team-id</th>
-      <th scope="col">dept</th>
-    </tr>
-  </thead>
-  <tbody id="student_body">
-  </tbody>
-</table>
+
 
 <div class="modal fade" id="A_Student_DeleteConfirm" tabindex="-1">
   <div id="step1" class="modal-footer">
     <button type="button" class="btn btn-primary btn-lg btn-danger" id="btnDelete"> Delete</button>
   </div>
 </div>
-
 <div class="modal" id="A_Student_DeleteconfirmModal" style="display: none; z-index: 1050;">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -58,73 +101,104 @@
   </div>
 </div>
 
-<div class="modal fade" id="myModal" role="dialog">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Details</h4>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-      </div>
-      <div class="modal-body" id="details_put">
-        <input type="text" placeholder="srn" />
-        <input type="text" placeholder="name" />
-        <input type="text" placeholder="email" />
-        <input type="text" placeholder="phone" />
-        <input type="text" placeholder="team_year_code" />
-        <input type="text" placeholder="team_id" />
-        <select id="dept"></select>
-      </div>
-      <div class="modal-body" id="A_student_put_response">
 
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-info btn" onclick="student_put()">Save Changes</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal"
-          onclick="document.getElementById('A_student_put_response').innerHTML = ''">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div class="modal fade" id="studentPostModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<div class="modal fade" id="studentPostModal_A" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
   aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 style="text-align: center;" class="modal-title" id="exampleModalLabel">INSERT STUDENT</h3>
+        <h3 style="text-align: center;" class="modal-title" id="exampleModalLabel_A">Add Student</h3>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <form id="stupost" onsubmit="event.preventDefault()" style="text-align: center;">
-            <input type="text" id="srn-stu_post" placeholder="srn" class="form-control" /> <br />
-            <input type="text" id="name-stu_post" placeholder="name" class="form-control" /> <br />
-            <input type="email" id="email-stu_post" placeholder="email" class="form-control" /><br />
-            <input type="tel" id="phone-stu_post" placeholder="phone" class="form-control" /><br />
-            <select id="dept-stu_post" class="form-control">
-              <option selected="selected" class="form-control" disabled="disabled">Department</option>
-            </select><br>
-            <input type="text" id="team_id-stu_post" placeholder="team_id" class="form-control"><br />
-            <input type="text" id="team_year_code-stu_post" placeholder="team_year_code" class="form-control"></form>
-          <br />
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" id="stu_post_sub" class="btn btn-primary" onclick="student_post()">Insert</button>
+          <form id="stupost_A" onsubmit="event.preventDefault()">
+            <label for="recipient-name" class="col-form-label">SRN</label>
+            <input type="text" id="srn-stu_post_A" placeholder="srn" class="form-control" />
+            <label for="recipient-name" class="col-form-label">Name</label>
+            <input type="text" id="name-stu_post_A" placeholder="name" class="form-control" />
+            <label for="recipient-name" class="col-form-label">Email</label>
+            <input type="email" id="email-stu_post_A" placeholder="email" class="form-control" />
+            <label for="recipient-name" class="col-form-label">Phone</label>
+            <input type="tel" id="phone-stu_post_A" placeholder="phone" class="form-control" />
+            <label for="recipient-name" class="col-form-label">Department</label>
+            <select id="dept-stu_post_A" class="form-control"></select>
+            <label for="recipient-name" class="col-form-label">Team Year Code</label>
+            <input type="text" id="team_year_code-stu_post_A" placeholder="team_year_code" class="form-control">
+            <label for="recipient-name" class="col-form-label">Team ID</label>
+            <input type="text" id="team_id-stu_post_A" placeholder="team_id" class="form-control">
+            <br>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" id="stu_sub_post_A" class="btn btn-primary"
+              onclick="student_post_Admin()">Insert</button>
           </form>
-          <p id="stumsg-post"></p>
+          <p id="stumsg-post_A"></p>
+          <div class="toast" id="student_post_toast_admin" role="alert"
+            style="position: absolute; top: 0; right: -150px;" aria-live="assertive" aria-atomic="true"
+            data-animation="true" data-delay="5000">
+            <div class="toast-header">
+              <!-- <img src="..." class="rounded mr-2" alt="..."> -->
+              <strong class="mr-auto" id="student_post_toast_admin_header"></strong>
+              <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="toast-body" id="student_post_toast_admin_body"></div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<script>
-  var b1 = document.getElementbyId('refresh')
-  b1.addEventListener("click", function () {
-    student_refresh()
-  })
-  var b2 = document.getElementbyId('delete')
-  b2.addEventListener("click", function () { })
-</script>
+<div class="modal fade" id="modal_admin_student_put" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="text-align: center;" class="modal-title" id="exampleModalLabel">Edit Student</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <form onsubmit="event.preventDefault()" id="admin_student_details_put">
+            <label for="recipient-name" class="col-form-label">SRN</label>
+            <input type="text" placeholder="srn" class="form-control" disabled="disabled" />
+            <label for="recipient-name" class="col-form-label">Name</label>
+            <input type="text" placeholder="name" class="form-control" />
+            <label for="recipient-name" class="col-form-label">Email</label>
+            <input type="text" placeholder="email" class="form-control" disabled="disabled" />
+            <label for="recipient-name" class="col-form-label">Phone</label>
+            <input type="text" placeholder="phone" class="form-control" />
+            <label for="recipient-name" class="col-form-label">Department</label>
+            <input type="text" placeholder="dept" class="form-control" class="form-control" disabled="disabled" />
+            <label for="recipient-name" class="col-form-label">Team Year Code</label>
+            <input type="text" placeholder="team_year_code" class="form-control" />
+            <label for="recipient-name" class="col-form-label">Team ID</label>
+            <input type="text" placeholder="team_id" class="form-control" />
+            <br>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="admin_student_put()">Save Changes</button><br>
+            <strong id="response_admin_student_put"></strong>
+          </form>
+          <div class="toast" id="student_put_toast_admin" role="alert"
+            style="position: absolute; top: 0; right: -150px;" aria-live="assertive" aria-atomic="true"
+            data-animation="true" data-delay="5000">
+            <div class="toast-header">
+              <!-- <img src="..." class="rounded mr-2" alt="..."> -->
+              <strong class="mr-auto" id="student_put_toast_admin_header"></strong>
+              <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="toast-body" id="student_put_toast_admin_body"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

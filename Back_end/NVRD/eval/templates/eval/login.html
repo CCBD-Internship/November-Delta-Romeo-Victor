@@ -118,16 +118,17 @@
 		</div>
 	</div>
 
-  {% comment %} <script>
+  <script>
   function get_token(ele){
     var xhttp=new XMLHttpRequest()
     xhttp.onreadystatechange=function(){
       if(this.readyState == XMLHttpRequest.DONE && this.status == 200){
         let data=JSON.parse(this.responseText)
         // document.cookie="access="+data["access"]+"; SameSite=None; Secure"
-        // document.cookie="user="+document.getElementById("username").value+"; SameSite=None; Secure"
-		localStorage["user"]=document.getElementById("username").value
-        window.location.replace("http://localhost:8000/"+document.getElementById("username").value+"/home");
+		// document.cookie="user="+document.getElementById("username").value+"; SameSite=None; Secure"
+		console.log(document.getElementById("username").value)
+		localStorage["username"]=document.getElementById("username").value
+        //window.location.replace("http://localhost:8000/"+document.getElementById("username").value+"/home");
     }
   }
     let username=document.getElementById("username").value
@@ -135,7 +136,7 @@
     xhttp.open("POST","/api/token/", true);
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhttp.send("username="+username+"&password="+password);
-  } {% endcomment %}
+  }
   </script>
 </body>
 </html>

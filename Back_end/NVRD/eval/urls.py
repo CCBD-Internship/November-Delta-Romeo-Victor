@@ -70,11 +70,11 @@ urlpatterns = [
 # frontend HTML
 urlpatterns += [
     path('<str:user>/home/', views.indexpage),
-    path('<str:user>/home/Admin/student/HTML/', views.admin_studentHTML),
+    path('<str:user>/home/admin/student/HTML/', views.admin_studentHTML),
 ]
 
 # frontend JS
 urlpatterns += [
-    path('<str:user>/home/Admin/student/JS/', views.admin_studentJS),
+    path('<str:user>/home/admin/student/JS/', views.admin_studentJS),
     path('<str:user>/home/main.js/', views.indexJS),
 ]

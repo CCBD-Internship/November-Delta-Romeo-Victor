@@ -90,6 +90,7 @@ def loginpage(request):
                       backend='django.contrib.auth.backends.ModelBackend')
                 response = redirect('/'+username+'/home')
                 response.set_cookie('token', str(token.access_token))
+                response.set_cookie('username', username)
                 return response
             return render(request, 'eval/login.html', context)
         return render(request, 'eval/login.html', context)
@@ -838,7 +839,7 @@ class Student_List(APIView):
                             i.save()
                         return Response({"detail": "update successful", "assumption": null_set_list}, status=status.HTTP_202_ACCEPTED)
                     else:
-                        response_list.extent(null_set_list)
+                        response_list.extend(null_set_list)
                         return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     return Response({"detail": "only project administrator can update"}, status=status.HTTP_403_FORBIDDEN)
@@ -848,7 +849,7 @@ class Student_List(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, user, panel_year_code=None, panel_id=None):
-        try:
+        # try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
                 if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     response_list = []
@@ -885,8 +886,8 @@ class Student_List(APIView):
                     return Response({"detail": "only project administrator can delete"}, status=status.HTTP_403_FORBIDDEN)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        # except:
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class Team_List(APIView):
