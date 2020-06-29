@@ -126,7 +126,7 @@
         let data=JSON.parse(this.responseText)
         // document.cookie="access="+data["access"]+"; SameSite=None; Secure"
         // document.cookie="user="+document.getElementById("username").value+"; SameSite=None; Secure"
-        localStorage["access"]=data["access"]
+		localStorage["user"]=document.getElementById("username").value
         window.location.replace("http://localhost:8000/"+document.getElementById("username").value+"/home");
     }
   }

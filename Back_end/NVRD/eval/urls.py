@@ -54,7 +54,7 @@ urlpatterns = [
     path('<str:user>/home/', views.home),
     path('api/<str:user>/generate-faculty-panel/',
          views.GenerateFacultyPanel.as_view()),
-    path('login/', views.loginpage),
+    path('', views.loginpage),
     path('logout/', views.logoutUser, name="logout"),
     #     path('api/<str:user>/<int:panel>/<str:type>/team/',
     #          views.Team_List.as_view(), name='index'),

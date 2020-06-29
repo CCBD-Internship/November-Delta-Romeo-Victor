@@ -64,25 +64,24 @@ import datetime
 #         pass    # do your thing here
 
 
-@login_required(login_url='/login/')
+@login_required(login_url='')
 def home(request, user):
     args = {}
     fac = Faculty.objects.get(fac_id=user)
     args["is_admin"] = fac.is_admin
-    return render(request, "eval/index.html", args)
+    return render(request, "eval/main.html", args)
 
 
 @ensure_csrf_cookie
 def loginpage(request):
     if request.user.is_authenticated:
-        return redirect('home')
+        print(request.user)
+        return redirect(str(request.user)+'/home')
     else:
         context = {}
         if request.method == 'POST':
             username = request.POST.get('username')
             password = request.POST.get('password')
-            # user = authenticate(request, username=username, password=password)
-            # if user is not None:
             user = User.objects.get(username=username)
             if(user.check_password(password)):
                 # {'refresh': str(token), 'access': str(token.access_token), 'user': request.data["username"], 'name': str(user.get_full_name())}
@@ -93,29 +92,32 @@ def loginpage(request):
                 response.set_cookie('token', str(token.access_token))
                 return response
             return render(request, 'eval/login.html', context)
-
         return render(request, 'eval/login.html', context)
 
 
 def logoutUser(request):
     logout(request)
-    response = redirect('/login')
+    response = redirect('/')
     response.delete_cookie('token')
     return response
 
 
+@login_required(login_url='')
 def indexpage(request, user):
     return render(request, "eval/main.html")
 
 
+@login_required(login_url='')
 def indexJS(request, user):
     return render(request, "eval/scripts/main.js")
 
 
+@login_required(login_url='')
 def admin_studentHTML(request, user):
     return render(request, "eval/containers/admin_student.html")
 
 
+@login_required(login_url='')
 def admin_studentJS(request, user):
     return render(request, "eval/scripts/admin_student.js")
 
