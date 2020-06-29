@@ -22,7 +22,10 @@ from .models import *
 from .serializers import *
 import json
 import datetime
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 # from django_cron import CronJobBase, Schedule
@@ -66,6 +69,7 @@ def loginpage(request):
             return render(request, 'eval/login.html', context)
 
         return render(request, 'eval/login.html', context)
+<<<<<<< HEAD
 
 
 def logoutUser(request):
@@ -85,6 +89,14 @@ def admin_studentHTML(request,user):
 
 def admin_studentJS(request,user):
     return render(request, "eval/scripts/admin_student.js")
+=======
+
+
+def logoutUser(request):
+    logout(request)
+    response = redirect('/login')
+    return response
+>>>>>>> test
 
 def add_one_panel(panel_year_code, serializer_list=None):
     if serializer_list and serializer_list != []:
@@ -182,9 +194,10 @@ class Faculty_List(APIView):
                     response_list = []
                     for i in request.data:
                         if(Faculty.objects.filter(fac_id=i["fac_id"]).exists()):
-                            f=Faculty.objects.filter(
+                            f = Faculty.objects.filter(
                                 fac_id=i.get("fac_id")).first()
-                            serial = Faculty_Serializer(f, data=i, partial=True)
+                            serial = Faculty_Serializer(
+                                f, data=i, partial=True)
                             # if "email" in i:
                             #     u = User.objects.get(id=user)
                             #     u.set_email(i["email"])
@@ -198,18 +211,19 @@ class Faculty_List(APIView):
                             response_list.append(
                                 {"value": i, "detail": "faculty does not exist"})
                     if(response_list == []):
-                        for i,j in zip(valid_list,request.data):
-                            f=Faculty.objects.filter(
+                        for i, j in zip(valid_list, request.data):
+                            f = Faculty.objects.filter(
                                 fac_id=j.get("fac_id")).first()
-                            if("is_active" in j and Faculty.objects.get(fac_id=j["fac_id"]).is_active==True and j["is_active"]==False):
-                                teams_under=Team.objects.filter(guide=f)
-                                facpan=FacultyPanel.objects.filter(fac_id=f,panel_id__in=Panel.objects.filter(is_active=True))
+                            if("is_active" in j and Faculty.objects.get(fac_id=j["fac_id"]).is_active == True and j["is_active"] == False):
+                                teams_under = Team.objects.filter(guide=f)
+                                facpan = FacultyPanel.objects.filter(
+                                    fac_id=f, panel_id__in=Panel.objects.filter(is_active=True))
                                 for fp in facpan:
                                     fp.delete()
                                 for tm in teams_under:
-                                    if(tm.panel_id==None or tm.panel_id.is_active==True):
-                                        tm.guide=None
-                                        tm.panel_id=None
+                                    if(tm.panel_id == None or tm.panel_id.is_active == True):
+                                        tm.guide = None
+                                        tm.panel_id = None
                                         tm.save()
                             if i.is_valid():
                                 i.save()
@@ -1294,8 +1308,8 @@ class AboutMe_List(APIView):
         try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
                 fp = FacultyPanel.objects.filter(fac_id=user)
-                res={}
-                res["user"]=Faculty.objects.filter(fac_id=user).values()[0]
+                res = {}
+                res["user"] = Faculty.objects.filter(fac_id=user).values()[0]
                 l = list(fp.values())
                 for i in l:
                     p = Panel.objects.get(id=i.pop("panel_id_id"))
@@ -1303,7 +1317,7 @@ class AboutMe_List(APIView):
                     i["is_active"] = p.is_active
                     i["panel_year_code"] = p.panel_year_code
                     i["panel_id"] = p.panel_id
-                res["panels"]=l
+                res["panels"] = l
                 return Response(res, status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
