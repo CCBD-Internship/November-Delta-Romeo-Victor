@@ -38,10 +38,11 @@
             xhttp.send();
         }
         var Tree = { "Admin": [], "Coordinator": [], "Evaluator": [] }
-        var evalview = { 1: { "Student": [], "Team": [] }, 2: { "Student": [], "Team": [] }, 3: { "Student": [], "Team": [] }, 4: { "Student": [], "Team": [] }, 5: { "Student": [], "Team": [] }, "Team": [], "Student": [], "Faculty-Panel": [] }
-        var coordview = { "Department": [], "Faculty-Panel": [], "Team-Faculty-Review": [] }
-        var adminview = { "Department": [], "Faculty": [], "Panel": [], "Faculty-panel": [], "Team": [], "Student": [], "Marks-View": [] }
+        var evalview = { "Review 1": { "Team": [] }, "Review 2": { "Team": [] }, "Review 3": { "Team": [] }, "Review 4": { "Team": [] }, "Review 5": { "Team": [] }, "Team": [], "Student": [], "Faculty-Panel": [] }
+        var coordview = { "Faculty-Panel": [], "Team-Faculty-Review": [] }
+        var adminview = { "Faculty": [], "Panel": [], "Faculty-panel": [], "Team": [], "Student": [], "Marks-View": [] }
         var User;
+        var Panels;
         var Admin_BC = []
         var Coordinator_BC = []
         var Evaluator_BC = []
@@ -109,7 +110,7 @@
                 }, 750)
             }
         }
-        window.addEventListener('hashchange', function (e) {
+        function hasher(e) {
             if (window.location.hash != "") {
                 spl = window.location.hash.split("#")[1].split('/')
                 spl.pop()
@@ -124,13 +125,40 @@
                 }
                 crumbMaker()
             }
+        }
+        function cardMaker(panel_id, panel_name, is_active, ctime) {
+            var color
+            if (is_active)
+                color = 'bg-info'
+            else
+                color = 'bg-secondary'
+            str = '<div class="col mb-4"><div class="card ' + color + ' onclick="crumbPusher()"><div class="card-header">' + panel_id + '</div><div class="card-body"><h5 class="card-title">' + panel_name + '</h5><p>' + ctime + '</p></div></div></div>'
+            return str
+        }
+        window.addEventListener('hashchange', hasher);
+
+        window.addEventListener('load', function (e) {
+            window.location.hash = ""
         });
+
+        function fillprofile_tab(data) {
+            var requiredinfo = ["name", "email", "phone", "fac_id"]
+            var str = ""
+            for (let info of requiredinfo)
+                str += "<p class='dropdown-item' style='cursor:pointer;'><b>" + info[0].toUpperCase() + info.slice(1,) + "</b>&emsp;" + data[info] + "</p>"
+            str += "<p class='dropdown-item' style='cursor:pointer;'><b>Dept</b>&emsp;" + data["dept_id"] + "</p>"
+            str += '<div class="dropdown-divider"></div><button class="dropdown-item" type="button" onclick="location.href=\'/logout/\'"><b>Logout</b></button>'
+            document.getElementById("fac_info").innerHTML = str
+        }
+
         function setTree() {
             var xhttp = new XMLHttpRequest()
             xhttp.onreadystatechange = function () {
                 if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
                     let data = JSON.parse(this.responseText)
+                    fillprofile_tab(data["user"])
                     User = data["user"]
+                    Panels = data["panels"]
                     if (data["user"]["is_admin"] == true) {
                         Tree.Admin = adminview
                     }
@@ -197,9 +225,28 @@
             crumbMaker()
         }
         function crumbPusher(e) {
+            console.log('hi', e.target.getAttribute('class'))
             lst = returnCurrentList()
-            lst.push(e.target.innerHTML)
-            crumbMaker()
+            if (e.target.getAttribute('class') == "card-body" || e.target.getAttribute('class') == "card-header") {
+                lst.push(e.target.parentNode.firstChild.innerHTML)
+                crumbMaker()
+            }
+            else if (e.target.getAttribute('class') == "card-title") {
+                lst.push(e.target.parentNode.parentNode.firstChild.innerHTML)
+                crumbMaker()
+            }
+            else if (e.target.getAttribute('class') == "list-group-item list-group-item-action") {
+                lst.push(e.target.innerHTML)
+                crumbMaker()
+            }
+
+        }
+        function returnPanel(val) {
+            for (let i = 0; i < Panels.length; i++) {
+                if (val == Panels[i]["panel_year_code"] + '-' + Panels[i]["panel_id"])
+                    return Panels[i]
+            }
+            return NaN
         }
         function listMaker() {
             lst = returnCurrentList()
@@ -209,19 +256,42 @@
             }
             if (Object.keys(obj).length > 0) {
                 returnCurrentHTML().innerHTML = ""
-                document.getElementById('NVRDlist').setAttribute('style', 'display:inline')
-                NVRDlist = document.getElementById("NVRDlist")
-                len = NVRDlist.children.length
-                for (let i = 0; i < len; i++) {
-                    NVRDlist.removeChild(NVRDlist.children[0])
+                document.getElementById("admin_HTML").setAttribute('style', 'display:none')
+                document.getElementById("coordinator_HTML").setAttribute('style', 'display:none')
+                document.getElementById("evaluator_HTML").setAttribute('style', 'display:none')
+                document.getElementById('NVRDlist').setAttribute('style', 'display:none')
+                document.getElementById('NVRDpanelcard').setAttribute('style', 'display:none')
+                if (obj == Tree.Coordinator || obj == Tree.Evaluator) {
+                    panelcard = document.getElementById('NVRDpanelcard')
+                    panelcard.setAttribute('style', 'display:inline')
+                    panelcard.innerHTML = ""
+                    var str = '<div class="row row-cols-1 row-cols-md-3" id="panelcardchild">';
+                    for (let i = 0; i < Object.keys(obj).length; i++) {
+                        var panel = returnPanel(Object.keys(obj)[i])
+                        str += cardMaker(Object.keys(obj)[i], panel["panel_name"], panel["is_active"], panel["ctime"])
+                    }
+                    str += '</div>'
+                    panelcard.innerHTML = str
+                    cardchild = document.getElementById('panelcardchild')
+                    for (var i = 0; i < cardchild.children.length; i++) {
+                        cardchild.children[i].firstChild.addEventListener('click', crumbPusher)
+                    }
                 }
+                else {
+                    document.getElementById('NVRDlist').setAttribute('style', 'display:inline')
+                    NVRDlist = document.getElementById("NVRDlist")
+                    len = NVRDlist.children.length
+                    for (let i = 0; i < len; i++) {
+                        NVRDlist.removeChild(NVRDlist.children[0])
+                    }
 
-                for (let i = 0; i < Object.keys(obj).length; i++) {
-                    elem = document.createElement("button")
-                    elem.setAttribute('class', 'list-group-item list-group-item-action');
-                    elem.addEventListener('click', crumbPusher)
-                    elem.innerHTML = Object.keys(obj)[i]
-                    NVRDlist.appendChild(elem)
+                    for (let i = 0; i < Object.keys(obj).length; i++) {
+                        elem = document.createElement("button")
+                        elem.setAttribute('class', 'list-group-item list-group-item-action');
+                        elem.addEventListener('click', crumbPusher)
+                        elem.innerHTML = Object.keys(obj)[i]
+                        NVRDlist.appendChild(elem)
+                    }
                 }
             }
             else {
@@ -229,6 +299,7 @@
                 document.getElementById("coordinator_HTML").setAttribute('style', 'display:none')
                 document.getElementById("evaluator_HTML").setAttribute('style', 'display:none')
                 document.getElementById('NVRDlist').setAttribute('style', 'display:none')
+                document.getElementById('NVRDpanelcard').setAttribute('style', 'display:none')
                 returnCurrentHTML().setAttribute('style', 'display:inline')
                 loadJS(urlGenerate())
                 loadHTML(urlGenerate())
@@ -253,17 +324,21 @@
         }
         function navbarGenerate() {
             NVRDnavbar = document.getElementById("NVRDnavbar")
+            profile = document.getElementById("profile").innerHTML = User.name
+            NVRDnavbar.innerHTML = ""
             if (Object.keys(Tree.Admin).length > 0) {
                 elem = document.createElement('a')
                 elem.innerHTML = "Admin"
                 elem.addEventListener('click', onClickNavbar)
                 elem.setAttribute('class', 'nav-item nav-link')
+                elem.setAttribute('style', 'cursor:pointer')
                 NVRDnavbar.appendChild(elem)
             }
             if (Object.keys(Tree.Coordinator).length > 0) {
                 elem = document.createElement('a')
                 elem.addEventListener('click', onClickNavbar)
                 elem.setAttribute('class', 'nav-item nav-link')
+                elem.setAttribute('style', 'cursor:pointer')
                 elem.innerHTML = "Coordinator"
                 NVRDnavbar.appendChild(elem)
             }
@@ -271,6 +346,7 @@
                 elem = document.createElement('a')
                 elem.addEventListener('click', onClickNavbar)
                 elem.setAttribute('class', 'nav-item nav-link')
+                elem.setAttribute('style', 'cursor:pointer')
                 elem.innerHTML = "Evaluator"
                 NVRDnavbar.appendChild(elem)
             }
@@ -303,18 +379,26 @@
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav" id='NVRDnavbar'>
                     <!-- <a class="nav-item nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
-            <a class="nav-item nav-link" href="#">Features</a>
-            <a class="nav-item nav-link" href="#">Pricing</a>
-            <a class="nav-item nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a> -->
+ <a class="nav-item nav-link" href="#">Features</a>
+ <a class="nav-item nav-link" href="#">Pricing</a>
+ <a class="nav-item nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a> -->
+                </div>
+            </div>
 
+
+            <div class="btn-group dropleft">
+                <button type="button" class="btn btn-info dropdown-toggle" id="profile" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                </button>
+                <div class="dropdown-menu bg-primary text-light active" id="fac_info">
                 </div>
             </div>
         </nav>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb" id="NVRDbreadcrumb">
                 <!-- <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item"><a href="#">Library</a></li>
-            <li class="breadcrumb-item active">Data</li> -->
+ <li class="breadcrumb-item"><a href="#">Library</a></li>
+ <li class="breadcrumb-item active">Data</li> -->
             </ol>
         </nav>
         <div class="progress fixed-bottom" id="progressParent">
@@ -326,36 +410,58 @@
     </div>
     <div class="list-group" id="NVRDlist">
         <!-- <button type="button" class="list-group-item list-group-item-action active">
-            Cras justo odio
-        </button>
-        <button type="button" class="list-group-item list-group-item-action">Dapibus ac facilisis in</button>
-        <button type="button" class="list-group-item list-group-item-action">Morbi leo risus</button>
-        <button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button>
-        <button type="button" class="list-group-item list-group-item-action" disabled>Vestibulum at eros</button> -->
+ Cras justo odio
+ </button>
+ <button type="button" class="list-group-item list-group-item-action">Dapibus ac facilisis in</button>
+ <button type="button" class="list-group-item list-group-item-action">Morbi leo risus</button>
+ <button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button>
+ <button type="button" class="list-group-item list-group-item-action" disabled>Vestibulum at eros</button> -->
     </div>
+    <div id="NVRDpanelcard">
+
+        <!-- <div class="col mb-4">
+ <div class="card">
+ <div class="card-header">Header</div>
+ <div class="card-body">
+ <h5 class="card-title">Card title</h5>
+ <p class="card-text">This is a longer card with supporting text below as a natural lead-in to
+ additional content. This content is a little bit longer.</p>
+ </div>
+ </div>
+ </div> -->
+    </div>
+
     <div id="admin_HTML"></div>
     <div id="coordinator_HTML"></div>
     <div id="evaluator_HTML"></div>
-
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
         crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
         crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
         crossorigin="anonymous"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+ integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+ crossorigin="anonymous"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+ integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+ crossorigin="anonymous"></script>
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+ integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+ crossorigin="anonymous"></script> -->
     <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
 
 
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script> -->
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script> -->
 </body>
 
 </html>

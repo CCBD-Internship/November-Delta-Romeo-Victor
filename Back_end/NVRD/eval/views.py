@@ -66,10 +66,16 @@ import datetime
 
 @login_required(login_url='')
 def home(request, user):
-    args = {}
-    fac = Faculty.objects.get(fac_id=user)
-    args["is_admin"] = fac.is_admin
-    return render(request, "eval/main.html", args)
+    # print(request.session._session)
+    if request.COOKIES.get('username'):
+        args = {}
+        fac = Faculty.objects.get(fac_id=user)
+        args["is_admin"] = fac.is_admin
+        return render(request, "eval/main.html", args)
+    else:
+        logout(request)
+        response = redirect('/')
+        return response
 
 
 @ensure_csrf_cookie
@@ -1328,7 +1334,6 @@ class Team_Student_CSV(APIView):
 class AboutMe_List(APIView):
 
     parser_classes = [JSONParser]
-
     def get(self, request, user):
         try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
@@ -1342,14 +1347,15 @@ class AboutMe_List(APIView):
                     i["is_active"] = p.is_active
                     i["panel_year_code"] = p.panel_year_code
                     i["panel_id"] = p.panel_id
+                    i["panel_name"]=p.panel_name
+                    i["ctime"]=p.ctime
+                l.sort(key=lambda x:x["ctime"],reverse=True)
                 res["panels"] = l
                 return Response(res, status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
 class TokenBlackList(APIView):
 
     parser_classes = [JSONParser]

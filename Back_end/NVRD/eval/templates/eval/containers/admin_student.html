@@ -21,10 +21,9 @@
           <!-- <label>Name</label> -->
           <input type="name" class="form-control" id="student_search_name_A" placeholder="name">
         </div>
-        <button onclick=student_search_A() class="btn btn-primary">Search</button>
+        <button onclick="student_search_A()" class="btn btn-primary">Search</button>
       </form>
     </div>
-
     <button type="button" style="visibility: hidden"></button>
 
     <button type="button" class="btn btn-lg btn-success active" data-toggle="modal" id="refresh"
@@ -130,16 +129,16 @@
             <label for="recipient-name" class="col-form-label">Team ID</label>
             <input type="text" id="team_id-stu_post_A" placeholder="team_id" class="form-control">
             <br>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             <button type="button" id="stu_sub_post_A" class="btn btn-primary"
               onclick="student_post_Admin()">Insert</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           </form>
           <p id="stumsg-post_A"></p>
           <div class="toast" id="student_post_toast_admin" role="alert"
-            style="position: absolute; top: 0; right: -150px;" aria-live="assertive" aria-atomic="true"
+            style=" top: 0; right: -150px;" aria-live="assertive" aria-atomic="true"
             data-animation="true" data-delay="5000">
             <div class="toast-header">
-              <!-- <img src="..." class="rounded mr-2" alt="..."> -->
+              <div id="student_post_svg_A"></div>
               <strong class="mr-auto" id="student_post_toast_admin_header"></strong>
               <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
@@ -181,15 +180,16 @@
             <label for="recipient-name" class="col-form-label">Team ID</label>
             <input type="text" placeholder="team_id" class="form-control" />
             <br>
+            <button type="button" class="btn btn-primary" onclick="admin_student_put()">Save Changes</button>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" onclick="admin_student_put()">Save Changes</button><br>
+            <br>
             <strong id="response_admin_student_put"></strong>
           </form>
           <div class="toast" id="student_put_toast_admin" role="alert"
-            style="position: absolute; top: 0; right: -150px;" aria-live="assertive" aria-atomic="true"
-            data-animation="true" data-delay="5000">
+            style="position: absolute; top: 0; left: 26vw;" aria-live="assertive" aria-atomic="true"
+            data-animation="true" data-delay="10000">
             <div class="toast-header">
-              <!-- <img src="..." class="rounded mr-2" alt="..."> -->
+              <div id="student_put_svg_A"></div>
               <strong class="mr-auto" id="student_put_toast_admin_header"></strong>
               <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
