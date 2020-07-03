@@ -1,10 +1,11 @@
-function cardMaker(panel_year_code, panel_id, panel_name, is_active, ctime) {
+function fpcardMaker(panel_year_code, panel_id, panel_name, is_active, ctime) {
     var color
     if (is_active)
         color = 'bg-info'
     else
         color = 'bg-secondary'
-    str = '<div class="col mb-4"><div onclick="openmodal(event,this)" class="card ' + color + ' onclick="crumbPusher()"><div class="card-header">' + panel_year_code + '   ' + panel_id + '    </div><div class="card-body"><h5 class="card-title">' + panel_name + '</h5><p>  ' + Date(ctime) + '</p></div></div></div>'
+    let date=new Date(ctime)
+    str = '<div class="col mb-4"><div onclick="openmodal(event,this)" class="card ' + color + '" ><div class="card-header">' + panel_year_code + '   ' + panel_id + '    </div><div class="card-body"><h5 class="card-title">' + panel_name + '</h5><p>  ' + date.toLocaleString() + '</p></div></div></div>'
     return str
 }
 
@@ -25,6 +26,7 @@ function A_fac_panel_get(p_year_code, p_id) {
                 str += '<td scope="col"><button type="button" class="btn btn-dark active btn" data-toggle="modal" data-target="#admin_faculty_panel_put" onclick="admin_faculty_panel_put_form(this)">' + svgstr + '</button></td></tr>'
             }
             document.getElementById("faculty_panel_body_A").innerHTML = str
+            checkerInit("fac_panel_boxes_main_A","fac_panel_boxes_A")
         }
     }
     var url = "/api/" + getCookie("username") + "/faculty-panel/?panel_id=" + p_id + "&panel_year_code=" + p_year_code;
@@ -51,8 +53,9 @@ function admin_faculty_panel_refresh() {
             let data = JSON.parse(this.responseText)
             var str = '<div class="row row-cols-1 row-cols-md-3" id="panelcardchild">'
             for (let i in data) {
-                str += cardMaker(data[i]["panel_year_code"], data[i]["panel_id"], data[i]["panel_name"], data[i]["is_active"], data[i]["ctime"])
+                str += fpcardMaker(data[i]["panel_year_code"], data[i]["panel_id"], data[i]["panel_name"], data[i]["is_active"], data[i]["ctime"])
             }
+            str+='</div>'
             document.getElementById("NVRD_fac_panel_card").innerHTML = str
         }
     }
@@ -116,20 +119,6 @@ function getCheckedBoxes_A(chkboxName) {
         }
     }
     return checkboxesChecked.length > 0 ? checkboxesChecked : null;
-}
-
-function setCheckedBoxes_A(e) {
-    var checkboxes = document.getElementsByName("fac_panel_boxes_A");
-    if (e.target.checked) {
-        for (var i = 0; i < checkboxes.length; i++) {
-            checkboxes[i].checked = true
-        }
-    }
-    else {
-        for (var i = 0; i < checkboxes.length; i++) {
-            checkboxes[i].checked = false
-        }
-    }
 }
 
 function fac_panel_delete_A() {

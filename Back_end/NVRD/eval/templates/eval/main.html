@@ -47,7 +47,7 @@
         }
         var Tree = { "Admin": [], "Coordinator": [], "Evaluator": [] }
         var evalview = { "Review-1": { "Team": [] }, "Review-2": { "Team": [] }, "Review-3": { "Team": [] }, "Review-4": { "Team": [] }, "Review-5": { "Team": [] }, "Team": [], "Student": [], "Faculty-Panel": [] }
-        var coordview = { "Faculty-Panel": [], "Team-Faculty-Review": [] , "Team":[],"Student":[]}
+        var coordview = { "Faculty-Panel": [], "Team-Faculty-Review": [], "Team": [], "Student": [] }
         var adminview = { "Faculty": [], "Panel": [], "Faculty-panel": [], "Team": [], "Student": [], "Marks-View": [] }
         var User;
         var Panels;
@@ -129,25 +129,27 @@
             if (window.location.hash != "") {
                 spl = window.location.hash.split("#")[1].split('/')
                 spl.pop()
-                currenttab = spl[0]
-                var lst = returnCurrentList()
-                var len = lst.length
-                for (let i = 0; i < len; i++) {
-                    lst.pop()
-                }
-                for (let i = 0; i < spl.length; i++) {
-                    lst.push(spl[i])
-                }
-                NVRDnavbar = document.getElementById('NVRDnavbar').children;
-                for (let i = 0; i < NVRDnavbar.length; i++) {
-                    if (currenttab == NVRDnavbar[i].innerHTML) {
-                        NVRDnavbar[i].setAttribute('class', 'nav-item nav-link active')
+                if(JSON.stringify(spl)!=JSON.stringify(returnCurrentList())){
+                    currenttab = spl[0]
+                    var lst = returnCurrentList()
+                    var len = lst.length
+                    for (let i = 0; i < len; i++) {
+                        lst.pop()
                     }
-                    else {
-                        NVRDnavbar[i].setAttribute('class', 'nav-item nav-link')
+                    for (let i = 0; i < spl.length; i++) {
+                        lst.push(spl[i])
                     }
-                }
-                crumbMaker()
+                    NVRDnavbar = document.getElementById('NVRDnavbar').children;
+                    for (let i = 0; i < NVRDnavbar.length; i++) {
+                        if (currenttab == NVRDnavbar[i].innerHTML) {
+                            NVRDnavbar[i].setAttribute('class', 'nav-item nav-link active')
+                        }
+                        else {
+                            NVRDnavbar[i].setAttribute('class', 'nav-item nav-link')
+                        }
+                    }
+                    crumbMaker(true)
+                }                
             }
         }
         function cardMaker(panel_id, panel_name, is_active, ctime) {
@@ -156,7 +158,7 @@
                 color = 'bg-success'
             else
                 color = 'bg-danger'
-            str = '<div class="col mb-4"><div class="card ' + color + ' onclick="crumbPusher()"><div class="card-header">' + panel_id + '</div><div class="card-body"><h5 class="card-title">' + panel_name + '</h5><p>' + ctime + '</p></div></div></div>'
+            str = '<div class="col mb-4"><div class="card ' + color + '" name="panels_main"><div class="card-header" name="panels_main">' + panel_id + '</div><div class="card-body" name="panels_main"><h5 class="card-title" name="panels_main">' + panel_name + '</h5><p name="panels_main">' + ctime + '</p></div></div></div>'
             return str
         }
         window.addEventListener('hashchange', hasher);
@@ -227,7 +229,7 @@
             xhttp.setRequestHeader("sessionid", getCookie("sessionid"));
             xhttp.send()
         }
-        function crumbMaker() {
+        function crumbMaker(loadbool) {
             lst = returnCurrentList()
             NVRDbreadcrumb = document.getElementById(id = "NVRDbreadcrumb")
             len = NVRDbreadcrumb.children.length
@@ -252,12 +254,12 @@
             //elem.setAttribute('class', 'breadcrumb-item')
             //elem.addEventListener('click', crumbPopper)
             //NVRDbreadcrumb.appendChild(elem)
-            listMaker()
             urlstr = ""
             for (let i = 0; i < lst.length; i++) {
                 urlstr += (lst[i] + '/')
             }
-            window.location.hash = urlstr;
+            window.location.hash = urlstr
+            listMaker(loadbool)
         }
         function crumbPopper(e) {
             lst = returnCurrentList()
@@ -265,29 +267,21 @@
             len = lst.length
             for (let i = ind + 1; i < len; i++)
                 lst.pop()
-            loadJS(urlGenerate())
-            loadHTML(urlGenerate())
-            crumbMaker()
+            crumbMaker(true)
         }
         function crumbPusher(e) {
             lst = returnCurrentList()
-            if (e.target.getAttribute('class') == "card-body" || e.target.getAttribute('class') == "card-header") {
+            if (e.target.name = "panels_main" && (e.target.getAttribute('class') == "card-body" || e.target.getAttribute('class') == "card-header")) {
                 lst.push(e.target.parentNode.firstChild.innerHTML)
-                loadJS(urlGenerate())
-                loadHTML(urlGenerate())
-                crumbMaker()
+                crumbMaker(true)
             }
-            else if (e.target.getAttribute('class') == "card-title") {
+            else if (e.target.name = "panels_main" && e.target.getAttribute('class') == "card-title") {
                 lst.push(e.target.parentNode.parentNode.firstChild.innerHTML)
-                loadJS(urlGenerate())
-                loadHTML(urlGenerate())
-                crumbMaker()
+                crumbMaker(true)
             }
             else if (e.target.getAttribute('class') == "list-group-item list-group-item-action") {
                 lst.push(e.target.innerHTML)
-                loadJS(urlGenerate())
-                loadHTML(urlGenerate())
-                crumbMaker()
+                crumbMaker(true)
             }
         }
         function returnPanel(val) {
@@ -297,7 +291,7 @@
             }
             return NaN
         }
-        function listMaker() {
+        function listMaker(loadbool) {
             lst = returnCurrentList()
             obj = Tree;
             for (let i = 0; i < lst.length; i++) {
@@ -314,14 +308,14 @@
                     panelcard = document.getElementById('NVRDpanelcard')
                     panelcard.setAttribute('style', 'display:inline')
                     panelcard.innerHTML = ""
-                    var str = '<div class="row row-cols-1 row-cols-md-3" id="panelcardchild">';
+                    var str = '<div class="row row-cols-1 row-cols-md-3" id="panelcardmainchild">';
                     for (let i = 0; i < Object.keys(obj).length; i++) {
                         var panel = returnPanel(Object.keys(obj)[i])
                         str += cardMaker(Object.keys(obj)[i], panel["panel_name"], panel["is_active"], panel["ctime"])
                     }
                     str += '</div>'
                     panelcard.innerHTML = str
-                    cardchild = document.getElementById('panelcardchild')
+                    cardchild = document.getElementById('panelcardmainchild')
                     for (var i = 0; i < cardchild.children.length; i++) {
                         cardchild.children[i].firstChild.addEventListener('click', crumbPusher)
                     }
@@ -344,6 +338,10 @@
                 }
             }
             else {
+                if (loadbool) {
+                    loadJS(urlGenerate())
+                    loadHTML(urlGenerate())
+                }
                 document.getElementById("admin_HTML").setAttribute('style', 'display:none')
                 document.getElementById("coordinator_HTML").setAttribute('style', 'display:none')
                 document.getElementById("evaluator_HTML").setAttribute('style', 'display:none')
@@ -367,7 +365,7 @@
                     NVRDnavbar[i].setAttribute('class', 'nav-item nav-link')
                 }
             }
-            crumbMaker()
+            crumbMaker(false)
         }
         function navbarGenerate() {
             NVRDnavbar = document.getElementById("NVRDnavbar")
