@@ -56,6 +56,7 @@ urlpatterns = [
          views.GenerateFacultyPanel.as_view()),
     path('', views.loginpage),
     path('logout/', views.logoutUser, name="logout"),
+    path('<str:user>/refresh/', views.refresh)
     #     path('api/<str:user>/<int:panel>/<str:type>/team/',
     #          views.Team_List.as_view(), name='index'),
     #     path('api/<str:user>/team/', views.Team_List.as_view(), name='index'),
@@ -69,12 +70,31 @@ urlpatterns = [
 
 # frontend HTML
 urlpatterns += [
+    path('<str:user>/home/coordinator/<str:panel_year_code>-<str:panel_id>/team/HTML/',
+         views.coordinator_teamHTML),
+    path('<str:user>/home/coordinator/<str:panel_year_code>-<str:panel_id>/student/HTML/',
+         views.coordinator_studentHTML),
     path('<str:user>/home/', views.indexpage),
+    path('<str:user>/home/admin/faculty/HTML/', views.admin_facultyHTML),
+    path('<str:user>/home/admin/faculty-panel/HTML/',
+         views.admin_faculty_panelHTML),
     path('<str:user>/home/admin/student/HTML/', views.admin_studentHTML),
+    path('<str:user>/home/admin/team/HTML/', views.admin_teamHTML),
+    path('<str:user>/home/admin/marks-view/HTML/', views.admin_marks_viewHTML),
+    path('<str:user>/home/admin/panel/HTML/', views.admin_panelHTML),
 ]
 
 # frontend JS
 urlpatterns += [
+    path('<str:user>/home/coordinator/<str:panel_year_code>-<str:panel_id>/team/JS/',
+         views.coordinator_teamJS),
+    path('<str:user>/home/coordinator/<str:panel_year_code>-<str:panel_id>/student/JS/',
+         views.coordinator_studentJS),
+    path('<str:user>/home/admin/faculty/JS/', views.admin_facultyJS),
+    path('<str:user>/home/admin/faculty-panel/JS/', views.admin_faculty_panelJS),
     path('<str:user>/home/admin/student/JS/', views.admin_studentJS),
+    path('<str:user>/home/admin/team/JS/', views.admin_teamJS),
+    path('<str:user>/home/admin/marks-view/JS/', views.admin_marks_viewJS),
+    path('<str:user>/home/admin/panel/JS/', views.admin_panelJS),
     path('<str:user>/home/main.js/', views.indexJS),
 ]

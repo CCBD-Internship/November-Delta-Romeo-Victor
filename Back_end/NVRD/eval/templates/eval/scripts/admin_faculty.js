@@ -1,5 +1,5 @@
-function student_refresh_A() {
-    tbody = document.getElementById("student_body")
+function faculty_refresh_A() {
+    tbody = document.getElementById("faculty_body")
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
@@ -9,26 +9,35 @@ function student_refresh_A() {
             svgstr += '<path fill-rule="evenodd" d="M11.293 1.293a1 1 0 0 1 1.414 0l2 2a1 1 0 0 1 0 1.414l-9 9a1 1 0 0 1-.39.242l-3 1a1 1 0 0 1-1.266-1.265l1-3a1 1 0 0 1 .242-.391l9-9zM12 2l2 2-9 9-3 1 1-3 9-9z"/>'
             svgstr += '<path fill-rule="evenodd" d="M12.146 6.354l-2.5-2.5.708-.708 2.5 2.5-.707.708zM3 10v.5a.5.5 0 0 0 .5.5H4v.5a.5.5 0 0 0 .5.5H5v.5a.5.5 0 0 0 .5.5H6v-1.5a.5.5 0 0 0-.5-.5H5v-.5a.5.5 0 0 0-.5-.5H3z"/>'
             svgstr += '</svg>'
+            console.log(data)
             for (let i in data) {
-                str += '<tr><td scope="row" style="text-align:right"><input name="student_boxes_A" class="form-check-input position-static" type="checkbox"></input></td>'
-                for (let j in data[i]) {
-                    str += ("<td>" + data[i][j] + "</td>")
+                str += '<tr>'
+                for (let j of ["fac_id", "fac_type", "name", "email", "phone", "is_active", "is_admin", "dept"]) {
+                    if (j == "is_active" || j == "is_admin") 
+                    {
+                        if (data[i][j] == true)
+                            str += ("<td>" + '&#9989;' + "</td>")
+                        else
+                            str += ("<td>" + '&#10060;'+"</td>")
+                    }
+                    else {
+                        str += ("<td>" + data[i][j] + "</td>")
+                    }
                 }
-                str += '<td scope="col"><button type="button" class="btn btn-dark active btn" data-toggle="modal" data-target="#modal_admin_student_put" onclick="admin_student_put_form(this)">' + svgstr + '</button></td></tr>'
+                str += '<td scope="col"><button type="button" class="btn btn-dark active btn" data-toggle="modal" data-target="#modal_admin_faculty_put" onclick="admin_faculty_put_form(this)">' + svgstr + '</button></td></tr>'
             }
-            document.getElementById("student_body_A").innerHTML = str
-            checkerInit("student_boxes_main_A", "student_boxes_A")
+            document.getElementById("faculty_body_A").innerHTML = str
         }
     }
     refreshLoader(xhttp)
-    xhttp.open("GET", "/api/" + getCookie("username") + "/student/", true);
+    xhttp.open("GET", "/api/" + getCookie("username") + "/faculty/", true);
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     xhttp.send();
 }
 
-function student_search_A() {
-    tbody = document.getElementById("student_body")
+function faculty_search_A() {
+    tbody = document.getElementById("faculty_body")
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
@@ -39,136 +48,60 @@ function student_search_A() {
             svgstr += '<path fill-rule="evenodd" d="M12.146 6.354l-2.5-2.5.708-.708 2.5 2.5-.707.708zM3 10v.5a.5.5 0 0 0 .5.5H4v.5a.5.5 0 0 0 .5.5H5v.5a.5.5 0 0 0 .5.5H6v-1.5a.5.5 0 0 0-.5-.5H5v-.5a.5.5 0 0 0-.5-.5H3z"/>'
             svgstr += '</svg>'
             for (let i in data) {
-                str += '<tr><td scope="row" style="text-align:right"><input name="student_boxes_A" class="form-check-input position-static" type="checkbox"></input></td>'
+                str += '<tr>'
                 for (let j in data[i]) {
                     str += ("<td>" + data[i][j] + "</td>")
                 }
-                str += '<td scope="col"><button type="button" class="btn btn-dark active btn" data-toggle="modal" data-target="#modal_admin_student_put" onclick="admin_student_put_form(this)">' + svgstr + '</button></td></tr>'
+                str += '<td scope="col"><button type="button" class="btn btn-dark active btn" data-toggle="modal" data-target="#modal_admin_faculty_put" onclick="admin_faculty_put_form(this)">' + svgstr + '</button></td></tr>'
             }
-            document.getElementById("student_body_A").innerHTML = str
-            checkerInit("student_boxes_main_A", "student_boxes_A")
+            document.getElementById("faculty_body_A").innerHTML = str
         }
     }
     refreshLoader(xhttp)
-    var srn = document.getElementById("student_search_srn_A").value
-    var name = document.getElementById("student_search_name_A").value
-    var str = "/api/" + getCookie("username") + "/student/"
-    if (name != "" || srn != "") {
-        str += '?'
-        if (name != "") {
-            str += ("name=" + name)
-        }
-        if (srn != "") {
-            if (name != "") {
-                str += '&'
-            }
-            str += ("srn=" + srn)
-        }
-    }
+    var fac_id = document.getElementById("faculty_search_fac_id_A").value
+    var str = "/api/" + getCookie("username") + "/faculty/"
+    if (fac_id != "")
+        str += ("?fac_id=" + fac_id)
     xhttp.open("GET", str, true);
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     xhttp.send();
 }
 
-function getCheckedBoxes_A(chkboxName) {
-    var checkboxes = document.getElementsByName(chkboxName);
-    var checkboxesChecked = [];
-    for (var i = 0; i < checkboxes.length; i++) {
-        if (checkboxes[i].checked) {
-            checkboxesChecked.push(checkboxes[i]);
-        }
-    }
-    return checkboxesChecked.length > 0 ? checkboxesChecked : null;
-}
-
-function student_delete_A() {
-    tbody = document.getElementById("student_body")
-    var checkedBoxes = getCheckedBoxes_A("student_boxes_A");
-    if (checkedBoxes.length > 0) {
-        a = []
-        for (i = 0; i < checkedBoxes.length; i++) { a.push(checkedBoxes[i].parentElement.parentElement.firstElementChild.nextElementSibling.innerHTML) }
-        var modal = $("#A_Student_DeleteconfirmModal");
-        modal.modal("show");
-        $("#A_Student_DeleteconfirmMessage").empty().append("Do you want to delete " + a.length + " students");
-        $('#A_Student_DeleteconfirmOk')
-            .on('click', function (e) {
-                e.preventDefault();
-                console.log(a);
-                send_delete_A(a);
-                $('#A_Student_DeleteconfirmModal').modal('hide');
-            });
-        $("#A_Student_DeleteconfirmCancel").on('click', function (e) {
-            e.preventDefault();
-            $('#A_Student_DeleteconfirmModal').modal('hide');
-        });
-    }
-}
-
-function send_delete_A(students) {
-    var JSON_array = []
-    for (let i = 0; i < students.length; ++i)
-        JSON_array.push({ "srn": students[i] })
-    var xhttp = new XMLHttpRequest()
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 202) {
-            student_refresh_A()
-        }
-        else {
-            console.log(JSON_array)
-        }
-    }
-    refreshLoader(xhttp)
-    xhttp.open("DELETE", "/api/" + getCookie("username") + "/student/", true);
-    xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
-    xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");
-    xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
-    xhttp.send(JSON.stringify(JSON_array));
-
-}
-
-function admin_student_put() {
+function admin_faculty_put() {
     var jsonarray = {}
-    var modal = document.getElementById("admin_student_details_put").firstElementChild
+    var modal = document.getElementById("admin_faculty_details_put").firstElementChild
     while (modal) {
         if (modal.placeholder)
-            jsonarray[modal.placeholder] = (modal.value == "null") ? null : (modal.value == "" ? null : modal.value)
+        {
+            jsonarray[modal.placeholder] = (modal.value == "null") ? null : (modal.value == "" ? null:(modal.value=="on")? modal.checked: modal.value)
+        }
         modal = modal.nextElementSibling
     }
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 202) {
+        if (this.readyState == 4 && this.status == 201) {
             var svg_tick = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check-circle-fill" fill="green" xmlns="http://www.w3.org/2000/svg">'
             svg_tick += '<path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>'
             svg_tick += '</svg>'
-            document.getElementById('student_put_svg_A').innerHTML = svg_tick
+            document.getElementById('faculty_put_svg_A').innerHTML = svg_tick
             var str = this.responseText
             d = JSON.parse(str)
             str = "<b>" + d["detail"] + "</b>"
-            console.log(d["assumption"])
             if (d["assumption"])
                 for (let i = 0; i < d["assumption"].length; ++i) {
-                    console.log(d["assumption"][i])
                     str += "<br>" + d["assumption"][i]["detail"] + "<br>"
                 }
-            document.getElementById('student_put_toast_admin_header').innerHTML = 'SUCCESS'
-            document.getElementById('student_put_toast_admin_body').innerHTML = str
-            $('#student_put_toast_admin').toast('show');
-            // var message = ''
-            // if (data["detail"] == "update successful")
-            //     message = "<b>Saved Successfully<b><br/>"
-            // else if (data["value"] != undefined)
-            //     message = "<b>Error For " + data["value"] + "<b>&emsp;" + data["detail"] + "<br/>"
-            // else
-            //     message = "<b>Error " + data["detail"] + "<b><br/>"
-            // document.getElementById("response_admin_student_put").innerHTML = message
-            student_refresh_A()
+            document.getElementById('faculty_put_toast_admin_header').innerHTML = 'SUCCESS'
+            document.getElementById('faculty_put_toast_admin_body').innerHTML = str
+            $('#faculty_put_toast_admin').toast('show');
+            faculty_refresh_A()
         }
         else {
             var svg_cross = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle-fill" fill="red" xmlns="http://www.w3.org/2000/svg">'
             svg_cross += '<path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.146-3.146a.5.5 0 0 0-.708-.708L8 7.293 4.854 4.146a.5.5 0 1 0-.708.708L7.293 8l-3.147 3.146a.5.5 0 0 0 .708.708L8 8.707l3.146 3.147a.5.5 0 0 0 .708-.708L8.707 8l3.147-3.146z"/>'
             svg_cross += '</svg>'
-            document.getElementById('student_put_svg_A').innerHTML = svg_cross
+            document.getElementById('faculty_put_svg_A').innerHTML = svg_cross
             var str = JSON.stringify(JSON.parse(this.responseText), null, 4);
             d = JSON.parse(str)
             str = ''
@@ -181,31 +114,31 @@ function admin_student_put() {
                         str += "<br>" + k[j] + ":" + d[i]["detail"][k[j]] + "<br>"
                 }
             }
-            document.getElementById('student_put_toast_admin_header').innerHTML = 'FAILURE'
-            document.getElementById('student_put_toast_admin_body').innerHTML = str
-            $('#student_put_toast_admin').toast('show');
-            console.log(JSON.stringify([jsonarray]))
+            document.getElementById('faculty_put_toast_admin_header').innerHTML = 'FAILURE'
+            document.getElementById('faculty_put_toast_admin_body').innerHTML = str
+            $('#faculty_put_toast_admin').toast('show');
         }
     }
     refreshLoader(xhttp)
-    xhttp.open("PUT", "/api/" + getCookie("username") + "/student/", true);
+    xhttp.open("PUT", "/api/" + getCookie("username") + "/faculty/", true);
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
     xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     xhttp.send(JSON.stringify([jsonarray]));
 }
 
-function admin_student_put_form(arg) {
+function admin_faculty_put_form(arg) {
     var head = arg.parentNode.parentNode.children
-    var modal = document.getElementById("admin_student_details_put").children
-    document.getElementById("response_admin_student_put").innerHTML = ""
-    modal[1].value = head[1].innerHTML
+    var modal = document.getElementById("admin_faculty_details_put").children
+    document.getElementById("response_admin_faculty_put").innerHTML = ""
+    insert_dept_options_A('dept-fac_put_A')
+    modal[1].value = head[0].innerHTML
     modal[3].value = head[2].innerHTML
     modal[5].value = head[3].innerHTML
     modal[7].value = head[4].innerHTML
-    modal[11].value = head[5].innerHTML
-    modal[13].value = head[6].innerHTML
-    modal[9].value = head[7].innerHTML
+    modal[11].value = head[1].innerHTML
+    modal[14].checked = head[5].innerHTML == "✅"
+    modal[17].checked = head[6].innerHTML == "✅"
 }
 
 function insert_dept_options_A(ele_id) {
@@ -213,19 +146,14 @@ function insert_dept_options_A(ele_id) {
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             let data = JSON.parse(this.responseText)
-            console.log(data)
             deptSelect = document.getElementById(ele_id);
             let str = ""
-            str += `<option selected="selected" disabled="disabled" class="form-control">Department</option>`
+            str += '<option selected="selected" disabled="disabled" class="form-control">Department</option>'
             for (let i = 0; i < data.length; i++) {
-                str += `<option value="${data[i]['dept']}">${data[i]['dept']}</option>`
+                str += '<option value=\"'+data[i]['dept']+'\">'+data[i]['dept']+'</option>'
             }
             document.getElementById(ele_id).innerHTML = ""
             document.getElementById(ele_id).innerHTML += str
-
-            /*for(let i=0;i<data.length;i++)
-              deptSelect.options[deptSelect.options.length] = new Option(data[i].dept,data[i].dept);
-            */
         }
     }
     xhttp.open("GET", "/api/" + getCookie("username") + "/department", true);
@@ -235,8 +163,7 @@ function insert_dept_options_A(ele_id) {
     xhttp.send()
 }
 
-function student_post_Admin() {
-    console.log("entry")
+function faculty_post_Admin() {
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 201) {
@@ -244,25 +171,24 @@ function student_post_Admin() {
             var svg_tick = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check-circle-fill" fill="green" xmlns="http://www.w3.org/2000/svg">'
             svg_tick += '<path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>'
             svg_tick += '</svg>'
-            document.getElementById('student_post_svg_A').innerHTML = svg_tick
+            document.getElementById('faculty_post_svg_A').innerHTML = svg_tick
             var str = JSON.stringify(JSON.parse(this.responseText), null, 4);
             d = JSON.parse(str)
             str = "<b>" + d["detail"] + "</b>"
-            console.log(d["assumption"])
             if (d["assumption"])
                 for (let i = 0; i < d["assumption"].length; ++i) {
-                    console.log(d["assumption"][i])
+                
                     str += "<br>" + d["assumption"][i]["detail"] + "<br>"
                 }
-            document.getElementById('student_post_toast_admin_header').innerHTML = 'SUCCESS'
-            document.getElementById('student_post_toast_admin_body').innerHTML = str
-            $('#student_post_toast_admin').toast('show');
+            document.getElementById('faculty_post_toast_admin_header').innerHTML = 'SUCCESS'
+            document.getElementById('faculty_post_toast_admin_body').innerHTML = str
+            $('#faculty_post_toast_admin').toast('show');
         }
         else {
             var svg_cross = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle-fill" fill="red" xmlns="http://www.w3.org/2000/svg">'
             svg_cross += '<path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.146-3.146a.5.5 0 0 0-.708-.708L8 7.293 4.854 4.146a.5.5 0 1 0-.708.708L7.293 8l-3.147 3.146a.5.5 0 0 0 .708.708L8 8.707l3.146 3.147a.5.5 0 0 0 .708-.708L8.707 8l3.147-3.146z"/>'
             svg_cross += '</svg>'
-            document.getElementById('student_post_svg_A').innerHTML = svg_cross
+            document.getElementById('faculty_post_svg_A').innerHTML = svg_cross
             var str = JSON.stringify(JSON.parse(this.responseText), null, 4);
             d = JSON.parse(str)
             str = ''
@@ -275,35 +201,33 @@ function student_post_Admin() {
                         str += "<br>" + k[j] + ":" + d[i]["detail"][k[j]] + "<br>"
                 }
             }
-            document.getElementById('student_post_toast_admin_header').innerHTML = 'FAILURE'
-            document.getElementById('student_post_toast_admin_body').innerHTML = str
-            $('#student_post_toast_admin').toast('show');
-            console.log(JSON.stringify([jsonarray]))
+            document.getElementById('faculty_post_toast_admin_header').innerHTML = 'FAILURE'
+            document.getElementById('faculty_post_toast_admin_body').innerHTML = str
+            $('#faculty_post_toast_admin').toast('show');
         }
-        x = document.forms["stupost_A"].firstElementChild
+        x = document.forms["facpost_A"].firstElementChild
         while (x) {
             x.value = null
             x = x.nextElementSibling
         }
-        insert_dept_options_A('dept-stu_post_A')
-        student_refresh_A()
+        insert_dept_options_A('dept-fac_post_A')
+        faculty_refresh_A()
     }
     var jsonarray = {}
-    let arr = document.forms["stupost_A"].firstElementChild
+    let arr = document.forms["facpost_A"].firstElementChild
     while (arr) {
-        console.log(arr.value)
         if (arr.type != "checkbox" && arr.value)
             jsonarray[(arr.id).slice(0, arr.id.indexOf("-"))] = (arr.value == "null") ? null : (arr.value == "" ? null : arr.value)
         else if (arr.type == "checkbox")
             jsonarray[(arr.id).slice(0, arr.id.indexOf("-"))] = arr.checked
         arr = arr.nextElementSibling
+        console.log(arr)
     }
     refreshLoader(xhttp)
-    xhttp.open("POST", "/api/" + getCookie("username") + "/student/", true);
+    xhttp.open("POST", "/api/" + getCookie("username") + "/faculty/", true);
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
     xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     xhttp.send(JSON.stringify([jsonarray]));
 }
-
-admin_refresh = student_refresh_A
+admin_refresh = faculty_refresh_A

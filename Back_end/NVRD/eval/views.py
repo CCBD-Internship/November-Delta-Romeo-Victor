@@ -18,6 +18,7 @@ from django.utils import timezone
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 # from django.core import serializers
 from .models import Department
 from .models import Faculty
@@ -49,6 +50,7 @@ from .serializers import TeamFacultyReview_Serializer
 
 import json
 import datetime
+from NVRD.settings import SIMPLE_JWT
 
 # Create your views here.
 
@@ -78,6 +80,34 @@ def home(request, user):
         return response
 
 
+@login_required(login_url='')
+@ensure_csrf_cookie
+def refresh(request, user):
+    try:
+        if request.method == 'POST':
+            token = RefreshToken(request.POST.get("refresh"))
+            if(not token.check_exp(claim='exp', current_time=timezone.now()+SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'])):
+                response = HttpResponse()
+                response.set_cookie('token', str(
+                    token.access_token), expires=timezone.now()+datetime.timedelta(days=1))
+                return response
+            else:
+                return force_logoutUser(request)
+        else:
+            return force_logoutUser(request)
+    except:
+        return force_logoutUser(request)
+
+
+def force_logoutUser(request):
+    logout(request)
+    response = HttpResponse(status=308)
+    response.delete_cookie('token')
+    response.delete_cookie('refresh')
+    response.delete_cookie('username')
+    return response
+
+
 @ensure_csrf_cookie
 def loginpage(request):
     if request.user.is_authenticated:
@@ -95,8 +125,12 @@ def loginpage(request):
                 login(request, user,
                       backend='django.contrib.auth.backends.ModelBackend')
                 response = redirect('/'+username+'/home')
-                response.set_cookie('token', str(token.access_token))
-                response.set_cookie('username', username)
+                response.set_cookie('token', str(
+                    token.access_token), expires=timezone.now()+datetime.timedelta(days=1))
+                response.set_cookie('refresh', str(
+                    token), expires=timezone.now()+datetime.timedelta(days=100))
+                response.set_cookie(
+                    'username', username, expires=timezone.now()+datetime.timedelta(days=100))
                 return response
             return render(request, 'eval/login.html', context)
         return render(request, 'eval/login.html', context)
@@ -106,27 +140,108 @@ def logoutUser(request):
     logout(request)
     response = redirect('/')
     response.delete_cookie('token')
+    response.delete_cookie('refresh')
+    response.delete_cookie('username')
     return response
+
+@login_required(login_url='')
+def coordinator_teamHTML(request,panel_id , panel_year_code , user):
+    return render(request, "eval/containers/coordinator_team.html")
 
 
 @login_required(login_url='')
+def coordinator_teamJS(request, panel_id , panel_year_code , user):
+    return render(request, "eval/scripts/coordinator_team.js") 
+
+
+@login_required(login_url='')
+def coordinator_studentHTML(request, panel_id , panel_year_code, user):
+    return render(request, "eval/containers/coordinator_student.html")
+
+
+@login_required(login_url='')
+def coordinator_studentJS(request, panel_id , panel_year_code , user):
+    return render(request, "eval/scripts/coordinator_student.js")
+
+
+@login_required(login_url='')
+def admin_faculty_panelHTML(request, user):
+    return render(request, "eval/containers/admin_faculty_panel.html")
+
+
+@login_required(login_url='')
+def admin_faculty_panelJS(request, user):
+    return render(request, "eval/scripts/admin_faculty_panel.js")
+
+
+@login_required(login_url='')
+def admin_facultyHTML(request, user):
+    return render(request, "eval/containers/admin_faculty.html")
+
+
+@login_required(login_url='')
+def admin_facultyJS(request, user):
+    return render(request, "eval/scripts/admin_faculty.js")
+
+
+@login_required(login_url='')
+@ensure_csrf_cookie
 def indexpage(request, user):
     return render(request, "eval/main.html")
 
 
 @login_required(login_url='')
+@ensure_csrf_cookie
 def indexJS(request, user):
     return render(request, "eval/scripts/main.js")
 
 
 @login_required(login_url='')
+@ensure_csrf_cookie
 def admin_studentHTML(request, user):
     return render(request, "eval/containers/admin_student.html")
 
 
 @login_required(login_url='')
+@ensure_csrf_cookie
 def admin_studentJS(request, user):
     return render(request, "eval/scripts/admin_student.js")
+
+
+@login_required(login_url='')
+@ensure_csrf_cookie
+def admin_panelHTML(request, user):
+    return render(request, "eval/containers/admin_panel.html")
+
+
+@login_required(login_url='')
+@ensure_csrf_cookie
+def admin_panelJS(request, user):
+    return render(request, "eval/scripts/admin_panel.js")
+
+
+@login_required(login_url='')
+@ensure_csrf_cookie
+def admin_teamHTML(request, user):
+    return render(request, "eval/containers/admin_team.html")
+
+
+@login_required(login_url='')
+@ensure_csrf_cookie
+def admin_teamJS(request, user):
+    return render(request, "eval/scripts/admin_team.js")
+
+
+@login_required(login_url='')
+@ensure_csrf_cookie
+def admin_marks_viewHTML(request, user):
+    return render(request, "eval/containers/admin_marks_view.html")
+
+
+@login_required(login_url='')
+@ensure_csrf_cookie
+def admin_marks_viewJS(request, user):
+    return render(request, "eval/scripts/admin_marks_view.js")
 
 
 def add_one_panel(panel_year_code, serializer_list=None):
@@ -181,6 +296,13 @@ class Faculty_List(APIView):
                 if "fac_id" in request.GET:
                     faculty_as_object = faculty_as_object(
                         fac_id=request.GET.__getitem__('fac_id'))
+                if 'inactive' in request.GET:
+                    active_panels = Panel.objects.filter(is_active=True)
+                    active_faculty = FacultyPanel.objects.filter(
+                        panel_id__in=active_panels)
+                    included_facs = [i.fac_id.fac_id for i in active_faculty]
+                    faculty_as_object = faculty_as_object.exclude(
+                        fac_id__in=included_facs)
                 content = Faculty_Serializer(faculty_as_object, many=True)
                 return Response(content.data)
             else:
@@ -283,10 +405,10 @@ class FacultyPanel_List(APIView):
                             fac_id__startswith=request.GET['fac_id'])
                     if 'panel_year_code' in request.GET:
                         facultypanel_as_object = facultypanel_as_object.filter(
-                            panel_id__in=Panel.objects.filter(year_code__startswith=request.GET['panel_year_code']))
+                            panel_id__in=Panel.objects.filter(panel_year_code=request.GET['panel_year_code']))
                     if 'panel_id' in request.GET:
                         facultypanel_as_object = facultypanel_as_object.filter(
-                            panel_id__in=Panel.objects.filter(panel_id__startswith=request.GET['panel_id']))
+                            panel_id__in=Panel.objects.filter(panel_id=request.GET['panel_id']))
                     content = FacultyPanel_Serializer(
                         facultypanel_as_object, many=True)
                     response_list = []
@@ -506,16 +628,19 @@ class Panel_List(APIView):
                 # admin
                 if(Faculty.objects.get(fac_id=user).is_admin == True):
                     if(panel_id == None and panel_year_code == None):
-                        panel_as_object = Panel.objects.all()
+                        panel_as_object = Panel.objects.all().order_by("panel_id", "-panel_year_code")
                     else:
                         panel_as_object = Panel.objects.filter(
-                            panel_id=panel_id, panel_year_code=panel_year_code)
-                    if 'time' in request.GET:
-                        panel_as_object = panel_as_object.filter(
-                            ctime__gte=request.GET['time'])
+                            panel_id=panel_id, panel_year_code=panel_year_code).order_by("-ctime")
                     if 'active' in request.GET:
                         panel_as_object = panel_as_object.filter(
                             is_active=request.GET['active'])
+                    if("panel_year_code" in request.GET):
+                        panel_as_object = panel_as_object.filter(
+                            panel_year_code__startswith=request.GET["panel_year_code"])
+                    if("panel_id" in request.GET):
+                        panel_as_object = panel_as_object.filter(
+                            panel_id__startswith=request.GET["panel_id"])
                     content = Panel_Serializer(panel_as_object, many=True)
                     response_list = []
                     for i in content.data:
@@ -856,42 +981,42 @@ class Student_List(APIView):
 
     def delete(self, request, user, panel_year_code=None, panel_id=None):
         # try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
-                if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
-                    response_list = []
-                    serial_list = []
-                    for i in request.data:
-                        if("team_id" in i and i["team_id"] != None and "team_year_code" in i and i["team_year_code"] != None):
-                            t = Team.objects.filter(
-                                team_id=i["team_id"], team_year_code=i["team_year_code"])
-                            i.pop("team_year_code")
-                            if(t.exists()):
-                                i["team_id"] = t.first().id
-                            else:
-                                i["team_id"] = None
+        if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
+                response_list = []
+                serial_list = []
+                for i in request.data:
+                    if("team_id" in i and i["team_id"] != None and "team_year_code" in i and i["team_year_code"] != None):
+                        t = Team.objects.filter(
+                            team_id=i["team_id"], team_year_code=i["team_year_code"])
+                        i.pop("team_year_code")
+                        if(t.exists()):
+                            i["team_id"] = t.first().id
                         else:
                             i["team_id"] = None
-                        if(Student.objects.filter(srn=i["srn"]).exists()):
-                            serial = Student_Serializer(Student.objects.get(
-                                srn=i["srn"]), data=i, partial=True)
-                            if not serial.is_valid():
-                                response_list.append(
-                                    {"value": i, "detail": serial.errors})
-                            else:
-                                serial_list.append(serial)
-                        else:
-                            response_list.append(
-                                {"value": i, "detail": "student does not exist"})
-                    if(response_list == []):
-                        for i in request.data:
-                            Student.objects.get(srn=i["srn"]).delete()
-                        return Response({"detail": "delete successful"}, status=status.HTTP_202_ACCEPTED)
                     else:
-                        return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+                        i["team_id"] = None
+                    if(Student.objects.filter(srn=i["srn"]).exists()):
+                        serial = Student_Serializer(Student.objects.get(
+                            srn=i["srn"]), data=i, partial=True)
+                        if not serial.is_valid():
+                            response_list.append(
+                                {"value": i, "detail": serial.errors})
+                        else:
+                            serial_list.append(serial)
+                    else:
+                        response_list.append(
+                            {"value": i, "detail": "student does not exist"})
+                if(response_list == []):
+                    for i in request.data:
+                        Student.objects.get(srn=i["srn"]).delete()
+                    return Response({"detail": "delete successful"}, status=status.HTTP_202_ACCEPTED)
                 else:
-                    return Response({"detail": "only project administrator can delete"}, status=status.HTTP_403_FORBIDDEN)
+                    return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response(status=status.HTTP_403_FORBIDDEN)
+                return Response({"detail": "only project administrator can delete"}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            return Response(status=status.HTTP_403_FORBIDDEN)
         # except:
         #     return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -907,10 +1032,10 @@ class Team_List(APIView):
                 if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     if 'panel_year_code' in request.GET:
                         team_as_object = team_as_object.filter(
-                            panel_id__in=Panel.objects.filter(panel_year_code__starteswith=request.GET['panel_year_code']))
+                            panel_id__in=Panel.objects.filter(panel_year_code__startswith=request.GET['panel_year_code']))
                     if 'panel_id' in request.GET:
                         team_as_object = team_as_object.filter(
-                            panel_id__in=Panel.objects.filter(panel_id__starteswith=request.GET['panel_id']))
+                            panel_id__in=Panel.objects.filter(panel_id__startswith=request.GET['panel_id']))
                 elif(FacultyPanel.objects.filter(fac_id=user, panel_id=Panel.objects.filter(panel_year_code=panel_year_code, panel_id=panel_id).first()).exists()):
                     id = Panel.objects.filter(
                         panel_year_code=panel_year_code, panel_id=panel_id).first().id
@@ -961,7 +1086,7 @@ class Team_List(APIView):
                     for i in request.data:
                         i["team_id"] = add_one_team(
                             i["team_year_code"], serial_list)
-                        if("panel_id" in i and "panel_year_code" in i and "guide" in i and FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(is_active=True, panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]), fac_id=i["guide"]).exists()):
+                        if("panel_id" in i and "panel_year_code" in i and "guide" in i and i["panel_id"] != None and i["panel_year_code"] != None and FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(is_active=True, panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]), fac_id=i["guide"]).exists()):
                             p = FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(
                                 is_active=True, panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]), fac_id=i["guide"]).first().panel_id
                             i["panel_id"] = p.id
@@ -982,7 +1107,7 @@ class Team_List(APIView):
                     if(response_list == []):
                         for i in serial_list:
                             i.save()
-                        return Response({"detail": "insert successful", "assumtion": null_set_list}, status=status.HTTP_202_ACCEPTED)
+                        return Response({"detail": "insert successful", "assumption": null_set_list}, status=status.HTTP_202_ACCEPTED)
                     else:
                         response_list.extend(null_set_list)
                         return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
@@ -1001,7 +1126,7 @@ class Team_List(APIView):
                     serial_list = []
                     null_set_list = []
                     for i in request.data:
-                        if("panel_id" in i and "panel_year_code" in i and "guide" in i and FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(is_active=True, panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]), fac_id=i["guide"]).exists()):
+                        if("panel_id" in i and "panel_year_code" in i and "guide" in i and i["panel_id"] != None and i["panel_year_code"] != None and FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(is_active=True, panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]), fac_id=i["guide"]).exists()):
                             p = FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(
                                 is_active=True, panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]), fac_id=i["guide"]).first().panel_id
                             i["panel_id"] = p.id
@@ -1027,7 +1152,7 @@ class Team_List(APIView):
                     if(response_list == []):
                         for i in serial_list:
                             i.save()
-                        return Response({"detail": "update successful", "assumtion": null_set_list}, status=status.HTTP_202_ACCEPTED)
+                        return Response({"detail": "update successful", "assumption": null_set_list}, status=status.HTTP_202_ACCEPTED)
                     else:
                         response_list.extend(null_set_list)
                         return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
@@ -1278,8 +1403,9 @@ class Team_Student_CSV(APIView):
                 response_list = []
                 null_set_list = []
                 team_list = []
+                correct = []
                 for i in request.data:
-                    if("panel_id" in i and "panel_year_code" in i and "guide" in i and FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(is_active=True, panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]), fac_id=i["guide"]).exists()):
+                    if("panel_id" in i and "panel_year_code" in i and "guide" in i and i["panel_id"] != None and i["panel_year_code"] != None and FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(is_active=True, panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]), fac_id=i["guide"]).exists()):
                         p = FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(
                             is_active=True, panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]), fac_id=i["guide"]).first().panel_id
                         i["panel_id"] = p.id
@@ -1296,6 +1422,7 @@ class Team_Student_CSV(APIView):
                     team_list.append(team_data)
                     team_serial = Team_Serializer(data=team_data)
                     dept = i["dept"]
+                    t = None
                     if team_serial.is_valid():
                         team_serial.save()
                         t = Team.objects.filter(
@@ -1303,8 +1430,9 @@ class Team_Student_CSV(APIView):
                     else:
                         response_list.append(
                             {"value": i, "detail": team_serial.errors})
-                    correct = []
                     for k in i["student"]:
+                        if(t):
+                            k["team_id"] = t.id
                         k["dept"] = dept
                         student_serial = Student_Serializer(data=k)
                         if student_serial.is_valid():
@@ -1315,7 +1443,7 @@ class Team_Student_CSV(APIView):
                 if(response_list == []):
                     for i in correct:
                         i.save()
-                    return Response({"detail": "insert successful", "assumtion": null_set_list}, status=status.HTTP_201_CREATED)
+                    return Response({"detail": "insert successful", "assumption": null_set_list}, status=status.HTTP_201_CREATED)
                 else:
                     response_list.extend(null_set_list)
                     # delete teams
@@ -1334,6 +1462,7 @@ class Team_Student_CSV(APIView):
 class AboutMe_List(APIView):
 
     parser_classes = [JSONParser]
+
     def get(self, request, user):
         try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
@@ -1347,15 +1476,17 @@ class AboutMe_List(APIView):
                     i["is_active"] = p.is_active
                     i["panel_year_code"] = p.panel_year_code
                     i["panel_id"] = p.panel_id
-                    i["panel_name"]=p.panel_name
-                    i["ctime"]=p.ctime
-                l.sort(key=lambda x:x["ctime"],reverse=True)
+                    i["panel_name"] = p.panel_name
+                    i["ctime"] = p.ctime
+                l.sort(key=lambda x: x["ctime"], reverse=True)
                 res["panels"] = l
                 return Response(res, status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
 class TokenBlackList(APIView):
 
     parser_classes = [JSONParser]
@@ -1551,10 +1682,13 @@ class GeneralMarksView(APIView):
         try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
                 if(Faculty.objects.get(fac_id=user).is_admin == True):
-                    student_as_object = Student.objects.all()
+                    student_as_object = Student.objects.all().order_by("-srn")
                     if "srn" in request.GET:
                         student_as_object = student_as_object.filter(
                             srn__startswith=request.GET["srn"])
+                    if "name" in request.GET:
+                        student_as_object = student_as_object.filter(
+                            name__startswith=request.GET["name"])
                     # else:
                     #     return Response({"detail": "provide more detailed srn, too heavy for server"}, status=status.HTTP_400_BAD_REQUEST)
                     content = list(student_as_object.values())
@@ -1590,6 +1724,10 @@ class GeneralMarksView(APIView):
                                 for k in i["review"][j]:
                                     k.pop("id")
                                     k["fac_id"] = k.pop("fac_id_id")
+                                    fac = Faculty.objects.get(
+                                        fac_id=k["fac_id"])
+                                    k["fac_name"] = fac.name
+                                    k["fac_type"] = fac.fac_type
                                     k.pop("srn_id")
                         else:
                             i.pop("team_id_id")

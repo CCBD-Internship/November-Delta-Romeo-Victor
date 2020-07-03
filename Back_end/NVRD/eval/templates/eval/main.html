@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NVRD-PLogger</title>
-    <link rel="stylesheet" href="https://bootswatch.com/4/flatly/bootstrap.css">
+    <link rel="stylesheet" href="https://bootswatch.com/4/darkly/bootstrap.css">
     <script id='admin_JS'></script>
     <script id='coordinator_JS'></script>
     <script id='evaluator_JS'></script>
@@ -15,7 +15,14 @@
             xhttp.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
                     elem = returnCurrentJS()
+                    var id = elem.getAttribute("id")
+                    document.getElementsByTagName("head")[0].removeChild(elem)
+                    elem = document.createElement("script")
+                    elem.setAttribute('id', id)
                     elem.innerHTML = this.responseText;
+                    document.getElementsByTagName("head")[0].appendChild(elem)
+                    loadJSbool = true
+                    refresher()
                 }
             };
             xhttp.open("GET", url + 'JS/', true);
@@ -29,6 +36,7 @@
                 if (this.readyState == 4 && this.status == 200) {
                     elem = returnCurrentHTML()
                     elem.innerHTML = this.responseText;
+                    loadHTMLbool = true
                     refresher()
                 }
             };
@@ -38,8 +46,8 @@
             xhttp.send();
         }
         var Tree = { "Admin": [], "Coordinator": [], "Evaluator": [] }
-        var evalview = { "Review 1": { "Team": [] }, "Review 2": { "Team": [] }, "Review 3": { "Team": [] }, "Review 4": { "Team": [] }, "Review 5": { "Team": [] }, "Team": [], "Student": [], "Faculty-Panel": [] }
-        var coordview = { "Faculty-Panel": [], "Team-Faculty-Review": [] }
+        var evalview = { "Review-1": { "Team": [] }, "Review-2": { "Team": [] }, "Review-3": { "Team": [] }, "Review-4": { "Team": [] }, "Review-5": { "Team": [] }, "Team": [], "Student": [], "Faculty-Panel": [] }
+        var coordview = { "Faculty-Panel": [], "Team-Faculty-Review": [] , "Team":[],"Student":[]}
         var adminview = { "Faculty": [], "Panel": [], "Faculty-panel": [], "Team": [], "Student": [], "Marks-View": [] }
         var User;
         var Panels;
@@ -47,6 +55,8 @@
         var Coordinator_BC = []
         var Evaluator_BC = []
         var currenttab;
+        var loadJSbool = false
+        var loadHTMLbool = false
         function returnCurrentHTML() {
             var lst = NaN
             if (currenttab == "Admin")
@@ -78,14 +88,19 @@
             return lst;
         }
         function refresher() {
-            if (currenttab == "Admin") {
-                admin_refresh()
-            }
-            else if (currenttab == "Coordinator") {
-                coordinator_refresh()
-            }
-            else if (currenttab == "Evaluator") {
-                evaluator_refresh()
+            if (loadJSbool == true && loadHTMLbool == true) {
+
+                if (currenttab == "Admin") {
+                    admin_refresh()
+                }
+                else if (currenttab == "Coordinator") {
+                    coordinator_refresh()
+                }
+                else if (currenttab == "Evaluator") {
+                    evaluator_refresh()
+                }
+                loadJSbool = false
+                loadHTMLbool = false
             }
         }
         function refreshLoader(xhttp) {
@@ -123,15 +138,24 @@
                 for (let i = 0; i < spl.length; i++) {
                     lst.push(spl[i])
                 }
+                NVRDnavbar = document.getElementById('NVRDnavbar').children;
+                for (let i = 0; i < NVRDnavbar.length; i++) {
+                    if (currenttab == NVRDnavbar[i].innerHTML) {
+                        NVRDnavbar[i].setAttribute('class', 'nav-item nav-link active')
+                    }
+                    else {
+                        NVRDnavbar[i].setAttribute('class', 'nav-item nav-link')
+                    }
+                }
                 crumbMaker()
             }
         }
         function cardMaker(panel_id, panel_name, is_active, ctime) {
             var color
             if (is_active)
-                color = 'bg-info'
+                color = 'bg-success'
             else
-                color = 'bg-secondary'
+                color = 'bg-danger'
             str = '<div class="col mb-4"><div class="card ' + color + ' onclick="crumbPusher()"><div class="card-header">' + panel_id + '</div><div class="card-body"><h5 class="card-title">' + panel_name + '</h5><p>' + ctime + '</p></div></div></div>'
             return str
         }
@@ -151,7 +175,26 @@
             document.getElementById("fac_info").innerHTML = str
         }
 
+        function refreshToken() {
+            var xhttp = new XMLHttpRequest()
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+                    console.log("Logged-In")
+                }
+                else if (this.status == 308) {
+                    window.location.replace('/logout/')
+                }
+            }
+            xhttp.open("POST", '/' + getCookie("username") + "/refresh/", true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+            xhttp.setRequestHeader("sessionid", getCookie("sessionid"));
+            xhttp.send("refresh=" + getCookie("refresh"))
+        }
+
         function setTree() {
+            refreshToken()
+            setInterval(refreshToken, 1000 * 3600);
             var xhttp = new XMLHttpRequest()
             xhttp.onreadystatechange = function () {
                 if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
@@ -222,24 +265,30 @@
             len = lst.length
             for (let i = ind + 1; i < len; i++)
                 lst.pop()
+            loadJS(urlGenerate())
+            loadHTML(urlGenerate())
             crumbMaker()
         }
         function crumbPusher(e) {
-            console.log('hi', e.target.getAttribute('class'))
             lst = returnCurrentList()
             if (e.target.getAttribute('class') == "card-body" || e.target.getAttribute('class') == "card-header") {
                 lst.push(e.target.parentNode.firstChild.innerHTML)
+                loadJS(urlGenerate())
+                loadHTML(urlGenerate())
                 crumbMaker()
             }
             else if (e.target.getAttribute('class') == "card-title") {
                 lst.push(e.target.parentNode.parentNode.firstChild.innerHTML)
+                loadJS(urlGenerate())
+                loadHTML(urlGenerate())
                 crumbMaker()
             }
             else if (e.target.getAttribute('class') == "list-group-item list-group-item-action") {
                 lst.push(e.target.innerHTML)
+                loadJS(urlGenerate())
+                loadHTML(urlGenerate())
                 crumbMaker()
             }
-
         }
         function returnPanel(val) {
             for (let i = 0; i < Panels.length; i++) {
@@ -301,8 +350,6 @@
                 document.getElementById('NVRDlist').setAttribute('style', 'display:none')
                 document.getElementById('NVRDpanelcard').setAttribute('style', 'display:none')
                 returnCurrentHTML().setAttribute('style', 'display:inline')
-                loadJS(urlGenerate())
-                loadHTML(urlGenerate())
             }
         }
         function urlGenerate() {
@@ -365,10 +412,42 @@
             }
             return "";
         }
+
+        function checkerInit(main_id, check_name) {
+            document.getElementById(main_id).addEventListener('click', function (e) {
+                var checkboxes = document.getElementsByName(check_name);
+                if (e.target.checked)
+                    for (var i = 0; i < checkboxes.length; i++)
+                        checkboxes[i].checked = true
+                else
+                    for (var i = 0; i < checkboxes.length; i++)
+                        checkboxes[i].checked = false
+            })
+            checks = document.getElementsByName(check_name)
+            for (let i = 0; i < checks.length; i++) {
+                checks[i].addEventListener("click", function (e) {
+                    if (!e.target.checked) {
+                        document.getElementById(main_id).checked = false
+                    }
+                    else if (e.target.checked) {
+                        var flag = true
+                        var elem = document.getElementsByName(e.target.name)
+                        for (let i = 0; i < elem.length; i++) {
+                            if (elem[i].checked == false) {
+                                flag = false
+                            }
+                        }
+                        if (flag) {
+                            document.getElementById(main_id).checked = true
+                        }
+                    }
+                })
+            }
+        }
     </script>
 </head>
 
-<body onload="setTree()">
+<body onload="setTree()" style="cursor:pointer">
     <div class="sticky-top">
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
             <a class="navbar-brand" href="#">NVRD</a>
@@ -417,7 +496,7 @@
  <button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button>
  <button type="button" class="list-group-item list-group-item-action" disabled>Vestibulum at eros</button> -->
     </div>
-    <div id="NVRDpanelcard">
+    <div style="max-width: 100%" id="NVRDpanelcard">
 
         <!-- <div class="col mb-4">
  <div class="card">
