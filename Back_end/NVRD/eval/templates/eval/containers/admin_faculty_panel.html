@@ -35,7 +35,7 @@
                 <table id="table" class="table table-striped">
                     <thead>
                         <tr>
-                            <th scope="col" style="text-align:right"><input id="fac_panel_boxes_main_A" class="form-check-input position-static" type="checkbox" name="fac_panel_boxes_main_A" onclick="setCheckedBoxes_A(event)"/></th>
+                            <th scope="col" style="text-align:right"><input id="fac_panel_boxes_main_A" class="form-check-input position-static" type="checkbox" name="fac_panel_boxes_main_A"/></th>
                             <th scope="col">Faculty ID</th>
                             <th scope="col">Name</th>
                             <th scope="col">Email</th>
@@ -87,7 +87,7 @@
             <form id="facpanel_post_A" onsubmit="event.preventDefault()">
 
               <label for="recipient-name" class="col-form-label">Faculty Id</label>
-              <select id="faclist-facpanel_A"></select><br>
+              <select id="faclist-facpanel_A" class="form-control"></select><br>
               <label for="recipient-name" class="col-form-label">Is Coordinator</label>
               <input type="checkbox" placeholder="team_id" id="isfac_activeforpanel">
               <br>
@@ -116,7 +116,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h3 style="text-align: center;" class="modal-title" id="fac_panel_put_A">Edit Co-ordinator </h3>
+          <h3 style="text-align: center;" class="modal-title" id="fac_panel_put_A"></h3>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
