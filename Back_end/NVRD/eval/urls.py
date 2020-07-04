@@ -56,7 +56,7 @@ urlpatterns = [
          views.GenerateFacultyPanel.as_view()),
     path('', views.loginpage),
     path('logout/', views.logoutUser, name="logout"),
-    path('<str:user>/refresh/', views.refresh)
+    path('<str:user>/refresh/', views.refresh),
     #     path('api/<str:user>/<int:panel>/<str:type>/team/',
     #          views.Team_List.as_view(), name='index'),
     #     path('api/<str:user>/team/', views.Team_List.as_view(), name='index'),
@@ -65,7 +65,7 @@ urlpatterns = [
     #     path('api/faculty/', views.Faculty_List.as_view(), name='index'),
     #     path('api/marks/', views.marks.as_view(), name='index'),
     # path('api/Blacklist/', views.TokenBlackList.as_view())
-
+     path('admin/',admin.site.urls)
 ]
 
 # frontend HTML
@@ -74,6 +74,8 @@ urlpatterns += [
          views.coordinator_teamHTML),
     path('<str:user>/home/coordinator/<str:panel_year_code>-<str:panel_id>/student/HTML/',
          views.coordinator_studentHTML),
+    path('<str:user>/home/coordinator/<str:panel_year_code>-<str:panel_id>/team-faculty-review/HTML/',
+         views.coordinator_team_faculty_reviewHTML),
     path('<str:user>/home/', views.indexpage),
     path('<str:user>/home/admin/faculty/HTML/', views.admin_facultyHTML),
     path('<str:user>/home/admin/faculty-panel/HTML/',
@@ -82,6 +84,7 @@ urlpatterns += [
     path('<str:user>/home/admin/team/HTML/', views.admin_teamHTML),
     path('<str:user>/home/admin/marks-view/HTML/', views.admin_marks_viewHTML),
     path('<str:user>/home/admin/panel/HTML/', views.admin_panelHTML),
+
 ]
 
 # frontend JS
@@ -90,6 +93,9 @@ urlpatterns += [
          views.coordinator_teamJS),
     path('<str:user>/home/coordinator/<str:panel_year_code>-<str:panel_id>/student/JS/',
          views.coordinator_studentJS),
+     path('<str:user>/home/coordinator/<str:panel_year_code>-<str:panel_id>/team-faculty-review/JS/',
+         views.coordinator_team_faculty_reviewJS),
+
     path('<str:user>/home/admin/faculty/JS/', views.admin_facultyJS),
     path('<str:user>/home/admin/faculty-panel/JS/', views.admin_faculty_panelJS),
     path('<str:user>/home/admin/student/JS/', views.admin_studentJS),

@@ -144,23 +144,34 @@ def logoutUser(request):
     response.delete_cookie('username')
     return response
 
+
 @login_required(login_url='')
-def coordinator_teamHTML(request,panel_id , panel_year_code , user):
+def coordinator_teamHTML(request, panel_id, panel_year_code, user):
     return render(request, "eval/containers/coordinator_team.html")
 
 
 @login_required(login_url='')
-def coordinator_teamJS(request, panel_id , panel_year_code , user):
-    return render(request, "eval/scripts/coordinator_team.js") 
+def coordinator_teamJS(request, panel_id, panel_year_code, user):
+    return render(request, "eval/scripts/coordinator_team.js")
 
 
 @login_required(login_url='')
-def coordinator_studentHTML(request, panel_id , panel_year_code, user):
+def coordinator_team_faculty_reviewHTML(request, panel_id, panel_year_code, user):
+    return render(request, "eval/containers/coordinator_team_faculty_review.html")
+
+
+@login_required(login_url='')
+def coordinator_team_faculty_reviewJS(request, panel_id, panel_year_code, user):
+    return render(request, "eval/scripts/coordinator_team_faculty_review.js")
+
+
+@login_required(login_url='')
+def coordinator_studentHTML(request, panel_id, panel_year_code, user):
     return render(request, "eval/containers/coordinator_student.html")
 
 
 @login_required(login_url='')
-def coordinator_studentJS(request, panel_id , panel_year_code , user):
+def coordinator_studentJS(request, panel_id, panel_year_code, user):
     return render(request, "eval/scripts/coordinator_student.js")
 
 
@@ -1220,6 +1231,9 @@ class TeamFacultyReview_List(APIView):
                     t = Team.objects.get(id=i.pop("team_id_id"))
                     i["team_id"] = t.team_id
                     i["team_year_code"] = t.team_year_code
+                    fac_d = Faculty.objects.filter(fac_id=i["fac_id"]).first()
+                    i["fac_name"] = fac_d.name
+                    i["fac_email"] = fac_d.email
                 return Response(res, status=status.HTTP_200_OK)
             else:
                 return Response({"detail": "Only Coordinator has Permission To View This Page"},
@@ -1236,28 +1250,33 @@ class TeamFacultyReview_List(APIView):
                     p_id = Panel.objects.filter(
                         panel_id=panel_id, panel_year_code=panel_year_code).first().id
                     if FacultyPanel.objects.filter(fac_id=user, panel_id=p_id).first().is_coordinator == True:
-                        if Team.objects.filter(team_year_code=i["team_year_code"], team_id=i["team_id"]).first().guide.fac_id in i["fac_id"]:
-                            if Team.objects.filter(team_year_code=i["team_year_code"], team_id=i["team_id"], panel_id=p_id).exists():
-                                for teach in i["fac_id"]:
-                                    if FacultyPanel.objects.filter(panel_id=p_id, fac_id=teach).exists():
-                                        t_id = Team.objects.filter(
-                                            team_year_code=i["team_year_code"], team_id=i["team_id"]).first()
-                                        row = TeamFacultyReview_Serializer(data={"team_id": t_id.id, "fac_id": teach, "review_number": i["review_number"],
-                                                                                 "remarks": "Unreviewed", "id": str(i["team_year_code"])+'_'+str(i["team_id"])+'_'+str(teach)+'_'+str(i["review_number"])})
-                                        if row.is_valid():
-                                            accept.append(row)
-                                        else:
-                                            fail.append(
-                                                {"value": i, "detail": row.errors})
+                        if Team.objects.filter(team_year_code=i["team_year_code"], team_id=i["team_id"], panel_id=p_id).exists():
+                            g_fid = Team.objects.filter(
+                                team_year_code=i["team_year_code"], team_id=i["team_id"]).first().guide.fac_id
+                            t_id = Team.objects.filter(
+                                team_year_code=i["team_year_code"], team_id=i["team_id"], panel_id=p_id).team_id
+                            if TeamFacultyReview.objects.filter(team_id=t_id, fac_id=g_id).exists() or g_id == i["fac_id"]:
+                                teach = i["fac_id"]
+                                if FacultyPanel.objects.filter(panel_id=p_id, fac_id=teach).exists():
+                                    t_id = Team.objects.filter(
+                                        team_year_code=i["team_year_code"], team_id=i["team_id"]).first()
+                                    row = TeamFacultyReview_Serializer(data={"team_id": t_id.id, "fac_id": teach, "review_number": i["review_number"],
+                                                                             "remarks": "Unreviewed", "id": str(i["team_year_code"])+'_'+str(i["team_id"])+'_'+str(teach)+'_'+str(i["review_number"])})
+                                    if row.is_valid():
+                                        accept.append(row)
                                     else:
                                         fail.append(
-                                            {"value": i, "detail": "team is not present in the panel"})
+                                            {"value": i, "detail": row.errors})
+                                else:
+                                    fail.append(
+                                        {"value": i, "detail": "team is not present in the panel"})
                             else:
                                 fail.append(
-                                    {"value": i, "detail": "team is not present in the panel"})
+                                    {"value": i, "detail": "guide is not present in faculty_list"})
                         else:
                             fail.append(
-                                {"value": i, "detail": "guide is not present in faculty_list"})
+                                {"value": i, "detail": "team is not present in the panel"})
+
                     else:
                         fail.append(
                             {"value": i, "detail": "user is not the panel coordinator"})

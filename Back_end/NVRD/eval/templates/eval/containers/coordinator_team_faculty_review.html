@@ -1,0 +1,259 @@
+<div id="NVRD_coord_team_fac_review_card">
+  <!-- cards -->
+</div>
+
+<!-- modal that opens on clicking a team -->
+<div class="modal fade bd-example-modal-xl" id="C_TFR_modal" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <!-- x button -->
+      <div class="modal-header">
+        <h3 style="text-align: center;" class="modal-title" id="C_TFR_modal_title"></h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <!-- accordian -->
+      <div class="modal-body">
+        <div class="accordion" id="C_TFR_accordian">
+          <!-- 1 -->
+          <div class="card" id="C_TFR_R1">
+            <div class="card-header" id="C_TFR_Review1_card">
+              <h2 class="mb-0">
+                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#review_collapseOne"
+                  aria-expanded="false" aria-controls="review_collapseOne">
+                  <b>
+                    <h4>Review #1</h4>
+                      <button type="button" class="btn btn-warning active float-right" data-toggle="modal"
+                        data-target="#faculty-panelPostModal_A" onclick="AddC_TFR_A()"><svg width="1em" height="1em"
+                          viewBox="0 0 16 16" class="bi bi-plus-square-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                          <path fill-rule="evenodd"
+                            d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4a.5.5 0 0 0-1 0v3.5H4a.5.5 0 0 0 0 1h3.5V12a.5.5 0 0 0 1 0V8.5H12a.5.5 0 0 0 0-1H8.5V4z" />
+                        </svg>
+                      </button>
+                  </b>
+                </button>
+              </h2>
+              
+
+            </div>
+
+            <div id="review_collapseOne" class="collapse" aria-labelledby="C_TFR_Review1_card"
+              data-parent="#C_TFR_accordian">
+              <div class="card-body" id="C_TFR_R1_table">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col">Faculty Id</th>
+                      <th scope="col">Faculty Name</th>
+                      <th scope="col">Faculty email</th>
+                      <th scope="col"></th>
+                  </tr>
+                  </thead>
+                  <tbody id="C_TFR_R1_tbody">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <!-- 2 -->
+          <div class="card" id="C_TFR_R2">
+            <div class="card-header" id="C_TFR_Review2_card">
+              <h2 class="mb-0">
+                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#review_collapseTwo"
+                  aria-expanded="false" aria-controls="review_collapseTwo">
+                  <b>
+                    <h4>Review #2</h4>
+                    <button type="button" class="btn btn-warning active float-right" data-toggle="modal"
+                        data-target="#faculty-panelPostModal_A" onclick="AddC_TFR_A()"><svg width="1em" height="1em"
+                          viewBox="0 0 16 16" class="bi bi-plus-square-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                          <path fill-rule="evenodd"
+                            d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4a.5.5 0 0 0-1 0v3.5H4a.5.5 0 0 0 0 1h3.5V12a.5.5 0 0 0 1 0V8.5H12a.5.5 0 0 0 0-1H8.5V4z" />
+                        </svg>
+                      </button>
+                  </b>
+                </button>
+              </h2>
+            </div>
+
+            <div id="review_collapseTwo" class="collapse" aria-labelledby="C_TFR_Review2_card"
+              data-parent="#C_TFR_accordian">
+              <div class="card-body" id="C_TFR_R2_table">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col">Faculty Id</th>
+                      <th scope="col">Faculty Name</th>
+                      <th scope="col">Faculty email</th>
+                      <th scope="col"></th>
+                  </tr>
+                  </thead>
+                  <tbody id="C_TFR_R2_tbody">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <!-- 3 -->
+          <div class="card" id="C_TFR_R3">
+            <div class="card-header" id="C_TFR_Review3_card">
+              <h2 class="mb-0">
+                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#review_collapseThree"
+                  aria-expanded="false" aria-controls="review_collapseThree">
+                  <b>
+                    <h4>Review #3</h4>
+                    <button type="button" class="btn btn-warning active float-right" data-toggle="modal"
+                        data-target="#faculty-panelPostModal_A" onclick="AddC_TFR_A()"><svg width="1em" height="1em"
+                          viewBox="0 0 16 16" class="bi bi-plus-square-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                          <path fill-rule="evenodd"
+                            d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4a.5.5 0 0 0-1 0v3.5H4a.5.5 0 0 0 0 1h3.5V12a.5.5 0 0 0 1 0V8.5H12a.5.5 0 0 0 0-1H8.5V4z" />
+                        </svg>
+                      </button>
+                  </b>
+                </button>
+              </h2>
+            </div>
+
+            <div id="review_collapseThree" class="collapse" aria-labelledby="C_TFR_Review3_card"
+              data-parent="#C_TFR_accordian">
+              <div class="card-body" id="C_TFR_R3_table">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col">Faculty Id</th>
+                      <th scope="col">Faculty Name</th>
+                      <th scope="col">Faculty email</th>
+                      <th scope="col"></th>
+                  </tr>
+                  </thead>
+                  <tbody id="C_TFR_R3_tbody">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <!-- 4 -->
+          <div class="card" id="C_TFR_R4">
+            <div class="card-header" id="C_TFR_Review4_card">
+              <h2 class="mb-0">
+                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#review_collapseFour"
+                  aria-expanded="false" aria-controls="review_collapseFour">
+                  <b>
+                    <h4>Review #4</h4>
+                    <button type="button" class="btn btn-warning active float-right" data-toggle="modal"
+                        data-target="#faculty-panelPostModal_A" onclick="AddC_TFR_A()"><svg width="1em" height="1em"
+                          viewBox="0 0 16 16" class="bi bi-plus-square-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                          <path fill-rule="evenodd"
+                            d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4a.5.5 0 0 0-1 0v3.5H4a.5.5 0 0 0 0 1h3.5V12a.5.5 0 0 0 1 0V8.5H12a.5.5 0 0 0 0-1H8.5V4z" />
+                        </svg>
+                      </button>
+                  </b>
+                </button>
+              </h2>
+            </div>
+
+            <div id="review_collapseFour" class="collapse" aria-labelledby="C_TFR_Review4_card"
+              data-parent="#C_TFR_accordian">
+              <div class="card-body" id="C_TFR_R4_table">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col">Faculty Id</th>
+                      <th scope="col">Faculty Name</th>
+                      <th scope="col">Faculty email</th>
+                      <th scope="col"></th>
+                  </tr>
+                  </thead>
+                  <tbody id="C_TFR_R4_tbody">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <!-- 5 -->
+          <div class="card" id="C_TFR_R5">
+            <div class="card-header" id="C_TFR_Review5_card">
+              <h2 class="mb-0">
+                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#review_collapseFive"
+                  aria-expanded="false" aria-controls="review_collapseFive">
+                  <b>
+                    <h4>Review #5</h4>
+                    <button type="button" class="btn btn-warning active float-right" data-toggle="modal"
+                        data-target="#faculty-panelPostModal_A" onclick="AddC_TFR_A()"><svg width="1em" height="1em"
+                          viewBox="0 0 16 16" class="bi bi-plus-square-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                          <path fill-rule="evenodd"
+                            d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4a.5.5 0 0 0-1 0v3.5H4a.5.5 0 0 0 0 1h3.5V12a.5.5 0 0 0 1 0V8.5H12a.5.5 0 0 0 0-1H8.5V4z" />
+                        </svg>
+                      </button> 
+                  </b>
+                </button>
+              </h2>
+            </div>
+
+            <div id="review_collapseFive" class="collapse" aria-labelledby="C_TFR_Review5_card"
+              data-parent="#C_TFR_accordian">
+              <div class="card-body" id="C_TFR_R5_table">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col">Faculty Id</th>
+                      <th scope="col">Faculty Name</th>
+                      <th scope="col">Faculty email</th>
+                      <th scope="col"></th>
+                  </tr>
+                  </thead>
+                  <tbody id="C_TFR_R5_tbody">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- modal to confirm delete of fac -->
+  <div class="modal" id="C_TFR_DeleteModal" style="display: none; z-index: 1050;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body" id="A_fac_panel_DeleteconfirmMessage">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default " id="A_fac_panel_DeleteconfirmOk">DELETE</button>
+          <button type="button" class="btn btn-default" id="A_fac_panel_DeleteconfirmCancel">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- modal for insert a fac -->
+  <div class="modal fade" id="C_TFR_PostModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 style="text-align: center;" class="modal-title" id="exampleModalLabel_A">Add Faculty to review this team
+          </h3>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <form id="C_TFR_post" onsubmit="event.preventDefault()">
+              <label for="recipient-name" class="col-form-label">Faculty Id</label>
+              <select id="faclist-C_TFR" class="form-control"></select>
+              <br><br>
+              <button type="button" class="btn btn-primary" id="C_TFR_postsave" onclick="C_TFR_post(event,this)">Add
+                Faculty</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
