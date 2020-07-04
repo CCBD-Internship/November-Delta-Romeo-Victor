@@ -1272,7 +1272,7 @@ class TeamFacultyReview_List(APIView):
                                         {"value": i, "detail": "team is not present in the panel"})
                             else:
                                 fail.append(
-                                    {"value": i, "detail": "guide is not present in faculty_list"})
+                                    {"value": i, "detail": "guide is not present in faculty:+"str(g_fid)})
                         else:
                             fail.append(
                                 {"value": i, "detail": "team is not present in the panel"})
