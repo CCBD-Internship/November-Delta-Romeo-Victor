@@ -117,7 +117,7 @@ function PRC_display_status(e) {
         elem.textContent = "Evaluation window opens on " + open_time.toLocaleDateString() + " at " + open_time.toLocaleTimeString()
     }
     else if (now.getTime() > open_time.getTime() && now.getTime() < close_time.getTime()) {
-        elem.textContent = "Evaluation window is open now!! shall close in approximately " + diff_hours(close_time, now)[0] + " hours " + diff_hours(close_time, now)[1] + " minutes"
+        elem.textContent = "Evaluation window is open now!! shall close in approximately " + diff_hours(close_time, now)[0]+" days "+diff_hours(close_time, now)[1] + " hours " + diff_hours(close_time, now)[2] + " minutes"
     }
     else {
         elem.textContent = "Evaluation window was closed on " + close_time.toLocaleDateString() + " at " + close_time.toLocaleTimeString()
@@ -127,9 +127,11 @@ function PRC_display_status(e) {
 function diff_hours(dt2, dt1) {
 
     var diff = (dt2.getTime() - dt1.getTime()) / 1000;
-    hour = diff/(60 * 60);
+    var days=diff/(24*60*60)
+    diff%=(24*60*60)
+    var hour = diff/(60 * 60);
     diff %= (60*60);
-    minute = diff/60;
-    return [Math.floor(hour),Math.abs(Math.round(minute))];
+    var minute = diff/60;
+    return [Math.floor(days),Math.floor(hour),Math.abs(Math.round(minute))];
 
 }

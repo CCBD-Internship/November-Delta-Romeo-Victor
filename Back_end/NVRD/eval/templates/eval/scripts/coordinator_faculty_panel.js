@@ -1,4 +1,4 @@
- function facpanel_refresh_coordinator() {
+function facpanel_refresh_coordinator() {
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
@@ -9,54 +9,58 @@
             svgstr += '<path fill-rule="evenodd" d="M12.146 6.354l-2.5-2.5.708-.708 2.5 2.5-.707.708zM3 10v.5a.5.5 0 0 0 .5.5H4v.5a.5.5 0 0 0 .5.5H5v.5a.5.5 0 0 0 .5.5H6v-1.5a.5.5 0 0 0-.5-.5H5v-.5a.5.5 0 0 0-.5-.5H3z"/>'
             svgstr += '</svg>'
             for (let i in data) {
-                for (let j of ["fac_id", "name","phone","email","is_coordinator"])
-                    str += ("<td>" + (typeof(data[i][j])!="boolean"?data[i][j]:data[i][j]?'&#9989;':'&#10060;') + "</td>")
+                for (let j of ["fac_id", "name", "phone", "email", "is_coordinator"])
+                    str += ("<td>" + (typeof (data[i][j]) != "boolean" ? data[i][j] : data[i][j] ? '&#9989;' : '&#10060;') + "</td>")
                 str += '<td scope="col"><button type="button" class="btn btn-dark active btn" data-toggle="modal" data-target="#coord_faculty_panel_put" onclick="coord_faculty_panel_put_form(this)">' + svgstr + '</button></td></tr>'
             }
             document.getElementById("faculty_panel_body_C").innerHTML = str
         }
     }
+    refreshLoader(xhttp)
     var curr_list = returnCurrentList()
     var p_year_code = curr_list[1].slice(0, curr_list[1].indexOf("-"))
     var p_id = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
-    refreshLoader(xhttp)
-    var url = "/api/" + getCookie("username") + "/faculty-panel/?panel_id=" + p_id + "&panel_year_code=" + p_year_code;
-    xhttp.open("GET",url, true);
+    var url = '/api/' + getCookie("username") + '/' + p_year_code + '-' + p_id + '/' + 'faculty-panel/';
+    xhttp.open("GET", url, true);
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     xhttp.send();
 }
-function coord_faculty_panel_put_form(t){
-	var req=t.parentNode.parentNode.childNodes
-	$("#fac_panel_put_C").html("Make "+req[0].innerHTML+" Coordinator ?")
-	var putform=document.getElementById("coord_faculty_panel_details_put").childNodes
+function coord_faculty_panel_put_form(t) {
+    var req = t.parentNode.parentNode.childNodes
+    $("#fac_panel_put_C").html("Make " + req[0].innerHTML + " Coordinator ?")
+    var putform = document.getElementById("coord_faculty_panel_details_put").childNodes
 
-	for(let ele of putform)
-		if(ele.type=="checkbox"){
-			ele.checked=(req[4].innerHTML=="✅"?true:false)
-			break
-		}
+    for (let ele of putform)
+        if (ele.type == "checkbox") {
+            ele.checked = (req[4].innerHTML == "✅" ? true : false)
+            break
+        }
 }
-function coord_faculty_panel_put(t){
-	var curr_list = returnCurrentList()
+function coord_faculty_panel_put(t) {
+    var curr_list = returnCurrentList()
     var pyc = curr_list[1].slice(0, curr_list[1].indexOf("-"))
     var pid = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
- 	var fac=document.getElementById("fac_panel_put_C").innerHTML.split(" ")[1]   
- 	var jsonarray = { "panel_year_code": pyc, "panel_id": pid, "fac_id": fac }
-	for(let ele of t.parentNode.childNodes){
-		if(ele.type=="checkbox"){
-			jsonarray["is_coordinator"]=ele.checked
-		}
-	}
+    var fac = document.getElementById("fac_panel_put_C").innerHTML.split(" ")[1]
+    var jsonarray = { "panel_year_code": pyc, "panel_id": pid, "fac_id": fac }
+    for (let ele of t.parentNode.childNodes) {
+        if (ele.type == "checkbox") {
+            jsonarray["is_coordinator"] = ele.checked
+        }
+    }
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 201) {
-        	setTimeout(()=>{$("#coord_faculty_panel_put").modal("hide")},2000)
-        	facpanel_refresh_coordinator()
+            setTimeout(() => { $("#coord_faculty_panel_put").modal("hide") }, 2000)
+            facpanel_refresh_coordinator()
         }
     }
     refreshLoader(xhttp)
-    xhttp.open("PUT", "/api/" + getCookie("username") + "/faculty-panel/", true);
+    var curr_list = returnCurrentList()
+    var p_year_code = curr_list[1].slice(0, curr_list[1].indexOf("-"))
+    var p_id = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
+    var url = '/api/' + getCookie("username") + '/' + p_year_code + '-' + p_id + '/' + 'faculty-panel/';
+    xhttp.open("PUT", url, true);
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
     xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));

@@ -21,7 +21,7 @@ function marks_view_refresh_A() {
             for (i = 0; i < tbody.children.length; i++) {
                 tbody.children[i].addEventListener('click', marks_view_modal_A)
             }
-            checkerInit("marks_view_boxes_main_A","marks_view_boxes_A")
+            checkerInit("marks_view_boxes_main_A", "marks_view_boxes_A")
         }
     }
     refreshLoader(xhttp)
@@ -52,7 +52,7 @@ function marks_view_search_A() {
             for (i = 0; i < tbody.children.length; i++) {
                 tbody.children[i].addEventListener('click', marks_view_modal_A)
             }
-            checkerInit("marks_view_boxes_main_A","marks_view_boxes_A")
+            checkerInit("marks_view_boxes_main_A", "marks_view_boxes_A")
         }
     }
     refreshLoader(xhttp)
@@ -86,33 +86,35 @@ function marks_view_elem_A(x) {
 }
 var val;
 function marks_view_modal_A(e) {
-    val = marks_view_elem_A(e.target.parentElement.children[1].innerHTML)
-    document.getElementById("marks_modal_A_title").innerHTML = val["srn"]
-    document.getElementById("marks_modal_A_subtitle").innerHTML = val["name"]
-    for (var i = 1; i <= 5; i++) {
-        var tbody = document.getElementById("marks_view_body_A_Review" + i.toString())
-        var ctitle = document.getElementById("Card_A_Title_Review" + i.toString())
-        var str = ''
-        if (i in val["review"]) {
-            ctitle.setAttribute('class', 'btn btn-link')
-            // document.getElementById("Card_A_Review" + i.toString()).setAttribute("style", "display:inline")
-            for (let j = 0; j < val["review"][i].length; j++) {
-                str += '<tr>'
-                for (k in val["review"][i][j]) {
-                    str += ("<td>" + val["review"][i][j][k] + "</td>")
+    if (e.target.getAttribute("name") != 'marks_view_boxes_A') {
+        val = marks_view_elem_A(e.target.parentElement.children[1].innerHTML)
+        document.getElementById("marks_modal_A_title").innerHTML = val["srn"]
+        document.getElementById("marks_modal_A_subtitle").innerHTML = val["name"]
+        for (var i = 1; i <= 5; i++) {
+            var tbody = document.getElementById("marks_view_body_A_Review" + i.toString())
+            var ctitle = document.getElementById("Card_A_Title_Review" + i.toString())
+            var str = ''
+            if (i in val["review"]) {
+                ctitle.setAttribute('class', 'btn btn-link')
+                // document.getElementById("Card_A_Review" + i.toString()).setAttribute("style", "display:inline")
+                for (let j = 0; j < val["review"][i].length; j++) {
+                    str += '<tr>'
+                    for (k in val["review"][i][j]) {
+                        str += ("<td>" + val["review"][i][j][k] + "</td>")
+                    }
+                    str += "</tr>"
                 }
-                str += "</tr>"
             }
+            else {
+                ctitle.setAttribute('class', 'btn btn-link text-danger')
+                // document.getElementById("Card_A_Review" + i.toString()).setAttribute("style", "display:none")
+            }
+            tbody.innerHTML = str
         }
-        else {
-            ctitle.setAttribute('class', 'btn btn-link text-danger')
-            // document.getElementById("Card_A_Review" + i.toString()).setAttribute("style", "display:none")
-        }
-        tbody.innerHTML = str
+        $('#modal_admin_marks_view').modal({
+            show: true
+        })
     }
-    $('#modal_admin_marks_view').modal({
-        show: true
-    })
 }
 
 admin_refresh = marks_view_refresh_A

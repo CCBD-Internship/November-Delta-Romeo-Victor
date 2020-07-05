@@ -51,6 +51,7 @@ from .serializers import TeamFacultyReview_Serializer
 import json
 import datetime
 from NVRD.settings import SIMPLE_JWT
+import jwt
 
 # Create your views here.
 
@@ -254,44 +255,53 @@ def admin_marks_viewHTML(request, user):
 def admin_marks_viewJS(request, user):
     return render(request, "eval/scripts/admin_marks_view.js")
 
+
 @login_required(login_url='')
-def coordinator_panel_reviewHTML(request,panel_id , panel_year_code , user):
+def coordinator_panel_reviewHTML(request, panel_id, panel_year_code, user):
     return render(request, "eval/containers/coordinator_panel_review.html")
 
+
 @login_required(login_url='')
-def coordinator_panel_reviewJS(request, panel_id , panel_year_code , user):
+def coordinator_panel_reviewJS(request, panel_id, panel_year_code, user):
     return render(request, "eval/scripts/coordinator_panel_review.js")
 
+
 @login_required(login_url='')
 @ensure_csrf_cookie
-def evaluator_teamHTML(request, panel_id , panel_year_code , user):
+def evaluator_teamHTML(request, panel_id, panel_year_code, user):
     return render(request, "eval/containers/evaluator_team.html")
 
+
 @login_required(login_url='')
 @ensure_csrf_cookie
-def evaluator_teamJS(request, panel_id , panel_year_code , user):
+def evaluator_teamJS(request, panel_id, panel_year_code, user):
     return render(request, "eval/scripts/evaluator_team.js")
 
+
 @login_required(login_url='')
 @ensure_csrf_cookie
-def evaluator_studentHTML(request, panel_id , panel_year_code , user):
+def evaluator_studentHTML(request, panel_id, panel_year_code, user):
     return render(request, "eval/containers/evaluator_student.html")
 
+
 @login_required(login_url='')
 @ensure_csrf_cookie
-def evaluator_studentJS(request, panel_id , panel_year_code , user):
+def evaluator_studentJS(request, panel_id, panel_year_code, user):
     return render(request, "eval/scripts/evaluator_student.js")
 
-@login_required(login_url='')
-@ensure_csrf_cookie
-def coordinator_facpanelHTML(request, panel_id , panel_year_code , user):
-    return render(request, "eval/containers/coordinator_faculty_panel.html")
 
 @login_required(login_url='')
 @ensure_csrf_cookie
-def coordinator_facpanelJS(request, panel_id , panel_year_code , user):
+def coordinator_facpanelHTML(request, panel_id, panel_year_code, user):
+    return render(request, "eval/containers/coordinator_faculty_panel.html")
+
+
+@login_required(login_url='')
+@ensure_csrf_cookie
+def coordinator_facpanelJS(request, panel_id, panel_year_code, user):
     return render(request, "eval/scripts/coordinator_faculty_panel.js")
-    
+
+
 def add_one_panel(panel_year_code, serializer_list=None):
     if serializer_list and serializer_list != []:
         for i in serializer_list[::-1]:
@@ -1261,9 +1271,11 @@ class TeamFacultyReview_List(APIView):
                 team_info = Team.objects.filter(panel_id__in=Panel.objects.filter(
                     panel_year_code=panel_year_code, panel_id=panel_id))
                 if 'team_id' in request.GET:
-                    team_info=team_info.filter(team_id=request.GET["team_id"])
+                    team_info = team_info.filter(
+                        team_id=request.GET["team_id"])
                 if 'team_year_code' in request.GET:
-                    team_info=team_info.filter(team_year_code=request.GET["team_year_code"])
+                    team_info = team_info.filter(
+                        team_year_code=request.GET["team_year_code"])
                 res = list(TeamFacultyReview.objects.filter(
                     team_id__in=team_info).values())
                 for i in res:
@@ -1296,7 +1308,7 @@ class TeamFacultyReview_List(APIView):
                                 team_year_code=i["team_year_code"], team_id=i["team_id"]).first().guide.fac_id
                             t_id = Team.objects.filter(
                                 team_year_code=i["team_year_code"], team_id=i["team_id"], panel_id=p_id).first().team_id
-                            if TeamFacultyReview.objects.filter(team_id=t_id, fac_id=g_fid,review_number=i["review_number"]).exists() or g_fid == i["fac_id"]:
+                            if TeamFacultyReview.objects.filter(team_id=t_id, fac_id=g_fid, review_number=i["review_number"]).exists() or g_fid == i["fac_id"]:
                                 teach = i["fac_id"]
                                 if FacultyPanel.objects.filter(panel_id=p_id, fac_id=teach).exists():
                                     t_id = Team.objects.filter(
@@ -1524,7 +1536,7 @@ class AboutMe_List(APIView):
     parser_classes = [JSONParser]
 
     def get(self, request, user):
-        try:
+        # try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
                 fp = FacultyPanel.objects.filter(fac_id=user)
                 res = {}
@@ -1543,8 +1555,8 @@ class AboutMe_List(APIView):
                 return Response(res, status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        # except:
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class TokenBlackList(APIView):
