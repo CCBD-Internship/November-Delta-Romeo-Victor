@@ -97,6 +97,7 @@ class Review1(models.Model):
     literature_survey = models.IntegerField()
     knowledge_on_the_project = models.IntegerField()
     comments = models.CharField(max_length=200, blank=True, null=True)
+    is_evaluated=models.BooleanField(default=False)
     id = models.CharField(max_length=200,primary_key=True)
 
     class Meta:
@@ -124,6 +125,7 @@ class Review2(models.Model):
     understanding_of_technology_platform_middleware = models.IntegerField()
     viva_voce = models.IntegerField()
     comments = models.CharField(max_length=200, blank=True, null=True)
+    is_evaluated=models.BooleanField(default=False)
     id = models.CharField(max_length=200,primary_key=True)
 
     class Meta:
@@ -153,6 +155,7 @@ class Review3(models.Model):
     progress_of_the_project_work = models.IntegerField()
     viva_voce = models.IntegerField()
     comments = models.CharField(max_length=200, blank=True, null=True)
+    is_evaluated=models.BooleanField(default=False)
     id = models.CharField(max_length=200,primary_key=True)
 
     class Meta:
@@ -182,6 +185,7 @@ class Review4(models.Model):
     project_report = models.IntegerField()
     viva_voce = models.IntegerField()
     comments = models.CharField(max_length=200, blank=True, null=True)
+    is_evaluated=models.BooleanField(default=False)
     id = models.CharField(max_length=200,primary_key=True)
 
     class Meta:
@@ -209,6 +213,7 @@ class Review5(models.Model):
     project_report = models.IntegerField()
     viva_voce = models.IntegerField()
     comments = models.CharField(max_length=200, blank=True, null=True)
+    is_evaluated=models.BooleanField(default=False)
     id = models.CharField(max_length=200,primary_key=True)
 
     class Meta:

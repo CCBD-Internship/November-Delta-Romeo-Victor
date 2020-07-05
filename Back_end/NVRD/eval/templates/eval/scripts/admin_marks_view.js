@@ -14,6 +14,7 @@ function marks_view_refresh_A() {
                 for (let j in lst) {
                     str += ("<td>" + data[i][lst[j]] + "</td>")
                 }
+                str+=("<td>" + admin_marks_return_status(data[i]) + "</td>")
                 str += '</tr>'
             }
             document.getElementById("marks_view_body_A").innerHTML = str
@@ -100,7 +101,18 @@ function marks_view_modal_A(e) {
                 for (let j = 0; j < val["review"][i].length; j++) {
                     str += '<tr>'
                     for (k in val["review"][i][j]) {
-                        str += ("<td>" + val["review"][i][j][k] + "</td>")
+                        if (k == "is_evaluated") {
+                            if (val["review"][i][j][k] == true) {
+                                str += ("<td>" + '&#9989;' + "</td>")
+                            }
+                            else {
+                                str += ("<td>" + '&#10060;' + "</td>")
+                                ctitle.setAttribute('class', 'btn btn-link text-warning')
+                            }
+                        }
+                        else {
+                            str += ("<td>" + val["review"][i][j][k] + "</td>")
+                        }
                     }
                     str += "</tr>"
                 }
@@ -115,6 +127,25 @@ function marks_view_modal_A(e) {
             show: true
         })
     }
+}
+
+function admin_marks_return_status(val) {
+    var str=''
+    for(var i=1;i<=5;i++){
+        if(i in val["review"]){
+            var bool=true
+            for(j=0;j<val["review"][i].length;j++){
+                if(val["review"][i][j]["is_evaluated"]==false){
+                    bool=false
+                }
+            }
+            str+= (bool ? '&#9989;':'❔') 
+        }
+        else{
+            str+='&#10060;'
+        }
+    }
+    return str
 }
 
 admin_refresh = marks_view_refresh_A

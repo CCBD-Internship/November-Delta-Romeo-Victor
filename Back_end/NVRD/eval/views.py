@@ -90,7 +90,7 @@ def refresh(request, user):
             if(not token.check_exp(claim='exp', current_time=timezone.now()+SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'])):
                 response = HttpResponse()
                 response.set_cookie('token', str(
-                    token.access_token), expires=timezone.now()+datetime.timedelta(days=1),samesite='Lax',secure=True)
+                    token.access_token), expires=timezone.now()+datetime.timedelta(days=1), samesite='Lax', secure=True)
                 return response
             else:
                 return force_logoutUser(request)
@@ -1038,45 +1038,45 @@ class Student_List(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, user, panel_year_code=None, panel_id=None):
-        # try:
-        if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
-            if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
-                response_list = []
-                serial_list = []
-                for i in request.data:
-                    if("team_id" in i and i["team_id"] != None and "team_year_code" in i and i["team_year_code"] != None):
-                        t = Team.objects.filter(
-                            team_id=i["team_id"], team_year_code=i["team_year_code"])
-                        i.pop("team_year_code")
-                        if(t.exists()):
-                            i["team_id"] = t.first().id
+        try:
+            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+                if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
+                    response_list = []
+                    serial_list = []
+                    for i in request.data:
+                        if("team_id" in i and i["team_id"] != None and "team_year_code" in i and i["team_year_code"] != None):
+                            t = Team.objects.filter(
+                                team_id=i["team_id"], team_year_code=i["team_year_code"])
+                            i.pop("team_year_code")
+                            if(t.exists()):
+                                i["team_id"] = t.first().id
+                            else:
+                                i["team_id"] = None
                         else:
                             i["team_id"] = None
-                    else:
-                        i["team_id"] = None
-                    if(Student.objects.filter(srn=i["srn"]).exists()):
-                        serial = Student_Serializer(Student.objects.get(
-                            srn=i["srn"]), data=i, partial=True)
-                        if not serial.is_valid():
-                            response_list.append(
-                                {"value": i, "detail": serial.errors})
+                        if(Student.objects.filter(srn=i["srn"]).exists()):
+                            serial = Student_Serializer(Student.objects.get(
+                                srn=i["srn"]), data=i, partial=True)
+                            if not serial.is_valid():
+                                response_list.append(
+                                    {"value": i, "detail": serial.errors})
+                            else:
+                                serial_list.append(serial)
                         else:
-                            serial_list.append(serial)
+                            response_list.append(
+                                {"value": i, "detail": "student does not exist"})
+                    if(response_list == []):
+                        for i in request.data:
+                            Student.objects.get(srn=i["srn"]).delete()
+                        return Response({"detail": "delete successful"}, status=status.HTTP_202_ACCEPTED)
                     else:
-                        response_list.append(
-                            {"value": i, "detail": "student does not exist"})
-                if(response_list == []):
-                    for i in request.data:
-                        Student.objects.get(srn=i["srn"]).delete()
-                    return Response({"detail": "delete successful"}, status=status.HTTP_202_ACCEPTED)
+                        return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"detail": "only project administrator can delete"}, status=status.HTTP_403_FORBIDDEN)
             else:
-                return Response({"detail": "only project administrator can delete"}, status=status.HTTP_403_FORBIDDEN)
-        else:
-            return Response(status=status.HTTP_403_FORBIDDEN)
-        # except:
-        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+                return Response(status=status.HTTP_403_FORBIDDEN)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class Team_List(APIView):
@@ -1307,7 +1307,7 @@ class TeamFacultyReview_List(APIView):
                             g_fid = Team.objects.filter(
                                 team_year_code=i["team_year_code"], team_id=i["team_id"]).first().guide.fac_id
                             t_id = Team.objects.filter(
-                                team_year_code=i["team_year_code"], team_id=i["team_id"], panel_id=p_id).first().team_id
+                                team_year_code=i["team_year_code"], team_id=i["team_id"], panel_id=p_id).first().id
                             if TeamFacultyReview.objects.filter(team_id=t_id, fac_id=g_fid, review_number=i["review_number"]).exists() or g_fid == i["fac_id"]:
                                 teach = i["fac_id"]
                                 if FacultyPanel.objects.filter(panel_id=p_id, fac_id=teach).exists():
@@ -1536,7 +1536,7 @@ class AboutMe_List(APIView):
     parser_classes = [JSONParser]
 
     def get(self, request, user):
-        # try:
+        try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
                 fp = FacultyPanel.objects.filter(fac_id=user)
                 res = {}
@@ -1555,8 +1555,8 @@ class AboutMe_List(APIView):
                 return Response(res, status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
-        # except:
-        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class TokenBlackList(APIView):
