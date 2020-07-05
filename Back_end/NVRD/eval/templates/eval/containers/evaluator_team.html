@@ -1,0 +1,56 @@
+    <nav class="navbar navbar-dark bg-info justify-content-end">
+        <div class="btn-group">
+          <button type="button" class="btn btn-lg btn-light dropdown-toggle" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-search" fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z" />
+              <path fill-rule="evenodd"
+                d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z" />
+            </svg>
+          </button>
+          <button style="visibility:hidden;"></button>
+          <button style="visibility:hidden;"></button>
+          <div class="dropdown-menu">
+            <form class="px-4 py-3" id="team_search_evaluator" name="team_search_form_evaluator" novalidate>
+              <div class="form-group">
+                <input type="srn" class="form-control" id="team_search_team_id_evaluator" placeholder="team_id">
+              </div>
+              <div class="form-group">
+                <input type="name" class="form-control" id="team_search_team_year_code_evaluator" placeholder="team_year_code">
+              </div>
+              <div class="form-group">
+                <input type="srn" class="form-control" id="team_search_team_name_evaluator" placeholder="team_name">
+              </div>
+              <button onclick="team_search_evaluator()" class="btn btn-primary">Search</button>
+            </form>
+          </div>
+    
+          <button type="button" class="btn btn-lg btn-success active" data-toggle="modal" id="refresh"
+            onclick="team_refresh_evaluator()"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-clockwise"
+              fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                d="M3.17 6.706a5 5 0 0 1 7.103-3.16.5.5 0 1 0 .454-.892A6 6 0 1 0 13.455 5.5a.5.5 0 0 0-.91.417 5 5 0 1 1-9.375.789z" />
+              <path fill-rule="evenodd"
+                d="M8.147.146a.5.5 0 0 1 .707 0l2.5 2.5a.5.5 0 0 1 0 .708l-2.5 2.5a.5.5 0 1 1-.707-.708L10.293 3 8.147.854a.5.5 0 0 1 0-.708z" />
+            </svg></button>  
+      </nav>
+      
+      <div class="overflow-auto">
+        <table id="table" class="table table-striped">
+          <thead>
+            <tr>
+                <th scope="col">Team-Year-Code</th>
+                <th scope="col">Team-ID</th>
+                <th scope="col">Team-Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Panel-Year-Code</th>
+                <th scope="col">Panel-ID</th>
+                <th scope="col">Guide</th>
+            </tr>
+          </thead>
+          <tbody id="team_body_evaluator">
+          </tbody>
+        </table>
+      </div>

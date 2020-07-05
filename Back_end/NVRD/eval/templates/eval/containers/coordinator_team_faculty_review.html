@@ -26,17 +26,18 @@
                   aria-expanded="false" aria-controls="review_collapseOne">
                   <b>
                     <h4>Review #1</h4>
-                      <button type="button" class="btn btn-warning active float-right" data-toggle="modal"
-                        data-target="#faculty-panelPostModal_A" onclick="AddC_TFR_A()"><svg width="1em" height="1em"
-                          viewBox="0 0 16 16" class="bi bi-plus-square-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                          <path fill-rule="evenodd"
-                            d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4a.5.5 0 0 0-1 0v3.5H4a.5.5 0 0 0 0 1h3.5V12a.5.5 0 0 0 1 0V8.5H12a.5.5 0 0 0 0-1H8.5V4z" />
-                        </svg>
-                      </button>
+                    <button type="button" class="btn btn-warning active float-right" data-toggle="modal"
+                      data-target="#C_TFR_PostModal" onclick="add_fac_tfr_coordinator(event,this)"><svg width="1em"
+                        height="1em" viewBox="0 0 16 16" class="bi bi-plus-square-fill" fill="currentColor"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                          d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4a.5.5 0 0 0-1 0v3.5H4a.5.5 0 0 0 0 1h3.5V12a.5.5 0 0 0 1 0V8.5H12a.5.5 0 0 0 0-1H8.5V4z" />
+                      </svg>
+                    </button>
                   </b>
                 </button>
               </h2>
-              
+
 
             </div>
 
@@ -50,11 +51,13 @@
                       <th scope="col">Faculty Name</th>
                       <th scope="col">Faculty email</th>
                       <th scope="col"></th>
-                  </tr>
+                    </tr>
                   </thead>
                   <tbody id="C_TFR_R1_tbody">
                   </tbody>
                 </table>
+              </div>
+              <div id="C_TFR_R1_tbody_error"></span>
               </div>
             </div>
           </div>
@@ -67,12 +70,13 @@
                   <b>
                     <h4>Review #2</h4>
                     <button type="button" class="btn btn-warning active float-right" data-toggle="modal"
-                        data-target="#faculty-panelPostModal_A" onclick="AddC_TFR_A()"><svg width="1em" height="1em"
-                          viewBox="0 0 16 16" class="bi bi-plus-square-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                          <path fill-rule="evenodd"
-                            d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4a.5.5 0 0 0-1 0v3.5H4a.5.5 0 0 0 0 1h3.5V12a.5.5 0 0 0 1 0V8.5H12a.5.5 0 0 0 0-1H8.5V4z" />
-                        </svg>
-                      </button>
+                      data-target="#C_TFR_PostModal" onclick="add_fac_tfr_coordinator(event,this)"><svg width="1em"
+                        height="1em" viewBox="0 0 16 16" class="bi bi-plus-square-fill" fill="currentColor"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                          d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4a.5.5 0 0 0-1 0v3.5H4a.5.5 0 0 0 0 1h3.5V12a.5.5 0 0 0 1 0V8.5H12a.5.5 0 0 0 0-1H8.5V4z" />
+                      </svg>
+                    </button>
                   </b>
                 </button>
               </h2>
@@ -88,11 +92,14 @@
                       <th scope="col">Faculty Name</th>
                       <th scope="col">Faculty email</th>
                       <th scope="col"></th>
-                  </tr>
+                    </tr>
                   </thead>
                   <tbody id="C_TFR_R2_tbody">
                   </tbody>
                 </table>
+
+              </div>
+              <div id="C_TFR_R2_tbody_error">
               </div>
             </div>
           </div>
@@ -105,12 +112,13 @@
                   <b>
                     <h4>Review #3</h4>
                     <button type="button" class="btn btn-warning active float-right" data-toggle="modal"
-                        data-target="#faculty-panelPostModal_A" onclick="AddC_TFR_A()"><svg width="1em" height="1em"
-                          viewBox="0 0 16 16" class="bi bi-plus-square-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                          <path fill-rule="evenodd"
-                            d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4a.5.5 0 0 0-1 0v3.5H4a.5.5 0 0 0 0 1h3.5V12a.5.5 0 0 0 1 0V8.5H12a.5.5 0 0 0 0-1H8.5V4z" />
-                        </svg>
-                      </button>
+                      data-target="#C_TFR_PostModal" onclick="add_fac_tfr_coordinator(event,this)"><svg width="1em"
+                        height="1em" viewBox="0 0 16 16" class="bi bi-plus-square-fill" fill="currentColor"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                          d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4a.5.5 0 0 0-1 0v3.5H4a.5.5 0 0 0 0 1h3.5V12a.5.5 0 0 0 1 0V8.5H12a.5.5 0 0 0 0-1H8.5V4z" />
+                      </svg>
+                    </button>
                   </b>
                 </button>
               </h2>
@@ -126,11 +134,13 @@
                       <th scope="col">Faculty Name</th>
                       <th scope="col">Faculty email</th>
                       <th scope="col"></th>
-                  </tr>
+                    </tr>
                   </thead>
                   <tbody id="C_TFR_R3_tbody">
                   </tbody>
                 </table>
+              </div>
+              <div id="C_TFR_R3_tbody_error">
               </div>
             </div>
           </div>
@@ -143,12 +153,13 @@
                   <b>
                     <h4>Review #4</h4>
                     <button type="button" class="btn btn-warning active float-right" data-toggle="modal"
-                        data-target="#faculty-panelPostModal_A" onclick="AddC_TFR_A()"><svg width="1em" height="1em"
-                          viewBox="0 0 16 16" class="bi bi-plus-square-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                          <path fill-rule="evenodd"
-                            d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4a.5.5 0 0 0-1 0v3.5H4a.5.5 0 0 0 0 1h3.5V12a.5.5 0 0 0 1 0V8.5H12a.5.5 0 0 0 0-1H8.5V4z" />
-                        </svg>
-                      </button>
+                      data-target="#C_TFR_PostModal" onclick="add_fac_tfr_coordinator(event,this)"><svg width="1em"
+                        height="1em" viewBox="0 0 16 16" class="bi bi-plus-square-fill" fill="currentColor"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                          d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4a.5.5 0 0 0-1 0v3.5H4a.5.5 0 0 0 0 1h3.5V12a.5.5 0 0 0 1 0V8.5H12a.5.5 0 0 0 0-1H8.5V4z" />
+                      </svg>
+                    </button>
                   </b>
                 </button>
               </h2>
@@ -164,11 +175,13 @@
                       <th scope="col">Faculty Name</th>
                       <th scope="col">Faculty email</th>
                       <th scope="col"></th>
-                  </tr>
+                    </tr>
                   </thead>
                   <tbody id="C_TFR_R4_tbody">
                   </tbody>
                 </table>
+              </div>
+              <div id="C_TFR_R4_tbody_error">
               </div>
             </div>
           </div>
@@ -181,12 +194,13 @@
                   <b>
                     <h4>Review #5</h4>
                     <button type="button" class="btn btn-warning active float-right" data-toggle="modal"
-                        data-target="#faculty-panelPostModal_A" onclick="AddC_TFR_A()"><svg width="1em" height="1em"
-                          viewBox="0 0 16 16" class="bi bi-plus-square-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                          <path fill-rule="evenodd"
-                            d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4a.5.5 0 0 0-1 0v3.5H4a.5.5 0 0 0 0 1h3.5V12a.5.5 0 0 0 1 0V8.5H12a.5.5 0 0 0 0-1H8.5V4z" />
-                        </svg>
-                      </button> 
+                      data-target="#C_TFR_PostModal" onclick="add_fac_tfr_coordinator(event,this)"><svg width="1em"
+                        height="1em" viewBox="0 0 16 16" class="bi bi-plus-square-fill" fill="currentColor"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                          d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4a.5.5 0 0 0-1 0v3.5H4a.5.5 0 0 0 0 1h3.5V12a.5.5 0 0 0 1 0V8.5H12a.5.5 0 0 0 0-1H8.5V4z" />
+                      </svg>
+                    </button>
                   </b>
                 </button>
               </h2>
@@ -202,33 +216,34 @@
                       <th scope="col">Faculty Name</th>
                       <th scope="col">Faculty email</th>
                       <th scope="col"></th>
-                  </tr>
+                    </tr>
                   </thead>
                   <tbody id="C_TFR_R5_tbody">
                   </tbody>
                 </table>
+              </div>
+              <div id="C_TFR_R5_tbody_error">
               </div>
             </div>
           </div>
 
         </div>
       </div>
+
+      <div class="toast" id="C_TFR_delete_toast" role="alert" style="position:fixed;"
+      aria-live="assertive" aria-atomic="true" data-animation="true" data-delay="5000">
+      <div class="toast-header">
+        <div id="C_TFR_delete_svg"></div>
+        <strong class="mr-auto" id="C_TFR_delete_toast_header"></strong>
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="toast-body" id="C_TFR_delete_toast_body"></div>
+    </div>
     </div>
   </div>
 
-  <!-- modal to confirm delete of fac -->
-  <div class="modal" id="C_TFR_DeleteModal" style="display: none; z-index: 1050;">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-body" id="A_fac_panel_DeleteconfirmMessage">
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default " id="A_fac_panel_DeleteconfirmOk">DELETE</button>
-          <button type="button" class="btn btn-default" id="A_fac_panel_DeleteconfirmCancel">Cancel</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- modal for insert a fac -->
   <div class="modal fade" id="C_TFR_PostModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -236,9 +251,8 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h3 style="text-align: center;" class="modal-title" id="exampleModalLabel_A">Add Faculty to review this team
-          </h3>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <h3 style="text-align: center;" class="modal-title" id="C_TFR_post_model_header"></h3>
+          <button type="button" class="close" data-dismiss="modal" data-target="#C_TFR_PostModal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -247,13 +261,27 @@
             <form id="C_TFR_post" onsubmit="event.preventDefault()">
               <label for="recipient-name" class="col-form-label">Faculty Id</label>
               <select id="faclist-C_TFR" class="form-control"></select>
-              <br><br>
+              <br>
               <button type="button" class="btn btn-primary" id="C_TFR_postsave" onclick="C_TFR_post(event,this)">Add
                 Faculty</button>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </form>
           </div>
+          <div class="toast" id="C_TFR_post_toast" role="alert" style=" top: 0; right: -150px;" aria-live="assertive"
+            aria-atomic="true" data-animation="true" data-delay="5000">
+            <div class="toast-header">
+              <div id="C_TFR_post_svg"></div>
+              <strong class="mr-auto" id="C_TFR_post_toast_header"></strong>
+              <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="toast-body" id="C_TFR_post_toast_body"></div>
+          </div>
         </div>
+
       </div>
     </div>
   </div>
+
+</div>

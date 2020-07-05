@@ -65,7 +65,7 @@ urlpatterns = [
     #     path('api/faculty/', views.Faculty_List.as_view(), name='index'),
     #     path('api/marks/', views.marks.as_view(), name='index'),
     # path('api/Blacklist/', views.TokenBlackList.as_view())
-     path('admin/',admin.site.urls)
+    path('admin/', admin.site.urls)
 ]
 
 # frontend HTML
@@ -84,7 +84,14 @@ urlpatterns += [
     path('<str:user>/home/admin/team/HTML/', views.admin_teamHTML),
     path('<str:user>/home/admin/marks-view/HTML/', views.admin_marks_viewHTML),
     path('<str:user>/home/admin/panel/HTML/', views.admin_panelHTML),
-
+    path('<str:user>/home/coordinator/<str:panel_year_code>-<str:panel_id>/panel-review/HTML/',
+         views.coordinator_panel_reviewHTML),
+    path('<str:user>/home/coordinator/<str:panel_year_code>-<str:panel_id>/faculty-panel/HTML/',
+         views.coordinator_facpanelHTML),
+    path('<str:user>/home/evaluator/<str:panel_year_code>-<str:panel_id>/team/HTML/',
+         views.evaluator_teamHTML),
+    path('<str:user>/home/evaluator/<str:panel_year_code>-<str:panel_id>/student/HTML/',
+         views.evaluator_studentHTML),
 ]
 
 # frontend JS
@@ -93,9 +100,8 @@ urlpatterns += [
          views.coordinator_teamJS),
     path('<str:user>/home/coordinator/<str:panel_year_code>-<str:panel_id>/student/JS/',
          views.coordinator_studentJS),
-     path('<str:user>/home/coordinator/<str:panel_year_code>-<str:panel_id>/team-faculty-review/JS/',
+    path('<str:user>/home/coordinator/<str:panel_year_code>-<str:panel_id>/team-faculty-review/JS/',
          views.coordinator_team_faculty_reviewJS),
-
     path('<str:user>/home/admin/faculty/JS/', views.admin_facultyJS),
     path('<str:user>/home/admin/faculty-panel/JS/', views.admin_faculty_panelJS),
     path('<str:user>/home/admin/student/JS/', views.admin_studentJS),
@@ -103,4 +109,12 @@ urlpatterns += [
     path('<str:user>/home/admin/marks-view/JS/', views.admin_marks_viewJS),
     path('<str:user>/home/admin/panel/JS/', views.admin_panelJS),
     path('<str:user>/home/main.js/', views.indexJS),
+    path('<str:user>/home/coordinator/<str:panel_year_code>-<str:panel_id>/panel-review/JS/',
+         views.coordinator_panel_reviewJS),
+    path('<str:user>/home/coordinator/<str:panel_year_code>-<str:panel_id>/faculty-panel/JS/',
+         views.coordinator_facpanelJS),
+    path('<str:user>/home/evaluator/<str:panel_year_code>-<str:panel_id>/team/JS/',
+         views.evaluator_teamJS),
+    path('<str:user>/home/evaluator/<str:panel_year_code>-<str:panel_id>/student/JS/',
+         views.evaluator_studentJS),
 ]

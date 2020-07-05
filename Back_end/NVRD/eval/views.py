@@ -89,7 +89,7 @@ def refresh(request, user):
             if(not token.check_exp(claim='exp', current_time=timezone.now()+SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'])):
                 response = HttpResponse()
                 response.set_cookie('token', str(
-                    token.access_token), expires=timezone.now()+datetime.timedelta(days=1))
+                    token.access_token), expires=timezone.now()+datetime.timedelta(days=1),samesite='Lax',secure=True)
                 return response
             else:
                 return force_logoutUser(request)
@@ -254,7 +254,44 @@ def admin_marks_viewHTML(request, user):
 def admin_marks_viewJS(request, user):
     return render(request, "eval/scripts/admin_marks_view.js")
 
+@login_required(login_url='')
+def coordinator_panel_reviewHTML(request,panel_id , panel_year_code , user):
+    return render(request, "eval/containers/coordinator_panel_review.html")
 
+@login_required(login_url='')
+def coordinator_panel_reviewJS(request, panel_id , panel_year_code , user):
+    return render(request, "eval/scripts/coordinator_panel_review.js")
+
+@login_required(login_url='')
+@ensure_csrf_cookie
+def evaluator_teamHTML(request, panel_id , panel_year_code , user):
+    return render(request, "eval/containers/evaluator_team.html")
+
+@login_required(login_url='')
+@ensure_csrf_cookie
+def evaluator_teamJS(request, panel_id , panel_year_code , user):
+    return render(request, "eval/scripts/evaluator_team.js")
+
+@login_required(login_url='')
+@ensure_csrf_cookie
+def evaluator_studentHTML(request, panel_id , panel_year_code , user):
+    return render(request, "eval/containers/evaluator_student.html")
+
+@login_required(login_url='')
+@ensure_csrf_cookie
+def evaluator_studentJS(request, panel_id , panel_year_code , user):
+    return render(request, "eval/scripts/evaluator_student.js")
+
+@login_required(login_url='')
+@ensure_csrf_cookie
+def coordinator_facpanelHTML(request, panel_id , panel_year_code , user):
+    return render(request, "eval/containers/coordinator_faculty_panel.html")
+
+@login_required(login_url='')
+@ensure_csrf_cookie
+def coordinator_facpanelJS(request, panel_id , panel_year_code , user):
+    return render(request, "eval/scripts/coordinator_faculty_panel.js")
+    
 def add_one_panel(panel_year_code, serializer_list=None):
     if serializer_list and serializer_list != []:
         for i in serializer_list[::-1]:
@@ -1223,6 +1260,10 @@ class TeamFacultyReview_List(APIView):
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username() and c2):
                 team_info = Team.objects.filter(panel_id__in=Panel.objects.filter(
                     panel_year_code=panel_year_code, panel_id=panel_id))
+                if 'team_id' in request.GET:
+                    team_info=team_info.filter(team_id=request.GET["team_id"])
+                if 'team_year_code' in request.GET:
+                    team_info=team_info.filter(team_year_code=request.GET["team_year_code"])
                 res = list(TeamFacultyReview.objects.filter(
                     team_id__in=team_info).values())
                 for i in res:
@@ -1254,8 +1295,8 @@ class TeamFacultyReview_List(APIView):
                             g_fid = Team.objects.filter(
                                 team_year_code=i["team_year_code"], team_id=i["team_id"]).first().guide.fac_id
                             t_id = Team.objects.filter(
-                                team_year_code=i["team_year_code"], team_id=i["team_id"], panel_id=p_id).team_id
-                            if TeamFacultyReview.objects.filter(team_id=t_id, fac_id=g_id).exists() or g_id == i["fac_id"]:
+                                team_year_code=i["team_year_code"], team_id=i["team_id"], panel_id=p_id).first().team_id
+                            if TeamFacultyReview.objects.filter(team_id=t_id, fac_id=g_fid,review_number=i["review_number"]).exists() or g_fid == i["fac_id"]:
                                 teach = i["fac_id"]
                                 if FacultyPanel.objects.filter(panel_id=p_id, fac_id=teach).exists():
                                     t_id = Team.objects.filter(
@@ -1272,7 +1313,7 @@ class TeamFacultyReview_List(APIView):
                                         {"value": i, "detail": "team is not present in the panel"})
                             else:
                                 fail.append(
-                                    {"value": i, "detail": "guide is not present in faculty:+"str(g_fid)})
+                                    {"value": i, "detail": "guide is not present in faculty:"+str(g_fid)})
                         else:
                             fail.append(
                                 {"value": i, "detail": "team is not present in the panel"})
@@ -1359,7 +1400,7 @@ class TeamFacultyReview_List(APIView):
                                     {"value": i, "detail": "team is not present in the panel"})
                         else:
                             fail.append(
-                                {"value": i, "detail": "guide is not present in faculty_list"})
+                                {"value": i, "detail": "cannot delete guide"})
                     else:
                         fail.append(
                             {"value": i, "detail": "user is not the panel coordinator"})
