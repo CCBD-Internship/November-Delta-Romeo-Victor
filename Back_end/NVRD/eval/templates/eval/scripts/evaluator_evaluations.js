@@ -10,7 +10,7 @@ function evaluator_evaluations_refresh() {
     xhttp.onreadystatechange = function () {
         if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
             let data = JSON.parse(this.responseText)
-            var str = '<div class="row row-cols-1 row-cols-md-3" id="C_TFRcardchild">'
+            var str = '<div class="row row-cols-1 row-cols-md-3 w-100" id="C_TFRcardchild">'
             for (let i in data) {
                 str += C_team_fac_review_cardmaker(data[i]["team_year_code"], data[i]["team_id"], data[i]["team_name"], data[i]["description"], data[i]["guide"])
             }
@@ -46,7 +46,10 @@ function C_team_fac_review_cardmaker(team_year_code, team_id, team_name, descrip
 function E_evaluations_opentip(e, t) {
     document.getElementById("evaluation_team_cards").style = "display:none;"
     document.getElementById("evaluation_views").style = "display:inline;"
-    document.getElementById('nav_bar_E').style = "display:none;"
+    document.getElementById("refresh_EE").style = "display:none"
+    document.getElementById("back_EE").style = "visibility:visible"
+    document.getElementById("reset_EE").style = "display:inline-block"
+    document.getElementById("check_all_EE").style = "display:inline-block"
     // str="<table class='table table-striped'><thead><tr><th scope='col'></th><th scope='col'></th><th scope='col'></th><th scope='col'></th></tr></thead><tbody id='C_TFR_R1_tbody'></tbody></table>"
     // document.getElementById('evaluation_views').innerHTML=str
     // console.log(t)
@@ -69,7 +72,6 @@ function E_evaluations_opentip(e, t) {
     xhttp.onreadystatechange = function () {
         if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
             let data = JSON.parse(this.responseText)
-            console.log(data)
             Evaluation_format = data
             var thead = ''
             max_vals = {
@@ -106,7 +108,7 @@ function E_evaluations_opentip(e, t) {
                         tbody += ("<td>" + i[j] + "</td>")
                     }
                     else if (max_vals[review_number][c] == -1) {
-                        tbody += ("<td>" + "<textarea class=\"form-control bg-transparent text-white text-center border-white\" " + i[j] + "></textarea></td>")
+                        tbody += ("<td>" + "<textarea class=\"form-control bg-transparent text-white text-center border-white\">" + i[j] + "</textarea></td>")
                     }
                     else if (max_vals[review_number][c] == -3) {
                         tbody += ("<td><input type=\"checkbox\"></td>")
@@ -115,7 +117,7 @@ function E_evaluations_opentip(e, t) {
 
                     }
                     else {
-                        tbody += ("<td>" + "<input class=\"form-control bg-transparent text-white text-center\" type='number' value='" + i[j] + "' size='2' min=\"0\" max='" + max_vals[review_number][c] + "'></td>")
+                        tbody += ("<td>" + "<input class=\"form-control bg-transparent text-white text-center\" style='min-width: 5em' type='number' value='" + i[j] + "'  min=\"0\" max='" + max_vals[review_number][c] + "'></td>")
                     }
                     c++;
                 }
@@ -123,7 +125,12 @@ function E_evaluations_opentip(e, t) {
             }
             document.getElementById("evaluation_views_table_body").innerHTML = tbody
             if (data["team_remarks"])
-                document.getElementById("evaluator_team_remark").innerHTML = data["team_remarks"]
+                document.getElementById("evaluator_team_remark").textContent = data["team_remarks"]
+            var tbody = document.getElementById("evaluation_views_table_body")
+            for (var i = 0; i < tbody.children.length; i++) {
+                tbody.children[i].children[tbody.children[i].children.length - 1].firstElementChild.checked = data["individual_review"][i]["is_evaluated"]
+            }
+
         }
     }
     xhttp.open("GET", "/api/" + getCookie("username") + "/" + panel_year_code + "-" + panel_id + "/" + review_number + "/" + team_year_code + "-" + team_id + "/marks-view/", true);
@@ -148,12 +155,18 @@ function diff_hours_E(dt2, dt1) {
 function time_refresh(open_time, close_time) {
     var now = new Date()
     var elem = document.getElementById("disptime-evalutator")
-    if (now.getTime() < open_time.getTime() && open_time.getTime() < close_time.getTime())
-        elem.textContent = "Evaluation window opens on " + open_time.toLocaleDateString() + " at " + open_time.toLocaleTimeString()
-    else if (now.getTime() > open_time.getTime() && now.getTime() < close_time.getTime())
-        elem.textContent = "Evaluation window is open now!! shall close in approximately " + diff_hours_E(close_time, now)[0] + " days " + diff_hours_E(close_time, now)[1] + " hours " + diff_hours_E(close_time, now)[2] + " minutes"
-    else
-        elem.textContent = "Evaluation window was closed on " + close_time.toLocaleDateString() + " at " + close_time.toLocaleTimeString()
+    if (now.getTime() < open_time.getTime() && open_time.getTime() < close_time.getTime()) {
+        elem.innerHTML = "<pre>Evaluation window opens on " + open_time.toLocaleDateString() + " at " + open_time.toLocaleTimeString() + "</pre>"
+        elem.setAttribute("style", "")
+    }
+    else if (now.getTime() > open_time.getTime() && now.getTime() < close_time.getTime()) {
+        elem.innerHTML = "<pre>Evaluation window is open now!! shall close in approximately " + diff_hours_E(close_time, now)[0] + " days " + diff_hours_E(close_time, now)[1] + " hours " + diff_hours_E(close_time, now)[2] + " minutes" + "</pre>"
+        elem.setAttribute("style", "color:#FFCC00")
+    }
+    else {
+        elem.innerHTML = "<pre>Evaluation window was closed on " + close_time.toLocaleDateString() + " at " + close_time.toLocaleTimeString() + "</pre>"
+        elem.setAttribute("style", "")
+    }
 
 }
 function panel_review_refresh_Evaluations() {
@@ -218,19 +231,93 @@ function submit_evaluation(e, t) {
         }
         c++;
     }
-    var ret = { "individual_review": jsonarray, "review_number": review_number, "team": { "team_year_code": team_year_code, "team_id": team_id }, "team_remarks": document.getElementById("evaluator_team_remark").textContent }
+    var ret = { "individual_review": jsonarray, "review_number": review_number, "team": { "team_year_code": team_year_code, "team_id": team_id }, "team_remarks": document.getElementById("evaluator_team_remark").value }
     xhttp.onreadystatechange = function () {
-        if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
-            console.log(data)
+        if (this.readyState == XMLHttpRequest.DONE) {
+            var svg_tick = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check-circle-fill" fill="green" xmlns="http://www.w3.org/2000/svg">'
+            svg_tick += '<path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>'
+            svg_tick += '</svg>'
+            var svg_cross = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle-fill" fill="red" xmlns="http://www.w3.org/2000/svg">'
+            svg_cross += '<path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.146-3.146a.5.5 0 0 0-.708-.708L8 7.293 4.854 4.146a.5.5 0 1 0-.708.708L7.293 8l-3.147 3.146a.5.5 0 0 0 .708.708L8 8.707l3.146 3.147a.5.5 0 0 0 .708-.708L8.707 8l3.147-3.146z"/>'
+            svg_cross += '</svg>'
+            // document.getElementById('evaluation_toast_E').setAttribute("style","display:inline")
+            if (e != 'local') {
+                if (this.status == 400) {
+                    document.getElementById('evaluation_toast_E_header').innerHTML = 'FAILURE'
+                    document.getElementById('evaluation_toast_E_body').innerHTML = 'Input Form values are incorrect'
+                    document.getElementById('evaluation_toast_E_svg').innerHTML = svg_cross
+                    $('#evaluation_toast_E').toast('show');
+                }
+                else if (this.status == 403) {
+                    document.getElementById('evaluation_toast_E_header').innerHTML = 'FAILURE'
+                    document.getElementById('evaluation_toast_E_body').innerHTML = 'Not authorized to modify Form according to schedule'
+                    document.getElementById('evaluation_toast_E_svg').innerHTML = svg_cross
+                    $('#evaluation_toast_E').toast('show');
+                }
+                else if (this.status == 202) {
+                    document.getElementById('evaluation_toast_E_header').innerHTML = 'SUCCESS'
+                    document.getElementById('evaluation_toast_E_body').innerHTML = 'Form submitted successfully!!'
+                    document.getElementById('evaluation_toast_E_svg').innerHTML = svg_tick
+                    $('#evaluation_toast_E').toast('show');
+                }
+            }
+            // document.getElementById('evaluation_toast_E').setAttribute("style","display:none")
             E_evaluations_opentip()
         }
-        else {
-
-        }
     }
+    refreshLoader(xhttp)
     xhttp.open("PUT", "/api/" + getCookie("username") + "/" + panel_year_code + "-" + panel_id + "/" + review_number + "/" + team_year_code + "-" + team_id + "/marks-view/", true);
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");
     xhttp.send(JSON.stringify(ret));
+}
+
+function back_to_cards_E() {
+    document.getElementById("evaluation_team_cards").style = "display:inline-block;"
+    document.getElementById("evaluation_views").style = "display:none;"
+    document.getElementById("refresh_EE").style = "display:inline-block"
+    document.getElementById("back_EE").style = "visibility:hidden"
+    document.getElementById("reset_EE").style = "display:none"
+    document.getElementById("check_all_EE").style = "display:none"
+    evaluator_evaluations_refresh()
+}
+
+function check_all_E() {
+    var tbody = document.getElementById("evaluation_views_table_body")
+    for (var i = 0; i < tbody.children.length; i++) {
+        tbody.children[i].children[tbody.children[i].children.length - 1].firstElementChild.checked = true
+    }
+    document.getElementById('evaluation_toast_E_header').innerHTML = 'ALL STUDENTS CHECKED'
+    document.getElementById('evaluation_toast_E_body').innerHTML = 'all students to be considered as evaluated'
+    document.getElementById('evaluation_toast_E_svg').innerHTML = ''
+    $('#evaluation_toast_E').toast('show');
+}
+
+function reset_all_E() {
+    var tbody = document.getElementById("evaluation_views_table_body")
+    for (var i = 0; i < tbody.children.length; i++) {
+        var row = tbody.children[i]
+        for (var j = 0; j < row.children.length; j++) {
+            var col = row.children[j].firstChild
+            if ((col.type && col.getAttribute("type") == "text")) {
+                col.value = ""
+            }
+            else if ((col.type && col.getAttribute("type") == "number")) {
+                col.value = 0
+            }
+            else if (col.type && col.getAttribute("type") == "checkbox") {
+                col.checked = false
+            }
+            else if( col.type == "textarea"){
+                col.value = "not yet scored"
+            }
+        }
+    }
+    document.getElementById("evaluator_team_remark").value = ""
+    document.getElementById('evaluation_toast_E_header').innerHTML = 'ALL VALUES RESET AND SAVED'
+    document.getElementById('evaluation_toast_E_body').innerHTML = 'all parameters are set to initial state'
+    document.getElementById('evaluation_toast_E_svg').innerHTML = ''
+    $('#evaluation_toast_E').toast('show');
+    submit_evaluation('local')
 }
