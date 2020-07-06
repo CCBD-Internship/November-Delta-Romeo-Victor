@@ -119,21 +119,25 @@ def loginpage(request):
         if request.method == 'POST':
             username = request.POST.get('username')
             password = request.POST.get('password')
-            user = User.objects.get(username=username)
-            if(user.check_password(password)):
-                # {'refresh': str(token), 'access': str(token.access_token), 'user': request.data["username"], 'name': str(user.get_full_name())}
-                token = RefreshToken.for_user(user)
-                login(request, user,
-                      backend='django.contrib.auth.backends.ModelBackend')
-                response = redirect('/'+username+'/home')
-                response.set_cookie('token', str(
-                    token.access_token), expires=timezone.now()+datetime.timedelta(days=1))
-                response.set_cookie('refresh', str(
-                    token), expires=timezone.now()+datetime.timedelta(days=100))
-                response.set_cookie(
-                    'username', username, expires=timezone.now()+datetime.timedelta(days=100))
-                return response
-            return render(request, 'eval/login.html', context)
+            if(User.objects.filter(username=request.POST.get("username")).exists()):
+                user = User.objects.get(username=username)
+                if(user.check_password(password)):
+                    token = RefreshToken.for_user(user)
+                    login(request, user,
+                        backend='django.contrib.auth.backends.ModelBackend')
+                    response = redirect('/'+username+'/home')
+                    response.set_cookie('token', str(
+                        token.access_token), expires=timezone.now()+datetime.timedelta(days=1))
+                    response.set_cookie('refresh', str(
+                        token), expires=timezone.now()+datetime.timedelta(days=100))
+                    response.set_cookie(
+                        'username', username, expires=timezone.now()+datetime.timedelta(days=100))
+                    return response
+                else:
+                    context["error"]="invalid user"
+                return render(request, 'eval/login.html', context)
+        else:
+            context["error"]="invalid user"
         return render(request, 'eval/login.html', context)
 
 
@@ -295,6 +299,7 @@ def evaluator_studentJS(request, panel_id, panel_year_code, user, review_number=
 def coordinator_facpanelHTML(request, panel_id, panel_year_code, user):
     return render(request, "eval/containers/coordinator_faculty_panel.html")
 
+
 @login_required(login_url='')
 @ensure_csrf_cookie
 def evaluator_facpanelHTML(request, panel_id, panel_year_code, user):
@@ -305,6 +310,7 @@ def evaluator_facpanelHTML(request, panel_id, panel_year_code, user):
 @ensure_csrf_cookie
 def coordinator_facpanelJS(request, panel_id, panel_year_code, user):
     return render(request, "eval/scripts/coordinator_faculty_panel.js")
+
 
 @login_required(login_url='')
 @ensure_csrf_cookie
@@ -1498,7 +1504,7 @@ class Team_Student_CSV(APIView):
                     else:
                         i["panel_id"] = None
                         null_set_list.append(
-                            {"value": i, "detail": "panel set to NULL,either panel does not or guide does not exist in panel"})
+                            {"value": [i], "detail": "panel set to NULL,either panel does not or guide does not exist in panel"})
                     team_data = {"team_name": i["team_name"], "description": i["description"],
                                  "guide": i["guide"], "panel_id": i["panel_id"], "team_id": add_one_team(i["team_year_code"]), "team_year_code": i["team_year_code"]}
                     team_list.append(team_data)
@@ -1511,7 +1517,7 @@ class Team_Student_CSV(APIView):
                             team_id=team_data["team_id"], team_year_code=team_data["team_year_code"]).first()
                     else:
                         response_list.append(
-                            {"value": i, "detail": team_serial.errors})
+                            {"value": [i], "detail": team_serial.errors})
                     for k in i["student"]:
                         if(t):
                             k["team_id"] = t.id
