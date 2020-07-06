@@ -63,54 +63,65 @@ function E_evaluations_opentip(e, t) {
         if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
             let data = JSON.parse(this.responseText)
             console.log(data)
-            var thead=''
-            max_vals={
-                1:[-2,-2,10,10,10,10,-2,-2,-1,-3],
-                2:[-2,-2,10,10,10,10,-2,-2,-1,-3],
-                3:[-2,-2,10,10,5,5,5,-2,-2,-1,-3],
-                4:[-2,-2,10,10,10,10,-2,-2,-1,-3],
-                5:[-2,-2,10,10,10,10,-2,-2,-1,-3]
+            var thead = ''
+            max_vals = {
+                1: [-2, -2, 10, 10, 10, 10, -2, -2, -1, -3],
+                2: [-2, -2, 10, 10, 10, 10, -2, -2, -1, -3],
+                3: [-2, -2, 10, 10, 5, 5, 5, -2, -2, -1, -3],
+                4: [-2, -2, 10, 10, 10, 10, -2, -2, -1, -3],
+                5: [-2, -2, 10, 10, 10, 10, -2, -2, -1, -3]
             }
-            var lst=["srn","name"]            
-            for(let i of Object.keys(data["individual_review"][0])){
-                if(lst.indexOf(i)==-1 && ["is_evaluated","comments","fac_id"].indexOf(i)==-1){
+            var lst = ["srn", "name"]
+            for (let i of Object.keys(data["individual_review"][0])) {
+                if (lst.indexOf(i) == -1 && ["is_evaluated", "comments", "fac_id"].indexOf(i) == -1) {
                     lst.push(i)
                 }
             }
             lst.push("comments")
             lst.push("is_evaluated")
-            var c=0
-            for(let i of lst){
-                var str=''
-                if(max_vals[review_number][c]>0){
-                    str+=' ('+max_vals[review_number][c]+')'
+            var c = 0
+            for (let i of lst) {
+                var str = ''
+                if (max_vals[review_number][c] > 0) {
+                    str += ' (' + max_vals[review_number][c] + ')'
                 }
                 c++;
-                thead+='<th scope="col">'+i.replace(/_/g,' ')+str+'</th>'
+                thead += '<th scope="col">' + i.replace(/_/g, ' ') + str + '</th>'
             }
-            document.getElementById("evaluation_views_table_fields").innerHTML=thead
-            var tbody=''
-            for(let i of data["individual_review"]){
-                tbody+="<tr class='w-100'>"
-                var c=0;
-                for(let j of lst){
-                    if(max_vals[review_number][c]==-2){
-                        tbody+=("<td>"+i[j]+"</td>")
+            document.getElementById("evaluation_views_table_fields").innerHTML = thead
+            var tbody = ''
+            for (let i of data["individual_review"]) {
+                tbody += "<tr class='w-100'>"
+                var c = 0;
+                for (let j of lst) {
+                    if (max_vals[review_number][c] == -2) {
+                        tbody += ("<td>" + i[j] + "</td>")
                     }
-                    else if(max_vals[review_number][c]==-1){
-                        tbody+=("<td>"+"<input type='text' value='"+i[j]+"' size='10'></td>")
+                    else if (max_vals[review_number][c] == -1) {
+                        tbody += ("<td>" + "<textarea class=\"form-control bg-transparent text-white text-center border-white\" " + i[j] + "></textarea></td>")
+                        }
+                    else if (max_vals[review_number][c] == -3) {
+                        tbody += ("<td><input type=\"checkbox\"></td>")
+                        // tbody += ("<td>" + "<label class=\"switch\"><input type='checkbox' default='" + i[j] + "' size='10'><span class=\"slider round\"></span></label></td>")
+                        // // tbody += "<td>"+"<span class=\"custom-control custom-switch\"><input type=\"checkbox\" class=\"custom-control-input\"><label class=\"custom-control-label\" for=\"customSwitch1\"></label></span>"+"</td>"
+                    
                     }
-                    else if(max_vals[review_number][c]==-3){
-                        tbody+=("<td>"+"<input type='checkbox' default='"+i[j]+"' size='10'></td>")
-                    }
-                    else{
-                        tbody+=("<td>"+"<input type='number' value='"+i[j]+"' size='2'></td>")
+                    else {
+                        tbody += ("<td>" + "<input class=\"form-control bg-transparent text-white text-center\" type='number' value='" + i[j] + "' size='2' min=\"0\" max='" + max_vals[review_number][c] + "'></td>")
                     }
                     c++;
                 }
-                tbody+="</tr>"
+                tbody += "</tr>"
             }
-            document.getElementById("evaluation_views_table_body").innerHTML=tbody
+            document.getElementById("evaluation_views_table_body").innerHTML = tbody
+
+
+            
+
+
+
+
+
         }
     }
 
