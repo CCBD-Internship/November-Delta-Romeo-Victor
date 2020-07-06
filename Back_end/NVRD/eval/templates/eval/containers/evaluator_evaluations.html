@@ -1,24 +1,24 @@
-    <nav class="navbar navbar-dark bg-info" id="nav_bar_E">
-    	<div id="disptime-evalutator">
+<nav class="navbar navbar-dark bg-info" id="nav_bar_E">
+  <div id="disptime-evalutator">
 
-    	</div>
-      	
-      	<div class="btn-group">
-          <button type="button" class="btn btn-lg btn-success active" data-toggle="modal" id="refresh"
-            onclick="evaluator_evaluations_refresh()"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-clockwise"
-              fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd"
-                d="M3.17 6.706a5 5 0 0 1 7.103-3.16.5.5 0 1 0 .454-.892A6 6 0 1 0 13.455 5.5a.5.5 0 0 0-.91.417 5 5 0 1 1-9.375.789z" />
-              <path fill-rule="evenodd"
-                d="M8.147.146a.5.5 0 0 1 .707 0l2.5 2.5a.5.5 0 0 1 0 .708l-2.5 2.5a.5.5 0 1 1-.707-.708L10.293 3 8.147.854a.5.5 0 0 1 0-.708z" />
-            </svg></button>
-      
-          <button type="button" style="visibility: hidden"></button>
-      	</div>
-      </nav>
-      <br>
-      <br>
-      
+  </div>
+
+  <div class="btn-group">
+    <button type="button" class="btn btn-lg btn-success active" data-toggle="modal" id="refresh"
+      onclick="evaluator_evaluations_refresh()"><svg width="1em" height="1em" viewBox="0 0 16 16"
+        class="bi bi-arrow-clockwise" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd"
+          d="M3.17 6.706a5 5 0 0 1 7.103-3.16.5.5 0 1 0 .454-.892A6 6 0 1 0 13.455 5.5a.5.5 0 0 0-.91.417 5 5 0 1 1-9.375.789z" />
+        <path fill-rule="evenodd"
+          d="M8.147.146a.5.5 0 0 1 .707 0l2.5 2.5a.5.5 0 0 1 0 .708l-2.5 2.5a.5.5 0 1 1-.707-.708L10.293 3 8.147.854a.5.5 0 0 1 0-.708z" />
+      </svg></button>
+
+    <button type="button" style="visibility: hidden"></button>
+  </div>
+</nav>
+<br>
+<br>
+
 <div id="evaluation_team_cards">
 
 </div>
@@ -28,11 +28,23 @@
     <div class="card-header" id="evaluation_views_card_header"></div>
     <div class="card-body" id="evaluation_views_card_body">
       <p id="evaluation_views_card_body_review"></p>
-      <b><h3 class="card-title" id="evaluation_views_card_body_head"></h3></b>
-      <table class="table table-dark" id="evaluation_views_table"></table>  
+      <b>
+        <h3 class="card-title" id="evaluation_views_card_body_head"></h3>
+      </b>
+      <p id="evaluation_views_card_body_description"></p>
+      <table class="table table-dark table-striped" id="evaluation_views_table" style="width:100%;">
+        <thead>
+          <tr id="evaluation_views_table_fields" class="w-100">
+
+          </tr>
+        </thead>
+        <tbody id="evaluation_views_table_body">
+
+        </tbody>
+      </table>
     </div>
     <div class="card-footer text-muted" id="evaluation_views_card_footer">
       2 days ago
     </div>
   </div>
-</div> 
+</div>
