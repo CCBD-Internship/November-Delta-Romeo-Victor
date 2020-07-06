@@ -66,7 +66,7 @@
             xhttp.send();
         }
         var Tree = { "Admin": [], "Coordinator": [], "Evaluator": [] }
-        var evalview = { "Review-1": { "Team": [], "Student": [] }, "Review-2": { "Team": [], "Student": [] }, "Review-3": { "Team": [], "Student": [] }, "Review-4": { "Team": [], "Student": [] }, "Review-5": { "Team": [], "Student": [] }, "Team": [], "Student": [], "Faculty-Panel": [] }
+        var evalview = { "Review-1": { "Team": [], "Student": [] ,"evaluations":[]}, "Review-2": { "Team": [], "Student": [] ,"evaluations":[]}, "Review-3": { "Team": [], "Student": [],"evaluations":[] }, "Review-4": { "Team": [], "Student": [] ,"evaluations":[]}, "Review-5": { "Team": [], "Student": [] ,"evaluations":[]}, "Team": [], "Student": [], "Faculty-Panel": [] }
         var coordview = { "Panel-Review": [], "Faculty-Panel": [], "Team-Faculty-Review": [], "Team": [], "Student": [] }
         var adminview = { "Faculty": [], "Panel": [], "Faculty-panel": [], "Team": [], "Student": [], "Marks-View": [] }
         var User;
@@ -320,7 +320,7 @@
                 lst.push(e.target.parentNode.parentNode.firstChild.innerHTML)
                 crumbMaker(true)
             }
-            else if (e.target.getAttribute('class') == "list-group-item list-group-item-action") {
+            else if (e.target.getAttribute('class') == "list-group-item list-group-item-action" || e.target.getAttribute('class')== 'list-group-item list-group-item-action bg-warning blink_me_main') {
                 lst.push(e.target.innerHTML)
                 crumbMaker(true)
             }

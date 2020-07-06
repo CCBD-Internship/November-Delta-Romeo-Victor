@@ -310,6 +310,17 @@ def evaluator_facpanelHTML(request, panel_id, panel_year_code, user):
 @ensure_csrf_cookie
 def coordinator_facpanelJS(request, panel_id, panel_year_code, user):
     return render(request, "eval/scripts/coordinator_faculty_panel.js")
+    
+@login_required(login_url='')
+@ensure_csrf_cookie
+def evaluator_evaluationsHTML(request, panel_id, panel_year_code, user,review_number):
+    return render(request, "eval/containers/evaluator_evaluations.html")
+
+
+@login_required(login_url='')
+@ensure_csrf_cookie
+def evaluator_evaluationsJS(request, panel_id, panel_year_code, user,review_number):
+    return render(request, "eval/scripts/evaluator_evaluations.js")
 
 
 @login_required(login_url='')
