@@ -188,6 +188,7 @@ function submit_evaluation(e, t) {
 
     for(let i of trows)
         jsonarray.push({})
+    jsonarray["fac_id"]=getCookie("username")
     theads=document.getElementById("evaluation_views_table_fields").children
     for(i of lst)
     {
@@ -217,7 +218,7 @@ function submit_evaluation(e, t) {
             console.log(data)
         }
     }
-    xhttp.open("POST", "/api/" + getCookie("username") + "/" + panel_year_code + "-" + panel_id + "/" + review_number + "/" + team_year_code + "-" + team_id + "/marks-view/", true);
+    xhttp.open("PUT", "/api/" + getCookie("username") + "/" + panel_year_code + "-" + panel_id + "/" + review_number + "/" + team_year_code + "-" + team_id + "/marks-view/", true);
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");

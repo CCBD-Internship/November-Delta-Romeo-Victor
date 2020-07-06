@@ -1707,7 +1707,7 @@ class EvaluatorMarksView(APIView):
 
     def put(self, request, user, panel_id=None, panel_year_code=None, team_id=None, team_year_code=None, review_number=None):
 
-        try:
+        # try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
 
                 t = Team.objects.filter(
@@ -1769,8 +1769,8 @@ class EvaluatorMarksView(APIView):
                     return Response({"details": "invalid team or review_number"}, status=status.HTTP_403_FORBIDDEN)
             else:
                 return Response({"details": "invalid token"}, status=status.HTTP_403_FORBIDDEN)
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        # except:
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class GeneralMarksView(APIView):
