@@ -17,7 +17,7 @@ function admin_panel_refresh() {
                         str += ("<td>" + date.toLocaleString() + "</td>")
                     }
                     else if (j == "is_active")
-                        str += ("<td>" + (data[i][j] ? 'Yes' : 'No') + "</td>")
+                        str += ("<td>" + (data[i][j] ?'&#9989;': '&#10060;') + "</td>")
                     else if (j == "id")
                         continue
                     else
@@ -172,7 +172,7 @@ function admin_panel_put_form(arg) {
             dest.value = arr.shift()
         }
         else if (dest.type == "checkbox") {
-            dest.checked = (arr.shift()) ? true : false
+            dest.checked = (arr.shift()=="✅") ? true : false
         }
         dest = dest.nextElementSibling
     }

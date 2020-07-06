@@ -139,7 +139,7 @@ function admin_marks_return_status(val) {
                     bool=false
                 }
             }
-            str+= (bool ? '&#9989;':'❔') 
+            str+= (bool ? '&#9989;':'❕') 
         }
         else{
             str+='&#10060;'

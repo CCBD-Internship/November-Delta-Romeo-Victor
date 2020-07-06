@@ -70,8 +70,12 @@ urlpatterns = [
 
 # frontend HTML
 urlpatterns += [
+    path('<str:user>/home/evaluator/<str:panel_year_code>-<str:panel_id>/<str:review_number>/team/HTML/',
+         views.evaluator_teamHTML),
     path('<str:user>/home/coordinator/<str:panel_year_code>-<str:panel_id>/team/HTML/',
          views.coordinator_teamHTML),
+    path('<str:user>/home/evaluator/<str:panel_year_code>-<str:panel_id>/<str:review_number>/student/HTML/',
+         views.evaluator_studentHTML),
     path('<str:user>/home/coordinator/<str:panel_year_code>-<str:panel_id>/student/HTML/',
          views.coordinator_studentHTML),
     path('<str:user>/home/coordinator/<str:panel_year_code>-<str:panel_id>/team-faculty-review/HTML/',
@@ -92,12 +96,18 @@ urlpatterns += [
          views.evaluator_teamHTML),
     path('<str:user>/home/evaluator/<str:panel_year_code>-<str:panel_id>/student/HTML/',
          views.evaluator_studentHTML),
+    path('<str:user>/home/evaluator/<str:panel_year_code>-<str:panel_id>/faculty-panel/HTML/',
+         views.evaluator_facpanelHTML),
 ]
 
 # frontend JS
 urlpatterns += [
+    path('<str:user>/home/evaluator/<str:panel_year_code>-<str:panel_id>/<str:review_number>/team/JS/',
+         views.evaluator_teamJS),
     path('<str:user>/home/coordinator/<str:panel_year_code>-<str:panel_id>/team/JS/',
          views.coordinator_teamJS),
+    path('<str:user>/home/evaluator/<str:panel_year_code>-<str:panel_id>/<str:review_number>/student/JS/',
+         views.evaluator_studentJS),
     path('<str:user>/home/coordinator/<str:panel_year_code>-<str:panel_id>/student/JS/',
          views.coordinator_studentJS),
     path('<str:user>/home/coordinator/<str:panel_year_code>-<str:panel_id>/team-faculty-review/JS/',
@@ -117,4 +127,6 @@ urlpatterns += [
          views.evaluator_teamJS),
     path('<str:user>/home/evaluator/<str:panel_year_code>-<str:panel_id>/student/JS/',
          views.evaluator_studentJS),
+    path('<str:user>/home/evaluator/<str:panel_year_code>-<str:panel_id>/faculty-panel/JS/',
+         views.evaluator_facpanelJS),
 ]

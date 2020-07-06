@@ -268,25 +268,25 @@ def coordinator_panel_reviewJS(request, panel_id, panel_year_code, user):
 
 @login_required(login_url='')
 @ensure_csrf_cookie
-def evaluator_teamHTML(request, panel_id, panel_year_code, user):
+def evaluator_teamHTML(request, panel_id, panel_year_code, user, review_number=None):
     return render(request, "eval/containers/evaluator_team.html")
 
 
 @login_required(login_url='')
 @ensure_csrf_cookie
-def evaluator_teamJS(request, panel_id, panel_year_code, user):
+def evaluator_teamJS(request, panel_id, panel_year_code, user, review_number=None):
     return render(request, "eval/scripts/evaluator_team.js")
 
 
 @login_required(login_url='')
 @ensure_csrf_cookie
-def evaluator_studentHTML(request, panel_id, panel_year_code, user):
+def evaluator_studentHTML(request, panel_id, panel_year_code, user, review_number=None):
     return render(request, "eval/containers/evaluator_student.html")
 
 
 @login_required(login_url='')
 @ensure_csrf_cookie
-def evaluator_studentJS(request, panel_id, panel_year_code, user):
+def evaluator_studentJS(request, panel_id, panel_year_code, user, review_number=None):
     return render(request, "eval/scripts/evaluator_student.js")
 
 
@@ -295,11 +295,21 @@ def evaluator_studentJS(request, panel_id, panel_year_code, user):
 def coordinator_facpanelHTML(request, panel_id, panel_year_code, user):
     return render(request, "eval/containers/coordinator_faculty_panel.html")
 
+@login_required(login_url='')
+@ensure_csrf_cookie
+def evaluator_facpanelHTML(request, panel_id, panel_year_code, user):
+    return render(request, "eval/containers/evaluator_faculty_panel.html")
+
 
 @login_required(login_url='')
 @ensure_csrf_cookie
 def coordinator_facpanelJS(request, panel_id, panel_year_code, user):
     return render(request, "eval/scripts/coordinator_faculty_panel.js")
+
+@login_required(login_url='')
+@ensure_csrf_cookie
+def evaluator_facpanelJS(request, panel_id, panel_year_code, user):
+    return render(request, "eval/scripts/evaluator_faculty_panel.js")
 
 
 def add_one_panel(panel_year_code, serializer_list=None):
@@ -851,7 +861,7 @@ class PanelReview_List(APIView):
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
                 p = Panel.objects.filter(
                     panel_id=panel_id, panel_year_code=panel_year_code).first()
-                if(FacultyPanel.objects.filter(fac_id=user, panel_id=p.id, is_coordinator=True).exists()):
+                if(FacultyPanel.objects.filter(fac_id=user, panel_id=p.id).exists()):
                     PanelReview_as_object = PanelReview.objects.filter(
                         panel_id=p).order_by("review_number")
                     content = list(PanelReview_as_object.values())
@@ -862,7 +872,7 @@ class PanelReview_List(APIView):
                         i["panel_year_code"] = panel_year_code
                     return Response(content, status=status.HTTP_200_OK)
                 else:
-                    return Response({"detail": "only panel coordinator can access"}, status=status.HTTP_403_FORBIDDEN)
+                    return Response({"detail": "only panel member can access"}, status=status.HTTP_403_FORBIDDEN)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
         except:

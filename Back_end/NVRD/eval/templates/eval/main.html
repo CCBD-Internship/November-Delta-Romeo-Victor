@@ -7,6 +7,25 @@
     <title>NVRD-PLogger</title>
     <link rel="stylesheet" href="https://bootswatch.com/4/darkly/bootstrap.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js" type="text/javascript"></script>
+    <style>
+        .blink_me_main {
+            animation: blinkermain 2000ms linear infinite;
+        }
+
+        @keyframes blinkermain {
+            0% {
+                opacity: .5;
+            }
+
+            50% {
+                opacity: .7;
+            }
+
+            100% {
+                opacity: .5;
+            }
+        }
+    </style>
     <script id='admin_JS'></script>
     <script id='coordinator_JS'></script>
     <script id='evaluator_JS'></script>
@@ -47,7 +66,7 @@
             xhttp.send();
         }
         var Tree = { "Admin": [], "Coordinator": [], "Evaluator": [] }
-        var evalview = { "Review-1": { "Team": [] }, "Review-2": { "Team": [] }, "Review-3": { "Team": [] }, "Review-4": { "Team": [] }, "Review-5": { "Team": [] }, "Team": [], "Student": [], "Faculty-Panel": [] }
+        var evalview = { "Review-1": { "Team": [], "Student": [] }, "Review-2": { "Team": [], "Student": [] }, "Review-3": { "Team": [], "Student": [] }, "Review-4": { "Team": [], "Student": [] }, "Review-5": { "Team": [], "Student": [] }, "Team": [], "Student": [], "Faculty-Panel": [] }
         var coordview = { "Panel-Review": [], "Faculty-Panel": [], "Team-Faculty-Review": [], "Team": [], "Student": [] }
         var adminview = { "Faculty": [], "Panel": [], "Faculty-panel": [], "Team": [], "Student": [], "Marks-View": [] }
         var User;
@@ -342,6 +361,48 @@
                         cardchild.children[i].firstChild.addEventListener('click', crumbPusher)
                     }
                 }
+                else if (returnCurrentList() == Evaluator_BC && returnCurrentList().length == 2) {
+                    xhttp = new XMLHttpRequest()
+                    xhttp.onreadystatechange = function () {
+                        if (this.readyState == 4 && this.status == 200) {
+                            document.getElementById('NVRDlist').setAttribute('style', 'display:inline')
+                            NVRDlist = document.getElementById("NVRDlist")
+                            len = NVRDlist.children.length
+                            for (let i = 0; i < len; i++) {
+                                NVRDlist.removeChild(NVRDlist.children[0])
+                            }
+                            var pnr = JSON.parse(this.responseText)
+                            var now = new Date()
+                            for (let i = 0; i < Object.keys(obj).length; i++) {
+                                elem = document.createElement("button")
+                                if (i <= 4) {
+                                    var open_time = new Date(pnr[i]["open_time"])
+                                    var close_time = new Date(pnr[i]["close_time"])
+                                    if (now.getTime() > open_time.getTime() && now.getTime() < close_time.getTime()) {
+                                        elem.setAttribute('class', 'list-group-item list-group-item-action bg-warning blink_me_main');
+                                    }
+                                    else {
+                                        elem.setAttribute('class', 'list-group-item list-group-item-action');
+                                    }
+                                }
+                                else {
+                                    elem.setAttribute('class', 'list-group-item list-group-item-action')
+                                }
+                                elem.addEventListener('click', crumbPusher)
+                                elem.innerHTML = Object.keys(obj)[i]
+                                NVRDlist.appendChild(elem)
+                            }
+                        }
+                    }
+                    var curr_list = returnCurrentList()
+                    var panel_id = curr_list[1].slice(0, curr_list[1].indexOf("-"))
+                    var panel_year_code = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
+                    refreshLoader(xhttp)
+                    xhttp.open("GET", "/api/" + getCookie("username") + "/" + panel_id + "-" + panel_year_code + "/panel-review/", true);
+                    xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
+                    xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+                    xhttp.send()
+                }
                 else {
                     document.getElementById('NVRDlist').setAttribute('style', 'display:inline')
                     NVRDlist = document.getElementById("NVRDlist")
@@ -349,7 +410,6 @@
                     for (let i = 0; i < len; i++) {
                         NVRDlist.removeChild(NVRDlist.children[0])
                     }
-
                     for (let i = 0; i < Object.keys(obj).length; i++) {
                         elem = document.createElement("button")
                         elem.setAttribute('class', 'list-group-item list-group-item-action');
@@ -463,6 +523,23 @@
                     }
                 })
             }
+        }
+
+        function main_panel_review_refresh() {
+            var xhttp = new XMLHttpRequest()
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    return JSON.parse(this.responseText)
+                }
+            }
+            var curr_list = returnCurrentList()
+            var panel_id = curr_list[1].slice(0, curr_list[1].indexOf("-"))
+            var panel_year_code = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
+            refreshLoader(xhttp)
+            xhttp.open("GET", "/api/" + getCookie("username") + "/" + panel_id + "-" + panel_year_code + "/panel-review/", true);
+            xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
+            xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+            xhttp.send()
         }
     </script>
 </head>

@@ -17,7 +17,7 @@ function team_refresh_A() {
                 str += '<td scope="col"><button type="button" class="btn btn-dark active btn" data-toggle="modal" data-target="#modal_admin_team_put" onclick="admin_team_put_form(this)">' + svgstr + '</button></td></tr>'
             }
             document.getElementById("team_body_A").innerHTML = str
-            checkerInit("team_boxes_main_A","team_boxes_A")
+            checkerInit("team_boxes_main_A", "team_boxes_A")
         }
     }
     refreshLoader(xhttp)
@@ -46,7 +46,7 @@ function team_search_A() {
                 str += '<td scope="col"><button type="button" class="btn btn-dark active btn" data-toggle="modal" data-target="#modal_admin_team_put" onclick="admin_team_put_form(this)">' + svgstr + '</button></td></tr>'
             }
             document.getElementById("team_body_A").innerHTML = str
-            checkerInit("team_boxes_main_A","team_boxes_A")
+            checkerInit("team_boxes_main_A", "team_boxes_A")
         }
     }
     refreshLoader(xhttp)
@@ -348,6 +348,7 @@ function admin_team_upload_csv(event) {
                 document.getElementById('team_csv_toast_admin_header').innerHTML = 'SUCCESS'
                 document.getElementById('team_csv_toast_admin_body').innerHTML = "Assumptions made while inserting are listed below"
                 $('#team_csv_toast_admin').toast('show');
+                document.getElementById('admin_team_upload_response').textContent = JSON.stringify(JSON.parse(this.responseText), null, 4)
             }
             else {
                 var svg_cross = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle-fill" fill="red" xmlns="http://www.w3.org/2000/svg">'
@@ -357,8 +358,25 @@ function admin_team_upload_csv(event) {
                 document.getElementById('team_csv_toast_admin_header').innerHTML = 'FAILURE'
                 document.getElementById('team_csv_toast_admin_body').innerHTML = "Errors are listed below"
                 $('#team_csv_toast_admin').toast('show');
+                // document.getElementById('admin_team_upload_response').textContent=JSON.stringify(JSON.parse(this.responseText),null,4)
+                str = ''
+                var data = JSON.parse(this.responseText)
+                console.log(data)
+
+                str += '<table id="A_teamcsv_Table" class="table table-bordered">'
+                str += '<th>Team</th><th>Student</th><th>details</th>'
+                for (let i in data) {
+                    console.log(data[i]['value'])
+                    str += '<tr><td>' + JSON.stringify(data[i]["value"][0]) + '</td>'
+                    if (data[i].value[1])
+                        str += '<td>' + JSON.stringify(data[i].value[1]) + '</td>'
+                    else
+                        str += '<td></td>'
+                    str += '<td>' + JSON.stringify(data[i]["detail"]) + '</td></tr>'
+                }
+                str += '</table>'
+                document.getElementById('admin_team_upload_response').innerHTML = str
             }
-            document.getElementById('admin_team_upload_response').textContent=JSON.stringify(JSON.parse(this.responseText),null,4)
         }
         refreshLoader(xhttp)
         xhttp.open("POST", "/api/" + getCookie("username") + "/team-bulk/", true);

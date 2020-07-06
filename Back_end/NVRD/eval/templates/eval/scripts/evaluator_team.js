@@ -21,8 +21,15 @@ function team_refresh_evaluator() {
     var curr_list = returnCurrentList()
     var panel_year_code = curr_list[1].slice(0, curr_list[1].indexOf("-"))
     var panel_id = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
+    var url
+    if (curr_list.length == 4) {
+        url = "/api/" + getCookie("username") + "/" + panel_year_code + "-" + panel_id + "/" + curr_list[2].split('-')[1] + "/team/"
+    }
+    else {
+        url = "/api/" + getCookie("username") + "/" + panel_year_code + "-" + panel_id + "/team/"
+    }
     refreshLoader(xhttp)
-    xhttp.open("GET", "/api/" + getCookie("username") + "/" + panel_year_code + "-" + panel_id + "/team/", true);
+    xhttp.open("GET", url, true);
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     xhttp.send();
@@ -58,6 +65,7 @@ function team_search_evaluator() {
     var panel_id = curr_list[1].slice(0, curr_list[1].indexOf("-"))
     var panel_year_code = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
     var str = ""
+    var url
     if (team_year_code != "") {
         if (str == "")
             str += ("?team_year_code=" + team_year_code)
@@ -76,7 +84,13 @@ function team_search_evaluator() {
         else
             str += ("&team_name=" + team_name)
     }
-    xhttp.open("GET", "/api/" + getCookie("username") + "/" + panel_id + "-" + panel_year_code + "/team/" + str, true);
+    if (curr_list.length == 4) {
+        url = "/api/" + getCookie("username") + "/" + panel_year_code + "-" + panel_id + "/" + curr_list[2].split('-')[1] + "/team/"
+    }
+    else {
+        url = "/api/" + getCookie("username") + "/" + panel_year_code + "-" + panel_id + "/team/"
+    }
+    xhttp.open("GET", url + str, true);
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     xhttp.send();

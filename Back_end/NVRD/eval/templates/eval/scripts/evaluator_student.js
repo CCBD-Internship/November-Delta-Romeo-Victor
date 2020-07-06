@@ -21,14 +21,21 @@ function student_refresh_evaluator() {
     var curr_list = returnCurrentList()
     var panel_year_code = curr_list[1].slice(0, curr_list[1].indexOf("-"))
     var panel_id = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
+    var str
+    if (curr_list.length == 4) {
+        str = "/api/" + getCookie("username") + "/" + panel_year_code + "-" + panel_id + "/" + curr_list[2].split('-')[1] + "/student/"
+    }
+    else {
+        str = "/api/" + getCookie("username") + "/" + panel_year_code + "-" + panel_id + "/student/"
+    }
     refreshLoader(xhttp)
-    xhttp.open("GET", "/api/" + getCookie("username") + "/" + panel_year_code + "-" + panel_id + "/student/", true);
+    xhttp.open("GET", str, true);
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     xhttp.send();
 }
 
-function student_search_evaluator(){
+function student_search_evaluator() {
     tbody = document.getElementById("student_body")
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
@@ -53,7 +60,14 @@ function student_search_evaluator(){
     var curr_list = returnCurrentList()
     var panel_id = curr_list[1].slice(0, curr_list[1].indexOf("-"))
     var panel_year_code = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
-    var str = "/api/" + getCookie("username") + "/" + panel_id + "-" + panel_year_code + "/student/"
+    var str
+    console.log(curr_list)
+    if (curr_list.length == 4) {
+        str = "/api/" + getCookie("username") + "/" + panel_year_code + "-" + panel_id + "/" + curr_list[2].split('-')[1] + "/student/"
+    }
+    else {
+        str = "/api/" + getCookie("username") + "/" + panel_year_code + "-" + panel_id + "/student/"
+    }
     if (name != "" || srn != "") {
         str += '?'
         if (name != "") {
@@ -72,6 +86,4 @@ function student_search_evaluator(){
     xhttp.send();
 }
 
-function evaluator_refresh() {
-    student_refresh_evaluator()
-}
+evaluator_refresh = student_refresh_evaluator
