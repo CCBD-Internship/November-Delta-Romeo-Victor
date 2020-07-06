@@ -1,6 +1,10 @@
 evaluator_refresh = evaluator_evaluations_refresh
 var lst = ["srn", "name"];
 var time_E = null;
+var team_year_code;
+var team_id;
+var team_name;
+var team_desc;
 function evaluator_evaluations_refresh() {
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
@@ -46,10 +50,12 @@ function E_evaluations_opentip(e, t) {
     // str="<table class='table table-striped'><thead><tr><th scope='col'></th><th scope='col'></th><th scope='col'></th><th scope='col'></th></tr></thead><tbody id='C_TFR_R1_tbody'></tbody></table>"
     // document.getElementById('evaluation_views').innerHTML=str
     // console.log(t)
-    var team_year_code = t.children[0].textContent.split("   ")[0];
-    var team_id = t.children[0].textContent.split("   ")[1];
-    var team_name = t.children[1].children[0].textContent.split(":")[1]
-    var team_desc = t.children[1].children[1].textContent.split(":")[1]
+    if (t) {
+        team_year_code = t.children[0].textContent.split("   ")[0];
+        team_id = t.children[0].textContent.split("   ")[1];
+        team_name = t.children[1].children[0].textContent.split(":")[1]
+        team_desc = t.children[1].children[1].textContent.split(":")[1]
+    }
     // console.log(team_id, team_year_code, team_name)
     document.getElementById('evaluation_views_card_header').textContent = team_year_code + "-" + team_id;
     var curr_list = returnCurrentList()
@@ -186,41 +192,45 @@ function submit_evaluation(e, t) {
     var jsonarray = []
     trows = document.getElementById("evaluation_views_table_body").children
 
-    for(let i of trows)
+    for (let i of trows)
         jsonarray.push({})
-    jsonarray["fac_id"]=getCookie("username")
-    theads=document.getElementById("evaluation_views_table_fields").children
-    for(i of lst)
-    {
-        for(var j=0;j<jsonarray.length;++j)
-            jsonarray[j][i]=''
+    jsonarray["fac_id"] = getCookie("username")
+    theads = document.getElementById("evaluation_views_table_fields").children
+    for (i of lst) {
+        for (var j = 0; j < jsonarray.length; ++j)
+            jsonarray[j][i] = ''
     }
-    var c=0;
-    for(let i of trows)
-    {
-        var vals=[]
-        for(let j of i.children)
-            if(j.firstElementChild)
-                vals.push(j.firstElementChild.value)
+    var c = 0;
+    for (let i of trows) {
+        var vals = []
+        for (let j of i.children)
+            if (j.firstElementChild) {
+                if (j.firstElementChild.type == 'checkbox')
+                    vals.push(j.firstElementChild.checked)
+                else
+                    vals.push(j.firstElementChild.value)
+            }
             else
                 vals.push(j.textContent)
-        for(var j=0;j<vals.length;++j)
-        {    
-            key=lst[j]
-            jsonarray[c][key]=vals[j]
+        for (var j = 0; j < vals.length; ++j) {
+            key = lst[j]
+            jsonarray[c][key] = vals[j]
         }
         c++;
     }
-    var ret={"individul_review":jsonarray,"review_number":review_number,"team":{"team_year_code":team_year_code,"team_id":team_id},"team_remark":document.getElementById("evaluator_team_remark").textContent}
-
+    var ret = { "individual_review": jsonarray, "review_number": review_number, "team": { "team_year_code": team_year_code, "team_id": team_id }, "team_remarks": document.getElementById("evaluator_team_remark").textContent }
     xhttp.onreadystatechange = function () {
         if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
             console.log(data)
+            E_evaluations_opentip()
+        }
+        else {
+
         }
     }
     xhttp.open("PUT", "/api/" + getCookie("username") + "/" + panel_year_code + "-" + panel_id + "/" + review_number + "/" + team_year_code + "-" + team_id + "/marks-view/", true);
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");
-    xhttp.send(ret);
+    xhttp.send(JSON.stringify(ret));
 }

@@ -124,7 +124,7 @@ def loginpage(request):
                 if(user.check_password(password)):
                     token = RefreshToken.for_user(user)
                     login(request, user,
-                        backend='django.contrib.auth.backends.ModelBackend')
+                          backend='django.contrib.auth.backends.ModelBackend')
                     response = redirect('/'+username+'/home')
                     response.set_cookie('token', str(
                         token.access_token), expires=timezone.now()+datetime.timedelta(days=1))
@@ -134,10 +134,10 @@ def loginpage(request):
                         'username', username, expires=timezone.now()+datetime.timedelta(days=100))
                     return response
                 else:
-                    context["error"]="invalid user"
+                    context["error"] = "invalid user"
                 return render(request, 'eval/login.html', context)
         else:
-            context["error"]="invalid user"
+            context["error"] = "invalid user"
         return render(request, 'eval/login.html', context)
 
 
@@ -310,16 +310,17 @@ def evaluator_facpanelHTML(request, panel_id, panel_year_code, user):
 @ensure_csrf_cookie
 def coordinator_facpanelJS(request, panel_id, panel_year_code, user):
     return render(request, "eval/scripts/coordinator_faculty_panel.js")
-    
+
+
 @login_required(login_url='')
 @ensure_csrf_cookie
-def evaluator_evaluationsHTML(request, panel_id, panel_year_code, user,review_number):
+def evaluator_evaluationsHTML(request, panel_id, panel_year_code, user, review_number):
     return render(request, "eval/containers/evaluator_evaluations.html")
 
 
 @login_required(login_url='')
 @ensure_csrf_cookie
-def evaluator_evaluationsJS(request, panel_id, panel_year_code, user,review_number):
+def evaluator_evaluationsJS(request, panel_id, panel_year_code, user, review_number):
     return render(request, "eval/scripts/evaluator_evaluations.js")
 
 
@@ -1706,10 +1707,8 @@ class EvaluatorMarksView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, user, panel_id=None, panel_year_code=None, team_id=None, team_year_code=None, review_number=None):
-
-        # try:
+        try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
-
                 t = Team.objects.filter(
                     team_id=team_id, team_year_code=team_year_code).first()
                 if TeamFacultyReview.objects.filter(fac_id=Faculty.objects.get(fac_id=user), team_id=t, review_number=review_number).exists():
@@ -1769,8 +1768,8 @@ class EvaluatorMarksView(APIView):
                     return Response({"details": "invalid team or review_number"}, status=status.HTTP_403_FORBIDDEN)
             else:
                 return Response({"details": "invalid token"}, status=status.HTTP_403_FORBIDDEN)
-        # except:
-        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class GeneralMarksView(APIView):
