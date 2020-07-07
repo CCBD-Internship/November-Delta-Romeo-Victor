@@ -23,10 +23,10 @@ function student_refresh_coordinator() {
     }
     var curr_list = returnCurrentList()
     // console.log(curr_list,curr_list[1].slice(0, curr_list[1].indexOf("-")),)
-    var panel_id = curr_list[1].slice(0, curr_list[1].indexOf("-"))
-    var panel_year_code = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
+    var panel_year_code = curr_list[1].slice(0, curr_list[1].indexOf("-"))
+    var panel_id = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
     refreshLoader(xhttp)
-    xhttp.open("GET", "/api/" + getCookie("username") + "/" + panel_id + "-" + panel_year_code + "/student/", true);
+    xhttp.open("GET", "/api/" + getCookie("username") + "/" + panel_year_code + "-" + panel_id + "/student/", true);
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     xhttp.send();
@@ -44,11 +44,11 @@ function student_search_coordinator() {
             svgstr += '<path fill-rule="evenodd" d="M12.146 6.354l-2.5-2.5.708-.708 2.5 2.5-.707.708zM3 10v.5a.5.5 0 0 0 .5.5H4v.5a.5.5 0 0 0 .5.5H5v.5a.5.5 0 0 0 .5.5H6v-1.5a.5.5 0 0 0-.5-.5H5v-.5a.5.5 0 0 0-.5-.5H3z"/>'
             svgstr += '</svg>'
             for (let i in data) {
-                str += '<tr><td scope="row" style="text-align:right"><input name="boxes" class="form-check-input position-static" type="checkbox"></input></td>'
+                str += '<tr>'
                 for (let j in data[i]) {
                     str += ("<td>" + data[i][j] + "</td>")
                 }
-                str += '<td scope="col"><button type="button" class="btn btn-dark active btn" data-toggle="modal" data-target="#modal_coordinator_student_put" onclick="coordinator_student_put_form(this)">' + svgstr + '</button></td></tr>'
+                str += '</tr>'
             }
             document.getElementById("student_body_coordinator").innerHTML = str
         }
@@ -58,9 +58,9 @@ function student_search_coordinator() {
     var name = document.getElementById("student_search_name_coordinator").value
     var curr_list = returnCurrentList()
     // console.log(curr_list,curr_list[1].slice(0, curr_list[1].indexOf("-")),)
-    var panel_id = curr_list[1].slice(0, curr_list[1].indexOf("-"))
-    var panel_year_code = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
-    var str = "/api/" + getCookie("username") + "/" + panel_id + "-" + panel_year_code + "/student/"
+    var panel_year_code = curr_list[1].slice(0, curr_list[1].indexOf("-"))
+    var panel_id = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
+    var str = "/api/" + getCookie("username") + "/" + panel_year_code + "-" + panel_id + "/student/"
     if (name != "" || srn != "") {
         str += '?'
         if (name != "") {

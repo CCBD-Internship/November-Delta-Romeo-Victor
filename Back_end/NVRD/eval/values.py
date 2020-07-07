@@ -17,15 +17,15 @@ def add_one_team(team_year_code):
     return str(int(largest.team_id) + 1).zfill(10)
 
 
-d = Department(dept="Computer Science")
+d = Department(dept="CSE")
 d.save()
 p = Panel(panel_year_code="PN_20", panel_id=add_one_panel(
     "PN_20"), panel_name="AAAA")
 p.save()
 p=Panel(panel_year_code="PN_20", panel_id=add_one_panel("PN_20"), panel_name="BBBB")
 p.save()
-f = Faculty(fac_id="7474", dept=Department.objects.filter(dept="Computer Science").first(),
-            email="abc@gmail.com", phone="+911234567890", name="Raghavan",is_admin=True)
+f = Faculty(fac_id="Admin", dept=Department.objects.filter(dept="CSE").first(),
+            email="admin@gmail.com", phone="+911234567890", name="Admin",is_admin=True)
 f.save()
 t = Team(team_year_code="UE_20", team_id=add_one_team(
     "UE_20"), guide=Faculty.objects.get(fac_id="7474"))
@@ -49,8 +49,14 @@ f = FacultyPanel(fac_id=Faculty.objects.get(fac_id="7474"), panel_id=Panel.objec
     panel_year_code="PN_20", panel_id="0000000001").first(), is_coordinator=True)
 f.save()
 
+
+from eval.models import *
+d = Department(dept="CSE")
+d.save()
+f = Faculty(fac_id="admin", dept=Department.objects.filter(dept="CSE").first(),
+            email="admin@gmail.com", phone="+911234567890", name="admin",is_admin=True)
+f.save()
 from django.contrib.auth.models import User
-# from eval.models import *
 from rest_framework.authtoken.models import Token
 for i in Faculty.objects.all():
     if(not User.objects.filter(username=i.fac_id).exists()):

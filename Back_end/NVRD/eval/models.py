@@ -23,8 +23,8 @@ class Faculty(models.Model):
     email = models.EmailField()
     phone = models.CharField(max_length=13)
     dept = models.ForeignKey('Department', models.DO_NOTHING)
-    fac_type = models.CharField(max_length=20, choices=[("assistant_prof", "assistant_prof"), (
-        "associate_prof", "associate_prof"), ("professor", "professor")], default="professor")
+    fac_type = models.CharField(max_length=20, choices=[("Assistant Professor", "Assistant Professor"), (
+        "Associate Professor", "Associate Professor"), ("Professor", "Professor")], default="Professor")
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 

@@ -427,6 +427,7 @@ class Faculty_List(APIView):
 
     def put(self, request, user):
         try:
+            print(request.data)
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
                 if(Faculty.objects.get(fac_id=user).is_admin == True):
                     valid_list = []
@@ -760,8 +761,9 @@ class Panel_List(APIView):
                             p = Panel.objects.filter(
                                 panel_id=i["panel_id"].value, panel_year_code=i["panel_year_code"].value).first()
                             for k in range(1, 6):
-                                PanelReview(review_number=k, panel_id=p, open_time=timezone.now(), close_time=timezone.make_aware(datetime.datetime.now(
-                                )+datetime.timedelta(days=365), timezone.get_default_timezone()), id=i["panel_year_code"].value+'_'+i["panel_id"].value+'_'+str(k)).save()
+                                # PanelReview(review_number=k, panel_id=p, open_time=timezone.now(), close_time=timezone.make_aware(datetime.datetime.now(
+                                # )+datetime.timedelta(days=365), timezone.get_default_timezone()), id=i["panel_year_code"].value+'_'+i["panel_id"].value+'_'+str(k)).save()
+                                PanelReview(review_number=k, panel_id=p, open_time=p.ctime, close_time=p.ctime, id=i["panel_year_code"].value+'_'+i["panel_id"].value+'_'+str(k)).save()
                         return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
                     else:
                         return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
@@ -1112,7 +1114,7 @@ class Team_List(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, user, panel_year_code=None, panel_id=None, review_number=None):
-        try:
+        # try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
                 team_as_object = Team.objects.all().order_by("-team_year_code", "team_id")
                 if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
@@ -1128,8 +1130,8 @@ class Team_List(APIView):
                     if(review_number == None):
                         team_as_object = Team.objects.filter(panel_id=id)
                     else:
-                        team_as_object = Team.objects.filter(id__in=list(*TeamFacultyReview.objects.filter(
-                            fac_id=user, review_number=review_number).values_list('team_id')), panel_id=id)
+                        team_as_object = Team.objects.filter(id__in=[i.team_id.id for i in TeamFacultyReview.objects.filter(
+                            fac_id=user, review_number=review_number)], panel_id=id)
                 else:
                     return Response(status=status.HTTP_403_FORBIDDEN)
                 if 'team_id' in request.GET:
@@ -1159,8 +1161,8 @@ class Team_List(APIView):
                 return Response(d, status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        # except:
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, user, panel_year_code=None, panel_id=None):
         try:

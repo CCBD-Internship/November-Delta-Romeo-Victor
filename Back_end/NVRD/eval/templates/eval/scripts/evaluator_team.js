@@ -62,8 +62,8 @@ function team_search_evaluator() {
     var team_id = document.getElementById("team_search_team_id_evaluator").value
     var team_name = document.getElementById("team_search_team_name_evaluator").value
     var curr_list = returnCurrentList()
-    var panel_id = curr_list[1].slice(0, curr_list[1].indexOf("-"))
-    var panel_year_code = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
+    var panel_year_code = curr_list[1].slice(0, curr_list[1].indexOf("-"))
+    var panel_id = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
     var str = ""
     var url
     if (team_year_code != "") {

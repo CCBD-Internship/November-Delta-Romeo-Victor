@@ -47,9 +47,11 @@ function student_search_evaluator() {
             svgstr += '<path fill-rule="evenodd" d="M12.146 6.354l-2.5-2.5.708-.708 2.5 2.5-.707.708zM3 10v.5a.5.5 0 0 0 .5.5H4v.5a.5.5 0 0 0 .5.5H5v.5a.5.5 0 0 0 .5.5H6v-1.5a.5.5 0 0 0-.5-.5H5v-.5a.5.5 0 0 0-.5-.5H3z"/>'
             svgstr += '</svg>'
             for (let i in data) {
+                str += '<tr>'
                 for (let j in data[i]) {
                     str += ("<td>" + data[i][j] + "</td>")
                 }
+                str += '<tr>'
             }
             document.getElementById("student_body_evaluator").innerHTML = str
         }
@@ -58,8 +60,8 @@ function student_search_evaluator() {
     var srn = document.getElementById("student_search_srn_evaluator").value
     var name = document.getElementById("student_search_name_evaluator").value
     var curr_list = returnCurrentList()
-    var panel_id = curr_list[1].slice(0, curr_list[1].indexOf("-"))
-    var panel_year_code = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
+    var panel_year_code = curr_list[1].slice(0, curr_list[1].indexOf("-"))
+    var panel_id = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
     var str
     console.log(curr_list)
     if (curr_list.length == 4) {

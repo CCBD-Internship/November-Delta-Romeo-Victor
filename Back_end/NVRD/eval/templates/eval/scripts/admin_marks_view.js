@@ -46,6 +46,7 @@ function marks_view_search_A() {
                 for (let j in lst) {
                     str += ("<td>" + data[i][lst[j]] + "</td>")
                 }
+                str+=("<td>" + admin_marks_return_status(data[i]) + "</td>")
                 str += '</tr>'
             }
             document.getElementById("marks_view_body_A").innerHTML = str
