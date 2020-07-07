@@ -187,12 +187,59 @@
             window.location.hash = ""
         });
 
+        function change_password(){
+            var data=document.getElementById("change_passwordModal-Data").firstElementChild
+            let jsonarray={}
+            while(data){
+                if(data.placeholder)
+                    jsonarray[data.placeholder]=data.value
+                data=data.nextElementSibling
+            }
+            console.log(jsonarray)
+            var xhttp = new XMLHttpRequest()
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    let d = JSON.parse(this.responseText)
+                    var svg_tick = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check-circle-fill" fill="green" xmlns="http://www.w3.org/2000/svg">'
+                    svg_tick += '<path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>'
+                    svg_tick += '</svg>'
+                    $('#changepassword_toast_svg').html(svg_tick)
+                    var str = "<b>" + d["detail"] + "</b>"
+                    str+="<h4>You will be logged out Please Log In again to Continue</h4>"
+                    $('#changepassword_toast_body').html(str)
+                    $('#changepassword_toast_header').html('SUCCESS')
+                    $('#changepassword_toast').toast('show');
+                    setTimeout(()=>{
+                        location.href="/logout/"
+                    },5000)
+                }
+                else if(this.readyState==4){
+                    var svg_cross = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle-fill" fill="red" xmlns="http://www.w3.org/2000/svg">'
+                    svg_cross += '<path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.146-3.146a.5.5 0 0 0-.708-.708L8 7.293 4.854 4.146a.5.5 0 1 0-.708.708L7.293 8l-3.147 3.146a.5.5 0 0 0 .708.708L8 8.707l3.146 3.147a.5.5 0 0 0 .708-.708L8.707 8l3.147-3.146z"/>'
+                    svg_cross += '</svg>'
+                     $('#changepassword_toast_svg').html(svg_cross)
+                    d = JSON.parse(this.responseText)
+                    var str = "<br>" +d["detail"] + "<br>"
+                    $('#changepassword_toast_header').html('REQUEST ABORTED')
+                    $('#changepassword_toast_body').html(str)
+                    $('#changepassword_toast').toast('show');
+                }
+            }
+            refreshLoader(xhttp)
+            xhttp.open("POST", "/api/" + getCookie("username") + "/changepassword/", true);
+            xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
+            xhttp.setRequestHeader("Content-type", "application/json;charset UTF-8");
+            xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+            xhttp.send(JSON.stringify(jsonarray))
+        }
         function fillprofile_tab(data) {
             var requiredinfo = ["name", "email", "phone", "fac_id"]
             var str = ""
             for (let info of requiredinfo)
                 str += "<p class='dropdown-item' style='cursor:pointer;'><b>" + info[0].toUpperCase() + info.slice(1,) + "</b>&emsp;" + data[info] + "</p>"
             str += "<p class='dropdown-item' style='cursor:pointer;'><b>Dept</b>&emsp;" + data["dept_id"] + "</p>"
+
+            str += '<button type="button" class="dropdown-item" data-toggle="modal" data-target="#change_passwordModal">Change Password</button>'
             str += '<div class="dropdown-divider"></div><button class="dropdown-item" type="button" onclick="location.href=\'/logout/\'"><b>Logout</b></button>'
             document.getElementById("fac_info").innerHTML = str
         }
@@ -638,6 +685,44 @@
  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script> -->
-</body>
 
+<div class="modal fade" id="change_passwordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="text-align: center;" class="modal-title" id="exampleModalLabel_A">Change Password</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <form id="change_passwordModal-Data" onsubmit="event.preventDefault()">
+            <label for="recipient-name" class="col-form-label">Old Password</label>
+            <input type="password" placeholder="old_password" class="form-control" min="1" max="10" />
+            <label for="recipient-name" class="col-form-label">New Password</label>
+            <input type="password" placeholder="new_password" class="form-control" />
+            <label for="recipient-name" class="col-form-label">Confirm Password</label>
+            <input type="password" placeholder="confirm_password" class="form-control" />
+            <br>
+            <button type="submit" class="btn btn-primary" onclick="change_password()">Save Changes</button><br>
+          </form>
+          <div class="toast" id="changepassword_toast" role="alert" aria-live="assertive" aria-atomic="true"
+            data-animation="true" data-delay="5000">
+            <div class="toast-header">
+              <div id="changepassword_toast_svg"></div>
+              <strong class="mr-auto" id="changepassword_toast_header"></strong>
+              <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="toast-body" id="changepassword_toast_body"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
 </html>
