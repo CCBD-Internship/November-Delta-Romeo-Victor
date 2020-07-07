@@ -108,7 +108,7 @@ function E_evaluations_opentip(e, t) {
                         tbody += ("<td>" + i[j] + "</td>")
                     }
                     else if (max_vals[review_number][c] == -1) {
-                        tbody += ("<td>" + "<textarea class=\"form-control bg-transparent text-white text-center border-white\">" + i[j] + "</textarea></td>")
+                        tbody += ("<td>" + "<textarea class=\"form-control bg-transparent text-white text-center border-white\" style='min-width: 15em'>" + i[j] + "</textarea></td>")
                     }
                     else if (max_vals[review_number][c] == -3) {
                         tbody += ("<td><input type=\"checkbox\"></td>")

@@ -211,7 +211,7 @@
                     $('#changepassword_toast').toast('show');
                     setTimeout(()=>{
                         location.href="/logout/"
-                    },5000)
+                    },2000)
                 }
                 else if(this.readyState==4){
                     var svg_cross = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle-fill" fill="red" xmlns="http://www.w3.org/2000/svg">'
@@ -707,6 +707,9 @@
             <input type="password" placeholder="confirm_password" class="form-control" />
             <br>
             <button type="submit" class="btn btn-primary" onclick="change_password()">Save Changes</button><br>
+            <br>
+            <br>
+            <h6 class="text-muted"><pre>You will be logged out once you change password</pre></h6>
           </form>
           <div class="toast" id="changepassword_toast" role="alert" aria-live="assertive" aria-atomic="true"
             data-animation="true" data-delay="5000">
