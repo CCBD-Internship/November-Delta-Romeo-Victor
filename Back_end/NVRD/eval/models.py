@@ -7,6 +7,7 @@
 # Feel free to rename the models, but don't rename #db_table values or field names.
 from django.db import models
 from django.utils import timezone
+from django.core.validators import RegexValidator
 
 
 class Department(models.Model):
@@ -14,14 +15,14 @@ class Department(models.Model):
 
     class Meta:
         managed = True
-        #db_table = 'department'
 
 
 class Faculty(models.Model):
     fac_id = models.CharField(primary_key=True, max_length=50)
     name = models.CharField(max_length=100)
     email = models.EmailField()
-    phone = models.CharField(max_length=13)
+    phone = models.CharField(max_length=10, validators=[RegexValidator(
+        regex='^[0-9]{10}$', message='Invalid Phone number')])
     dept = models.ForeignKey('Department', models.DO_NOTHING)
     fac_type = models.CharField(max_length=20, choices=[("Assistant Professor", "Assistant Professor"), (
         "Associate Professor", "Associate Professor"), ("Professor", "Professor")], default="Professor")
@@ -30,11 +31,6 @@ class Faculty(models.Model):
 
     class Meta:
         managed = True
-        constraints = [
-            models.CheckConstraint(
-                name='phone_constraint_faculty', check=models.Q(phone__startswith='+')),
-        ]
-        #db_table = 'faculty'
 
 
 class FacultyPanel(models.Model):
@@ -45,7 +41,6 @@ class FacultyPanel(models.Model):
 
     class Meta:
         managed = True
-        #db_table = 'faculty_panel'
         unique_together = (('fac_id', 'panel_id'),)
 
 
@@ -69,7 +64,6 @@ class Panel(models.Model):
 
     class Meta:
         managed = True
-        #db_table = 'panel'
         unique_together = (('panel_year_code', 'panel_id'),)
 
 
@@ -79,12 +73,10 @@ class PanelReview(models.Model):
     panel_id = models.ForeignKey('Panel', models.CASCADE, db_column="panel_id")
     open_time = models.DateTimeField()
     close_time = models.DateTimeField()
-    # id = models.AutoField(db_column="id",primary_key=True)
     id = models.CharField(max_length=23, db_column="id", primary_key=True)
 
     class Meta:
         managed = True
-        #db_table = 'panel_review'
         unique_together = (('panel_id', 'review_number'),)
 
 
@@ -97,8 +89,8 @@ class Review1(models.Model):
     literature_survey = models.IntegerField()
     knowledge_on_the_project = models.IntegerField()
     comments = models.CharField(max_length=200, blank=True, null=True)
-    is_evaluated=models.BooleanField(default=False)
-    id = models.CharField(max_length=200,primary_key=True)
+    is_evaluated = models.BooleanField(default=False)
+    id = models.CharField(max_length=200, primary_key=True)
 
     class Meta:
         managed = True
@@ -125,8 +117,8 @@ class Review2(models.Model):
     understanding_of_technology_platform_middleware = models.IntegerField()
     viva_voce = models.IntegerField()
     comments = models.CharField(max_length=200, blank=True, null=True)
-    is_evaluated=models.BooleanField(default=False)
-    id = models.CharField(max_length=200,primary_key=True)
+    is_evaluated = models.BooleanField(default=False)
+    id = models.CharField(max_length=200, primary_key=True)
 
     class Meta:
         managed = True
@@ -155,8 +147,8 @@ class Review3(models.Model):
     progress_of_the_project_work = models.IntegerField()
     viva_voce = models.IntegerField()
     comments = models.CharField(max_length=200, blank=True, null=True)
-    is_evaluated=models.BooleanField(default=False)
-    id = models.CharField(max_length=200,primary_key=True)
+    is_evaluated = models.BooleanField(default=False)
+    id = models.CharField(max_length=200, primary_key=True)
 
     class Meta:
         managed = True
@@ -172,7 +164,6 @@ class Review3(models.Model):
             models.CheckConstraint(
                 name='3_viva_voce', check=models.Q(viva_voce__lte=5) & models.Q(viva_voce__gte=0))
         ]
-        #db_table = 'review_3'
         unique_together = (('srn', 'fac_id'),)
 
 
@@ -185,8 +176,8 @@ class Review4(models.Model):
     project_report = models.IntegerField()
     viva_voce = models.IntegerField()
     comments = models.CharField(max_length=200, blank=True, null=True)
-    is_evaluated=models.BooleanField(default=False)
-    id = models.CharField(max_length=200,primary_key=True)
+    is_evaluated = models.BooleanField(default=False)
+    id = models.CharField(max_length=200, primary_key=True)
 
     class Meta:
         managed = True
@@ -200,7 +191,6 @@ class Review4(models.Model):
             models.CheckConstraint(
                 name='4_viva_voce', check=models.Q(viva_voce__lte=10) & models.Q(viva_voce__gte=0))
         ]
-        #db_table = 'review_4'
         unique_together = (('srn', 'fac_id'),)
 
 
@@ -213,8 +203,8 @@ class Review5(models.Model):
     project_report = models.IntegerField()
     viva_voce = models.IntegerField()
     comments = models.CharField(max_length=200, blank=True, null=True)
-    is_evaluated=models.BooleanField(default=False)
-    id = models.CharField(max_length=200,primary_key=True)
+    is_evaluated = models.BooleanField(default=False)
+    id = models.CharField(max_length=200, primary_key=True)
 
     class Meta:
         managed = True
@@ -228,34 +218,21 @@ class Review5(models.Model):
             models.CheckConstraint(
                 name='5_viva_voce', check=models.Q(viva_voce__lte=10) & models.Q(viva_voce__gte=0))
         ]
-        #db_table = 'review_5'
         unique_together = (('srn', 'fac_id'),)
 
 
 class Student(models.Model):
-    srn = models.CharField(primary_key=True, max_length=20)
+    srn = models.CharField(primary_key=True, max_length=20, validators=[
+                           RegexValidator(regex='^PES', message='SRN incorrect')])
     name = models.CharField(max_length=100)
     email = models.EmailField()
-    phone = models.CharField(max_length=13)
+    phone = models.CharField(max_length=10, validators=[RegexValidator(
+        regex='^[0-9]{10}$', message='Invalid Phone number')])
     dept = models.ForeignKey(Department, models.DO_NOTHING)
     team_id = models.ForeignKey('Team', models.SET_NULL, null=True, blank=True)
 
     class Meta:
         managed = True
-        constraints = [
-            models.CheckConstraint(
-                name='phone_constraint_student', check=models.Q(phone__startswith='+')),
-            models.CheckConstraint(name='srn_constraint',
-                                   check=models.Q(srn__startswith='PES')),
-        ]
-        #db_table = 'student'
-
-# use this function to generate team_id always
-# def add_one_team(year_code):
-#     largest = Team.objects.filter(year_code=year_code).order_by('team_id').last()
-#     if not largest:
-#         return str(1).zfill(10)
-#     return str(int(largest.team_id) + 1).zfill(10)
 
 
 class Team(models.Model):
@@ -272,7 +249,6 @@ class Team(models.Model):
     class Meta:
         managed = True
         unique_together = (('team_year_code', 'team_id'),)
-        #db_table = 'team'
 
 
 class TeamFacultyReview(models.Model):
@@ -291,7 +267,6 @@ class TeamFacultyReview(models.Model):
                 name='review_number_lte', check=models.Q(review_number__lte=5))
         ]
         managed = True
-        #db_table = 'team_faculty_review'
         unique_together = (('team_id', 'fac_id', 'review_number'),)
 
 # from django.contrib.auth.models import User

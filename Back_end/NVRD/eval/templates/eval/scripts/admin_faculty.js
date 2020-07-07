@@ -2,29 +2,31 @@ function faculty_refresh_A() {
     tbody = document.getElementById("faculty_body")
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            let data = JSON.parse(this.responseText)
-            var str = ''
-            var svgstr = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil" fill="currentColor" xmlns="http://www.w3.org/2000/svg">'
-            svgstr += '<path fill-rule="evenodd" d="M11.293 1.293a1 1 0 0 1 1.414 0l2 2a1 1 0 0 1 0 1.414l-9 9a1 1 0 0 1-.39.242l-3 1a1 1 0 0 1-1.266-1.265l1-3a1 1 0 0 1 .242-.391l9-9zM12 2l2 2-9 9-3 1 1-3 9-9z"/>'
-            svgstr += '<path fill-rule="evenodd" d="M12.146 6.354l-2.5-2.5.708-.708 2.5 2.5-.707.708zM3 10v.5a.5.5 0 0 0 .5.5H4v.5a.5.5 0 0 0 .5.5H5v.5a.5.5 0 0 0 .5.5H6v-1.5a.5.5 0 0 0-.5-.5H5v-.5a.5.5 0 0 0-.5-.5H3z"/>'
-            svgstr += '</svg>'
-            for (let i in data) {
-                str += '<tr>'
-                for (let j of ["fac_id", "fac_type", "name", "email", "phone", "is_active", "is_admin", "dept"]) {
-                    if (j == "is_active" || j == "is_admin") {
-                        if (data[i][j] == true)
-                            str += ("<td>" + '&#9989;' + "</td>")
-                        else
-                            str += ("<td>" + '&#10060;' + "</td>")
+        if (this.readyState == XMLHttpRequest.DONE) {
+            if (this.status == 200) {
+                let data = JSON.parse(this.responseText)
+                var str = ''
+                var svgstr = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil" fill="currentColor" xmlns="http://www.w3.org/2000/svg">'
+                svgstr += '<path fill-rule="evenodd" d="M11.293 1.293a1 1 0 0 1 1.414 0l2 2a1 1 0 0 1 0 1.414l-9 9a1 1 0 0 1-.39.242l-3 1a1 1 0 0 1-1.266-1.265l1-3a1 1 0 0 1 .242-.391l9-9zM12 2l2 2-9 9-3 1 1-3 9-9z"/>'
+                svgstr += '<path fill-rule="evenodd" d="M12.146 6.354l-2.5-2.5.708-.708 2.5 2.5-.707.708zM3 10v.5a.5.5 0 0 0 .5.5H4v.5a.5.5 0 0 0 .5.5H5v.5a.5.5 0 0 0 .5.5H6v-1.5a.5.5 0 0 0-.5-.5H5v-.5a.5.5 0 0 0-.5-.5H3z"/>'
+                svgstr += '</svg>'
+                for (let i in data) {
+                    str += '<tr>'
+                    for (let j of ["fac_id", "fac_type", "name", "email", "phone", "is_active", "is_admin", "dept"]) {
+                        if (j == "is_active" || j == "is_admin") {
+                            if (data[i][j] == true)
+                                str += ("<td>" + '&#9989;' + "</td>")
+                            else
+                                str += ("<td>" + '&#10060;' + "</td>")
+                        }
+                        else {
+                            str += ("<td>" + data[i][j] + "</td>")
+                        }
                     }
-                    else {
-                        str += ("<td>" + data[i][j] + "</td>")
-                    }
+                    str += '<td scope="col"><button type="button" class="btn btn-dark active btn" data-toggle="modal" data-target="#modal_admin_faculty_put" onclick="admin_faculty_put_form(this)">' + svgstr + '</button></td></tr>'
                 }
-                str += '<td scope="col"><button type="button" class="btn btn-dark active btn" data-toggle="modal" data-target="#modal_admin_faculty_put" onclick="admin_faculty_put_form(this)">' + svgstr + '</button></td></tr>'
+                document.getElementById("faculty_body_A").innerHTML = str
             }
-            document.getElementById("faculty_body_A").innerHTML = str
         }
     }
     refreshLoader(xhttp)
@@ -38,21 +40,23 @@ function faculty_search_A() {
     tbody = document.getElementById("faculty_body")
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            let data = JSON.parse(this.responseText)
-            var str = ''
-            var svgstr = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil" fill="currentColor" xmlns="http://www.w3.org/2000/svg">'
-            svgstr += '<path fill-rule="evenodd" d="M11.293 1.293a1 1 0 0 1 1.414 0l2 2a1 1 0 0 1 0 1.414l-9 9a1 1 0 0 1-.39.242l-3 1a1 1 0 0 1-1.266-1.265l1-3a1 1 0 0 1 .242-.391l9-9zM12 2l2 2-9 9-3 1 1-3 9-9z"/>'
-            svgstr += '<path fill-rule="evenodd" d="M12.146 6.354l-2.5-2.5.708-.708 2.5 2.5-.707.708zM3 10v.5a.5.5 0 0 0 .5.5H4v.5a.5.5 0 0 0 .5.5H5v.5a.5.5 0 0 0 .5.5H6v-1.5a.5.5 0 0 0-.5-.5H5v-.5a.5.5 0 0 0-.5-.5H3z"/>'
-            svgstr += '</svg>'
-            for (let i in data) {
-                str += '<tr>'
-                for (let j in data[i]) {
-                    str += ("<td>" + data[i][j] + "</td>")
+        if (this.readyState == XMLHttpRequest.DONE) {
+            if (this.status == 200) {
+                let data = JSON.parse(this.responseText)
+                var str = ''
+                var svgstr = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil" fill="currentColor" xmlns="http://www.w3.org/2000/svg">'
+                svgstr += '<path fill-rule="evenodd" d="M11.293 1.293a1 1 0 0 1 1.414 0l2 2a1 1 0 0 1 0 1.414l-9 9a1 1 0 0 1-.39.242l-3 1a1 1 0 0 1-1.266-1.265l1-3a1 1 0 0 1 .242-.391l9-9zM12 2l2 2-9 9-3 1 1-3 9-9z"/>'
+                svgstr += '<path fill-rule="evenodd" d="M12.146 6.354l-2.5-2.5.708-.708 2.5 2.5-.707.708zM3 10v.5a.5.5 0 0 0 .5.5H4v.5a.5.5 0 0 0 .5.5H5v.5a.5.5 0 0 0 .5.5H6v-1.5a.5.5 0 0 0-.5-.5H5v-.5a.5.5 0 0 0-.5-.5H3z"/>'
+                svgstr += '</svg>'
+                for (let i in data) {
+                    str += '<tr>'
+                    for (let j in data[i]) {
+                        str += ("<td>" + data[i][j] + "</td>")
+                    }
+                    str += '<td scope="col"><button type="button" class="btn btn-dark active btn" data-toggle="modal" data-target="#modal_admin_faculty_put" onclick="admin_faculty_put_form(this)">' + svgstr + '</button></td></tr>'
                 }
-                str += '<td scope="col"><button type="button" class="btn btn-dark active btn" data-toggle="modal" data-target="#modal_admin_faculty_put" onclick="admin_faculty_put_form(this)">' + svgstr + '</button></td></tr>'
+                document.getElementById("faculty_body_A").innerHTML = str
             }
-            document.getElementById("faculty_body_A").innerHTML = str
         }
     }
     refreshLoader(xhttp)
@@ -71,7 +75,6 @@ function admin_faculty_put() {
     var modal = document.getElementById("admin_faculty_details_put").firstElementChild
     while (modal) {
         if (modal.placeholder) {
-            // jsonarray[modal.placeholder] = (modal.value == "null") ? null : (modal.value == "" ? null:(modal.value=="on")? modal.checked: modal.value)
             if (modal.value == "null" || modal.value == "") {
                 jsonarray[modal.placeholder] = null
             }
@@ -175,7 +178,7 @@ function insert_dept_options_A(ele_id) {
 function faculty_post_Admin() {
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4) {
+        if (this.readyState == XMLHttpRequest.DONE) {
             if (this.status == 201) {
                 let data = JSON.parse(this.responseText)
                 var svg_tick = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check-circle-fill" fill="green" xmlns="http://www.w3.org/2000/svg">'

@@ -1,10 +1,9 @@
 var marks_store_A;
 
 function marks_view_refresh_A() {
-    var tbody
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
+        if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
             let data = JSON.parse(this.responseText)
             marks_store_A = data
             var lst = ['srn', 'name', 'team_year_code', 'team_id', 'dept_id']
@@ -14,11 +13,11 @@ function marks_view_refresh_A() {
                 for (let j in lst) {
                     str += ("<td>" + data[i][lst[j]] + "</td>")
                 }
-                str+=("<td>" + admin_marks_return_status(data[i]) + "</td>")
+                str += ("<td>" + admin_marks_return_status(data[i]) + "</td>")
                 str += '</tr>'
             }
             document.getElementById("marks_view_body_A").innerHTML = str
-            tbody = document.getElementById("marks_view_body_A")
+            var tbody = document.getElementById("marks_view_body_A")
             for (i = 0; i < tbody.children.length; i++) {
                 tbody.children[i].addEventListener('click', marks_view_modal_A)
             }
@@ -36,7 +35,7 @@ function marks_view_search_A() {
     var tbody
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
+        if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
             let data = JSON.parse(this.responseText)
             marks_store_A = data
             var lst = ['srn', 'name', 'team_year_code', 'team_id', 'dept_id']
@@ -46,7 +45,7 @@ function marks_view_search_A() {
                 for (let j in lst) {
                     str += ("<td>" + data[i][lst[j]] + "</td>")
                 }
-                str+=("<td>" + admin_marks_return_status(data[i]) + "</td>")
+                str += ("<td>" + admin_marks_return_status(data[i]) + "</td>")
                 str += '</tr>'
             }
             document.getElementById("marks_view_body_A").innerHTML = str
@@ -98,7 +97,6 @@ function marks_view_modal_A(e) {
             var str = ''
             if (i in val["review"]) {
                 ctitle.setAttribute('class', 'btn btn-link')
-                // document.getElementById("Card_A_Review" + i.toString()).setAttribute("style", "display:inline")
                 for (let j = 0; j < val["review"][i].length; j++) {
                     str += '<tr>'
                     for (k in val["review"][i][j]) {
@@ -120,7 +118,6 @@ function marks_view_modal_A(e) {
             }
             else {
                 ctitle.setAttribute('class', 'btn btn-link text-danger')
-                // document.getElementById("Card_A_Review" + i.toString()).setAttribute("style", "display:none")
             }
             tbody.innerHTML = str
         }
@@ -131,19 +128,19 @@ function marks_view_modal_A(e) {
 }
 
 function admin_marks_return_status(val) {
-    var str=''
-    for(var i=1;i<=5;i++){
-        if(i in val["review"]){
-            var bool=true
-            for(j=0;j<val["review"][i].length;j++){
-                if(val["review"][i][j]["is_evaluated"]==false){
-                    bool=false
+    var str = ''
+    for (var i = 1; i <= 5; i++) {
+        if (i in val["review"]) {
+            var bool = true
+            for (j = 0; j < val["review"][i].length; j++) {
+                if (val["review"][i][j]["is_evaluated"] == false) {
+                    bool = false
                 }
             }
-            str+= (bool ? '&#9989;':'❕') 
+            str += (bool ? '&#9989;' : '❕')
         }
-        else{
-            str+='&#10060;'
+        else {
+            str += '&#10060;'
         }
     }
     return str

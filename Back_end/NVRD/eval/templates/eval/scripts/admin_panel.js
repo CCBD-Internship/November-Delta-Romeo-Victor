@@ -2,7 +2,7 @@ function admin_panel_refresh() {
     tbody = document.getElementById("admin_panel_container")
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
+        if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
             let data = JSON.parse(this.responseText)
             var str = ''
             var svgstr = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil" fill="currentColor" xmlns="http://www.w3.org/2000/svg">'
@@ -17,7 +17,7 @@ function admin_panel_refresh() {
                         str += ("<td>" + date.toLocaleString() + "</td>")
                     }
                     else if (j == "is_active")
-                        str += ("<td>" + (data[i][j] ?'&#9989;': '&#10060;') + "</td>")
+                        str += ("<td>" + (data[i][j] ? '&#9989;' : '&#10060;') + "</td>")
                     else if (j == "id")
                         continue
                     else
@@ -26,7 +26,7 @@ function admin_panel_refresh() {
                 str += '<td scope="col"><button type="button" class="btn btn-dark active btn" data-toggle="modal" data-target="#admin_panel_put" onclick="admin_panel_put_form(this)">' + svgstr + '</button></td></tr>'
             }
             document.getElementById("admin_panel_container").innerHTML = str
-            checkerInit("admin_panels_allcheckboxes","panel_boxes_A")
+            checkerInit("admin_panels_allcheckboxes", "panel_boxes_A")
         }
     }
     refreshLoader(xhttp)
@@ -35,12 +35,12 @@ function admin_panel_refresh() {
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     xhttp.send();
 }
-admin_refresh=admin_panel_refresh
+admin_refresh = admin_panel_refresh
 
 function search_panels_A() {
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
+        if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
             let data = JSON.parse(this.responseText)
             var str = ''
             var svgstr = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil" fill="currentColor" xmlns="http://www.w3.org/2000/svg">'
@@ -64,7 +64,7 @@ function search_panels_A() {
                 str += '<td scope="col"><button type="button" class="btn btn-dark active btn" data-toggle="modal" data-target="#admin_panel_put" onclick="admin_panel_put_form(this)">' + svgstr + '</button></td></tr>'
             }
             document.getElementById("admin_panel_container").innerHTML = str
-            checkerInit("admin_panels_allcheckboxes","panel_boxes_A")
+            checkerInit("admin_panels_allcheckboxes", "panel_boxes_A")
         }
     }
     refreshLoader(xhttp)
@@ -147,7 +147,7 @@ function panel_delete_A() {
 function sendpanel_delete_A(panels) {
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 202)
+        if (this.readyState == XMLHttpRequest.DONE && this.status == 202)
             admin_panel_refresh()
     }
     refreshLoader(xhttp)
@@ -172,7 +172,7 @@ function admin_panel_put_form(arg) {
             dest.value = arr.shift()
         }
         else if (dest.type == "checkbox") {
-            dest.checked = (arr.shift()=="✅") ? true : false
+            dest.checked = (arr.shift() == "✅") ? true : false
         }
         dest = dest.nextElementSibling
     }
@@ -191,7 +191,7 @@ function admin_panel_put() {
     jsonarray["panel_name"] = (jsonarray["panel_name"]) ? jsonarray["panel_name"] : null
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 202) {
+        if (this.readyState == XMLHttpRequest.DONE && this.status == 202) {
             let d = JSON.parse(this.responseText)
             var svg_tick = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check-circle-fill" fill="green" xmlns="http://www.w3.org/2000/svg">'
             svg_tick += '<path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>'
@@ -229,41 +229,43 @@ function admin_panel_post() {
         arr.push({ "panel_year_code": temparray["panel_year_code"] })
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 201) {
-            let d = JSON.parse(this.responseText)
-            var svg_tick = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check-circle-fill" fill="green" xmlns="http://www.w3.org/2000/svg">'
-            svg_tick += '<path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>'
-            svg_tick += '</svg>'
-            document.getElementById('panel_post_svg_A').innerHTML = svg_tick
-            var str = "<b>" + d["detail"] + "</b>"
-            if (d["assumption"])
-                for (let i = 0; i < d["assumption"].length; ++i) {
-                    str += "<br>" + d["assumption"][i]["detail"] + "<br>"
-                }
-            document.getElementById('panel_post_toast_admin_header').innerHTML = 'SUCCESS'
-            document.getElementById('panel_post_toast_admin_body').innerHTML = str
-            $('#panel_post_toast_admin').toast('show');
-            admin_panel_refresh()
-        }
-        else if (this.readyState == 4) {
-            var svg_cross = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle-fill" fill="red" xmlns="http://www.w3.org/2000/svg">'
-            svg_cross += '<path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.146-3.146a.5.5 0 0 0-.708-.708L8 7.293 4.854 4.146a.5.5 0 1 0-.708.708L7.293 8l-3.147 3.146a.5.5 0 0 0 .708.708L8 8.707l3.146 3.147a.5.5 0 0 0 .708-.708L8.707 8l3.147-3.146z"/>'
-            svg_cross += '</svg>'
-            document.getElementById('panel_post_svg_A').innerHTML = svg_cross
-            d = JSON.parse(this.responseText)
-            var str = ''
-            for (let i = 0; i < d.length; ++i) {
-                if (typeof (d[i]["detail"]) == "string")
-                    str += "<br>" + d[i]["detail"] + "<br>"
-                else {
-                    let k = Object.keys(d[i]["detail"])
-                    for (let j = 0; j < k.length; ++j)
-                        str += "<br>" + k[j] + ":" + d[i]["detail"][k[j]] + "<br>"
-                }
+        if (this.readyState == XMLHttpRequest.DONE) {
+            if (this.status == 201) {
+                let d = JSON.parse(this.responseText)
+                var svg_tick = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check-circle-fill" fill="green" xmlns="http://www.w3.org/2000/svg">'
+                svg_tick += '<path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>'
+                svg_tick += '</svg>'
+                document.getElementById('panel_post_svg_A').innerHTML = svg_tick
+                var str = "<b>" + d["detail"] + "</b>"
+                if (d["assumption"])
+                    for (let i = 0; i < d["assumption"].length; ++i) {
+                        str += "<br>" + d["assumption"][i]["detail"] + "<br>"
+                    }
+                document.getElementById('panel_post_toast_admin_header').innerHTML = 'SUCCESS'
+                document.getElementById('panel_post_toast_admin_body').innerHTML = str
+                $('#panel_post_toast_admin').toast('show');
+                admin_panel_refresh()
             }
-            document.getElementById('panel_post_toast_admin_header').innerHTML = 'FAILURE'
-            document.getElementById('panel_post_toast_admin_body').innerHTML = str
-            $('#panel_post_toast_admin').toast('show');
+            else {
+                var svg_cross = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle-fill" fill="red" xmlns="http://www.w3.org/2000/svg">'
+                svg_cross += '<path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.146-3.146a.5.5 0 0 0-.708-.708L8 7.293 4.854 4.146a.5.5 0 1 0-.708.708L7.293 8l-3.147 3.146a.5.5 0 0 0 .708.708L8 8.707l3.146 3.147a.5.5 0 0 0 .708-.708L8.707 8l3.147-3.146z"/>'
+                svg_cross += '</svg>'
+                document.getElementById('panel_post_svg_A').innerHTML = svg_cross
+                d = JSON.parse(this.responseText)
+                var str = ''
+                for (let i = 0; i < d.length; ++i) {
+                    if (typeof (d[i]["detail"]) == "string")
+                        str += "<br>" + d[i]["detail"] + "<br>"
+                    else {
+                        let k = Object.keys(d[i]["detail"])
+                        for (let j = 0; j < k.length; ++j)
+                            str += "<br>" + k[j] + ":" + d[i]["detail"][k[j]] + "<br>"
+                    }
+                }
+                document.getElementById('panel_post_toast_admin_header').innerHTML = 'FAILURE'
+                document.getElementById('panel_post_toast_admin_body').innerHTML = str
+                $('#panel_post_toast_admin').toast('show');
+            }
         }
     }
     xhttp.open("POST", "/api/" + getCookie("username") + "/panel/", true);

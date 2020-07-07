@@ -3,8 +3,8 @@ function fpcardMaker(panel_year_code, panel_id, panel_name, is_active, ctime) {
     if (is_active)
         color = 'bg-info'
     else
-        color = 'bg-secondary'  
-    let date=new Date(ctime)
+        color = 'bg-secondary'
+    let date = new Date(ctime)
     str = '<div class="col mb-4"><div onclick="openmodal(event,this)" class="card ' + color + '" ><div class="card-header">' + panel_year_code + '   ' + panel_id + '    </div><div class="card-body"><h5 class="card-title">' + panel_name + '</h5><p>  ' + date.toLocaleString() + '</p></div></div></div>'
     return str
 }
@@ -12,7 +12,7 @@ function fpcardMaker(panel_year_code, panel_id, panel_name, is_active, ctime) {
 function A_fac_panel_get(p_year_code, p_id) {
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
+        if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
             let data = JSON.parse(this.responseText)
             var str = ''
             var svgstr = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil" fill="currentColor" xmlns="http://www.w3.org/2000/svg">'
@@ -22,11 +22,11 @@ function A_fac_panel_get(p_year_code, p_id) {
             for (let i in data) {
                 str += '<tr><td scope="row" style="text-align:right"><input name="fac_panel_boxes_A" class="form-check-input position-static" type="checkbox"></input></td>'
                 for (let j of ["fac_id", "name", "email", "phone", "is_coordinator"])
-                    str += ("<td>" +  (typeof(data[i][j])!="boolean"?data[i][j]:data[i][j]?'&#9989;':'&#10060;') + "</td>")
+                    str += ("<td>" + (typeof (data[i][j]) != "boolean" ? data[i][j] : data[i][j] ? '&#9989;' : '&#10060;') + "</td>")
                 str += '<td scope="col"><button type="button" class="btn btn-dark active btn" data-toggle="modal" data-target="#admin_faculty_panel_put" onclick="admin_faculty_panel_put_form(this)">' + svgstr + '</button></td></tr>'
             }
             document.getElementById("faculty_panel_body_A").innerHTML = str
-            checkerInit("fac_panel_boxes_main_A","fac_panel_boxes_A")
+            checkerInit("fac_panel_boxes_main_A", "fac_panel_boxes_A")
         }
     }
     var url = "/api/" + getCookie("username") + "/faculty-panel/?panel_id=" + p_id + "&panel_year_code=" + p_year_code;
@@ -49,13 +49,13 @@ function openmodal(e, t) {
 function admin_faculty_panel_refresh() {
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
+        if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
             let data = JSON.parse(this.responseText)
             var str = '<div class="row row-cols-1 row-cols-md-3" id="panelcardchild">'
             for (let i in data) {
                 str += fpcardMaker(data[i]["panel_year_code"], data[i]["panel_id"], data[i]["panel_name"], data[i]["is_active"], data[i]["ctime"])
             }
-            str+='</div>'
+            str += '</div>'
             document.getElementById("NVRD_fac_panel_card").innerHTML = str
         }
     }
@@ -72,7 +72,7 @@ admin_refresh = admin_faculty_panel_refresh
 function Addfacpanel_A() {
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
+        if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
             let data = JSON.parse(this.responseText)
             var str = ""
             for (let i of data) {
@@ -93,7 +93,7 @@ function facpanel_post_Admin(e, t) {
     var pid = document.getElementById("Faculty_panel_modal").firstElementChild.innerHTML.split(' ')[1]
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 201) {
+        if (this.readyState == XMLHttpRequest.DONE && this.status == 201) {
             let data = JSON.parse(this.responseText)
             A_fac_panel_get(pyc, pid)
             Addfacpanel_A()
@@ -149,7 +149,7 @@ function fac_panel_delete_A() {
 function fac_panel_send_delete_A(fac) {
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 201) {
+        if (this.readyState == XMLHttpRequest.DONE && this.status == 201) {
             A_fac_panel_get(fac[0]["panel_year_code"], fac[0]["panel_id"])
         }
     }
@@ -178,7 +178,7 @@ function admin_faculty_panel_put() {
     var jsonarray = { "panel_year_code": pyc, "panel_id": pid, "is_coordinator": document.getElementById("isfac_activeforpanel_put").checked, "fac_id": fac }
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 201) {
+        if (this.readyState == XMLHttpRequest.DONE && this.status == 201) {
             A_fac_panel_get(pyc, pid)
         }
     }

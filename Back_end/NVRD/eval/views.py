@@ -69,7 +69,6 @@ import jwt
 
 @login_required(login_url='')
 def home(request, user):
-    # print(request.session._session)
     if request.COOKIES.get('username'):
         args = {}
         fac = Faculty.objects.get(fac_id=user)
@@ -380,8 +379,7 @@ class Faculty_List(APIView):
             if(prof.is_admin and prof.fac_id == user):
                 faculty_as_object = Faculty.objects.filter(is_active=True)
                 if "fac_id" in request.GET:
-                    faculty_as_object = faculty_as_object(
-                        fac_id=request.GET.__getitem__('fac_id'))
+                    faculty_as_object = faculty_as_object.filter(fac_id__contains=request.GET['fac_id'])
                 if 'inactive' in request.GET:
                     active_panels = Panel.objects.filter(is_active=True)
                     active_faculty = FacultyPanel.objects.filter(
@@ -724,10 +722,10 @@ class Panel_List(APIView):
                             is_active=request.GET['active'])
                     if("panel_year_code" in request.GET):
                         panel_as_object = panel_as_object.filter(
-                            panel_year_code__startswith=request.GET["panel_year_code"])
+                            panel_year_code__contains=request.GET["panel_year_code"])
                     if("panel_id" in request.GET):
                         panel_as_object = panel_as_object.filter(
-                            panel_id__startswith=request.GET["panel_id"])
+                            panel_id__endswith=request.GET["panel_id"])
                     content = Panel_Serializer(panel_as_object, many=True)
                     response_list = []
                     for i in content.data:
@@ -956,10 +954,10 @@ class Student_List(APIView):
                     return Response(status=status.HTTP_403_FORBIDDEN)
                 if 'srn' in request.GET:
                     student_as_object = student_as_object.filter(
-                        srn__startswith=request.GET['srn'])
+                        srn__contains=request.GET['srn'])
                 if 'name' in request.GET:
                     student_as_object = student_as_object.filter(
-                        name__startswith=request.GET['name'])
+                        name__contains=request.GET['name'])
                 d = list(student_as_object.values())
                 for i in d:
                     if "team_id_id" in i and i["team_id_id"] != None:
@@ -1114,7 +1112,7 @@ class Team_List(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, user, panel_year_code=None, panel_id=None, review_number=None):
-        # try:
+        try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
                 team_as_object = Team.objects.all().order_by("-team_year_code", "team_id")
                 if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
@@ -1136,13 +1134,13 @@ class Team_List(APIView):
                     return Response(status=status.HTTP_403_FORBIDDEN)
                 if 'team_id' in request.GET:
                     team_as_object = team_as_object.filter(
-                        team_id__startswith=request.GET['team_id'])
+                        team_id__endswith=request.GET['team_id'])
                 if 'team_year_code' in request.GET:
                     team_as_object = team_as_object.filter(
-                        team_year_code__startswith=request.GET['team_year_code'])
+                        team_year_code__endswith=request.GET['team_year_code'])
                 if 'team_name' in request.GET:
                     team_as_object = team_as_object.filter(
-                        team_name__startswith=request.GET['team_name'])
+                        team_name__contains=request.GET['team_name'])
 
                 d = list(team_as_object.values())
                 for i in d:
@@ -1161,8 +1159,8 @@ class Team_List(APIView):
                 return Response(d, status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
-        # except:
-        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, user, panel_year_code=None, panel_id=None):
         try:
@@ -1785,12 +1783,10 @@ class GeneralMarksView(APIView):
                     student_as_object = Student.objects.all().order_by("-srn")
                     if "srn" in request.GET:
                         student_as_object = student_as_object.filter(
-                            srn__startswith=request.GET["srn"])
+                            srn__contains=request.GET["srn"])
                     if "name" in request.GET:
                         student_as_object = student_as_object.filter(
-                            name__startswith=request.GET["name"])
-                    # else:
-                    #     return Response({"detail": "provide more detailed srn, too heavy for server"}, status=status.HTTP_400_BAD_REQUEST)
+                            name__contains=request.GET["name"])
                     content = list(student_as_object.values())
                     for i in content:
                         i.pop("phone")
