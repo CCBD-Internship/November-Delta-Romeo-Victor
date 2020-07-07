@@ -316,7 +316,7 @@ function reset_all_E() {
     }
     document.getElementById("evaluator_team_remark").value = ""
     document.getElementById('evaluation_toast_E_header').innerHTML = 'ALL VALUES RESET AND SAVED'
-    document.getElementById('evaluation_toast_E_body').innerHTML = 'all parameters are set to initial state'
+    document.getElementById('evaluation_toast_E_body').innerHTML = 'all parameters are set to initial state and SAVED!!'
     document.getElementById('evaluation_toast_E_svg').innerHTML = ''
     $('#evaluation_toast_E').toast('show');
     submit_evaluation('local')

@@ -1,3 +1,7 @@
+from eval.models import *
+from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
+
 def add_one_panel(panel_year_code):
     largest = Panel.objects.filter(
         panel_year_code=panel_year_code).order_by('panel_id').last()
@@ -12,10 +16,6 @@ def add_one_team(team_year_code):
     if not largest:
         return str(1).zfill(10)
     return str(int(largest.team_id) + 1).zfill(10)
-
-from eval.models import *
-from django.contrib.auth.models import User
-from rest_framework.authtoken.models import Token
 
 d = Department(dept="CSE")
 d.save()

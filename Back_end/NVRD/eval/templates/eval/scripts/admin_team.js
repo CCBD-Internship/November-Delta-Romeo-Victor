@@ -243,6 +243,7 @@ function team_post_Admin() {
                 document.getElementById('team_post_toast_admin_body').innerHTML = str
                 $('#team_post_toast_admin').toast('show');
                 x = document.forms["teampost_A"].firstElementChild
+                team_refresh_A()
                 while (x) {
                     x.value = null
                     x = x.nextElementSibling

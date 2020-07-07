@@ -14,15 +14,15 @@
 
         @keyframes blinkermain {
             0% {
-                opacity: .5;
+                opacity: .6;
             }
 
             50% {
-                opacity: .7;
+                opacity: .9;
             }
 
             100% {
-                opacity: .5;
+                opacity: .6;
             }
         }
     </style>
@@ -77,6 +77,7 @@
         var currenttab;
         var loadJSbool = false
         var loadHTMLbool = false
+        var allowedBars = []
         function returnCurrentHTML() {
             var lst = NaN
             if (currenttab == "Admin")
@@ -187,13 +188,13 @@
             window.location.hash = ""
         });
 
-        function change_password(){
-            var data=document.getElementById("change_passwordModal-Data").firstElementChild
-            let jsonarray={}
-            while(data){
-                if(data.placeholder)
-                    jsonarray[data.placeholder]=data.value
-                data=data.nextElementSibling
+        function change_password() {
+            var data = document.getElementById("change_passwordModal-Data").firstElementChild
+            let jsonarray = {}
+            while (data) {
+                if (data.placeholder)
+                    jsonarray[data.placeholder] = data.value
+                data = data.nextElementSibling
             }
             var xhttp = new XMLHttpRequest()
             xhttp.onreadystatechange = function () {
@@ -204,21 +205,21 @@
                     svg_tick += '</svg>'
                     $('#changepassword_toast_svg').html(svg_tick)
                     var str = "<b>" + d["detail"] + "</b>"
-                    str+="<h4>You will be logged out Please Log In again to Continue</h4>"
+                    str += "<h4>You will be logged out Please Log In again to Continue</h4>"
                     $('#changepassword_toast_body').html(str)
                     $('#changepassword_toast_header').html('SUCCESS')
                     $('#changepassword_toast').toast('show');
-                    setTimeout(()=>{
-                        location.href="/logout/"
-                    },2000)
+                    setTimeout(() => {
+                        location.href = "/logout/"
+                    }, 2000)
                 }
-                else if(this.readyState==4){
+                else if (this.readyState == 4) {
                     var svg_cross = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle-fill" fill="red" xmlns="http://www.w3.org/2000/svg">'
                     svg_cross += '<path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.146-3.146a.5.5 0 0 0-.708-.708L8 7.293 4.854 4.146a.5.5 0 1 0-.708.708L7.293 8l-3.147 3.146a.5.5 0 0 0 .708.708L8 8.707l3.146 3.147a.5.5 0 0 0 .708-.708L8.707 8l3.147-3.146z"/>'
                     svg_cross += '</svg>'
-                     $('#changepassword_toast_svg').html(svg_cross)
+                    $('#changepassword_toast_svg').html(svg_cross)
                     d = JSON.parse(this.responseText)
-                    var str = "<br>" +d["detail"] + "<br>"
+                    var str = "<br>" + d["detail"] + "<br>"
                     $('#changepassword_toast_header').html('REQUEST ABORTED')
                     $('#changepassword_toast_body').html(str)
                     $('#changepassword_toast').toast('show');
@@ -248,7 +249,7 @@
             xhttp.onreadystatechange = function () {
                 if (this.readyState == XMLHttpRequest.DONE) {
                     if (this.status == 200) {
-                        
+
                     }
                     else {
                         window.location.replace('/logout/')
@@ -307,6 +308,9 @@
                     Coordinator_BC.push("Coordinator")
                     Evaluator_BC.push("Evaluator")
                     navbarGenerate()
+                    if(allowedBars.length){
+                        window.location.hash=allowedBars[0]+'/'                        
+                    }
                 }
             }
             xhttp.open("GET", "/api/" + getCookie("username") + "/aboutme/", true);
@@ -505,6 +509,7 @@
                 elem.setAttribute('class', 'nav-item nav-link')
                 elem.setAttribute('style', 'cursor:pointer')
                 NVRDnavbar.appendChild(elem)
+                allowedBars.push("Admin")
             }
             if (Object.keys(Tree.Coordinator).length > 0) {
                 elem = document.createElement('a')
@@ -513,6 +518,7 @@
                 elem.setAttribute('style', 'cursor:pointer')
                 elem.innerHTML = "Coordinator"
                 NVRDnavbar.appendChild(elem)
+                allowedBars.push("Coordinator")
             }
             if (Object.keys(Tree.Evaluator).length > 0) {
                 elem = document.createElement('a')
@@ -521,6 +527,7 @@
                 elem.setAttribute('style', 'cursor:pointer')
                 elem.innerHTML = "Evaluator"
                 NVRDnavbar.appendChild(elem)
+                allowedBars.push("Evaluator")
             }
         }
         function getCookie(cname) {
@@ -684,46 +691,50 @@
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script> -->
 
-<div class="modal fade" id="change_passwordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 style="text-align: center;" class="modal-title" id="exampleModalLabel_A">Change Password</h3>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <form id="change_passwordModal-Data" onsubmit="event.preventDefault()">
-            <label for="recipient-name" class="col-form-label">Old Password</label>
-            <input type="password" placeholder="old_password" class="form-control" min="1" max="10" />
-            <label for="recipient-name" class="col-form-label">New Password</label>
-            <input type="password" placeholder="new_password" class="form-control" />
-            <label for="recipient-name" class="col-form-label">Confirm Password</label>
-            <input type="password" placeholder="confirm_password" class="form-control" />
-            <br>
-            <button type="submit" class="btn btn-primary" onclick="change_password()">Save Changes</button><br>
-            <br>
-            <br>
-            <h6 class="text-muted"><pre>You will be logged out once you change password</pre></h6>
-          </form>
-          <div class="toast" id="changepassword_toast" role="alert" aria-live="assertive" aria-atomic="true"
-            data-animation="true" data-delay="5000">
-            <div class="toast-header">
-              <div id="changepassword_toast_svg"></div>
-              <strong class="mr-auto" id="changepassword_toast_header"></strong>
-              <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
+    <div class="modal fade" id="change_passwordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 style="text-align: center;" class="modal-title" id="exampleModalLabel_A">Change Password</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <form id="change_passwordModal-Data" onsubmit="event.preventDefault()">
+                            <label for="recipient-name" class="col-form-label">Old Password</label>
+                            <input type="password" placeholder="old_password" class="form-control" min="1" max="10" />
+                            <label for="recipient-name" class="col-form-label">New Password</label>
+                            <input type="password" placeholder="new_password" class="form-control" />
+                            <label for="recipient-name" class="col-form-label">Confirm Password</label>
+                            <input type="password" placeholder="confirm_password" class="form-control" />
+                            <br>
+                            <button type="submit" class="btn btn-primary" onclick="change_password()">Save
+                                Changes</button><br>
+                            <br>
+                            <br>
+                            <h6 class="text-muted">
+                                <pre>You will be logged out once you change password</pre>
+                            </h6>
+                        </form>
+                        <div class="toast" id="changepassword_toast" role="alert" aria-live="assertive"
+                            aria-atomic="true" data-animation="true" data-delay="5000">
+                            <div class="toast-header">
+                                <div id="changepassword_toast_svg"></div>
+                                <strong class="mr-auto" id="changepassword_toast_header"></strong>
+                                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="toast-body" id="changepassword_toast_body"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="toast-body" id="changepassword_toast_body"></div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
-</div>
 </body>
+
 </html>
