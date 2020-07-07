@@ -3,7 +3,7 @@ function fpcardMaker(panel_year_code, panel_id, panel_name, is_active, ctime) {
     if (is_active)
         color = 'bg-info'
     else
-        color = 'bg-secondary'
+        color = 'bg-secondary'  
     let date=new Date(ctime)
     str = '<div class="col mb-4"><div onclick="openmodal(event,this)" class="card ' + color + '" ><div class="card-header">' + panel_year_code + '   ' + panel_id + '    </div><div class="card-body"><h5 class="card-title">' + panel_name + '</h5><p>  ' + date.toLocaleString() + '</p></div></div></div>'
     return str
@@ -22,7 +22,7 @@ function A_fac_panel_get(p_year_code, p_id) {
             for (let i in data) {
                 str += '<tr><td scope="row" style="text-align:right"><input name="fac_panel_boxes_A" class="form-check-input position-static" type="checkbox"></input></td>'
                 for (let j of ["fac_id", "name", "email", "phone", "is_coordinator"])
-                    str += ("<td>" + data[i][j] + "</td>")
+                    str += ("<td>" +  (typeof(data[i][j])!="boolean"?data[i][j]:data[i][j]?'&#9989;':'&#10060;') + "</td>")
                 str += '<td scope="col"><button type="button" class="btn btn-dark active btn" data-toggle="modal" data-target="#admin_faculty_panel_put" onclick="admin_faculty_panel_put_form(this)">' + svgstr + '</button></td></tr>'
             }
             document.getElementById("faculty_panel_body_A").innerHTML = str
@@ -166,7 +166,7 @@ function admin_faculty_panel_put_form(t) {
     var if_checked = document.getElementById("isfac_activeforpanel_put")
     var head = t.parentNode.parentNode.children
     var modal = document.getElementById("admin_faculty_panel_details_put").children
-    if_checked.checked = head[5].textContent == "true"
+    if_checked.checked = head[5].textContent == "✅"
     var fac = document.getElementById("fac_panel_put_A")
     fac.textContent = "Edit Co-ordinator " + head[1].textContent
 }
