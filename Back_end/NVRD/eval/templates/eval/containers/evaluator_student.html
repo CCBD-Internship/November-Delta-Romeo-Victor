@@ -14,10 +14,17 @@
           <div class="dropdown-menu">
             <form class="px-4 py-3" id="student_search_evaluator" name="student_search_form_evaluator" onclick="event.preventDefault()" novalidate>
               <div class="form-group">
-                <input type="srn" class="form-control" id="student_search_srn_evaluator" placeholder="srn">
+                <input type="name" class="form-control" id="student_search_srn_evaluator" placeholder="srn">
               </div>
               <div class="form-group">
                 <input type="name" class="form-control" id="student_search_name_evaluator" placeholder="name">
+              </div>
+              <div class="form-group">
+                <input type="name" class="form-control" id="student_search_team_year_code_evaluator"
+                  placeholder="team_year_code">
+              </div>
+              <div class="form-group">
+                <input type="name" class="form-control" id="student_search_team_id_evaluator" placeholder="team_id">
               </div>
               <button onclick="student_search_evaluator()" class="btn btn-primary">Search</button>
             </form>

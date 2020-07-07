@@ -1,7 +1,7 @@
 function facpanel_refresh_coordinator() {
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
+        if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
             let data = JSON.parse(this.responseText)
             var str = ''
             var svgstr = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil" fill="currentColor" xmlns="http://www.w3.org/2000/svg">'
@@ -28,9 +28,8 @@ function facpanel_refresh_coordinator() {
 }
 function coord_faculty_panel_put_form(t) {
     var req = t.parentNode.parentNode.childNodes
-    $("#fac_panel_put_C").html("Make " + req[0].innerHTML + " Coordinator ?")
+    $("#fac_panel_put_C").html("Edit " + req[0].innerHTML)
     var putform = document.getElementById("coord_faculty_panel_details_put").childNodes
-
     for (let ele of putform)
         if (ele.type == "checkbox") {
             ele.checked = (req[4].innerHTML == "✅" ? true : false)
@@ -50,7 +49,7 @@ function coord_faculty_panel_put(t) {
     }
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 201) {
+        if (this.readyState == XMLHttpRequest.DONE && this.status == 201) {
             setTimeout(() => { $("#coord_faculty_panel_put").modal("hide") }, 2000)
             facpanel_refresh_coordinator()
         }

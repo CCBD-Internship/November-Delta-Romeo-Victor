@@ -59,19 +59,35 @@ function marks_view_search_A() {
     refreshLoader(xhttp)
     var srn = document.getElementById("marks_view_search_srn_A").value
     var name = document.getElementById("marks_view_search_name_A").value
+    var Team_year_code = document.getElementById("marks_view_search_team_year_code_A").value
+    var Team_id = document.getElementById("marks_view_search_team_id_A").value
     var str = "/api/" + getCookie("username") + "/marks-view/"
-    if (name != "" || srn != "") {
-        str += '?'
-        if (name != "") {
-            str += ("name=" + name)
-        }
-        if (srn != "") {
-            if (name != "") {
-                str += '&'
-            }
-            str += ("srn=" + srn)
-        }
+    var sstr=''
+    if (Team_year_code != "") {
+        if (sstr == "")
+            sstr += ("?team_year_code=" + Team_year_code)
+        else
+            sstr += ("&team_year_code=" + Team_year_code)
     }
+    if (Team_id != "") {
+        if (sstr == "")
+            sstr += ("?team_id=" + Team_id)
+        else
+            sstr += ("&team_id=" + Team_id)
+    }
+    if (name != "") {
+        if (sstr == "")
+            sstr += ("?name=" + name)
+        else
+            sstr += ("&name=" + name)
+    }
+    if (srn != "") {
+        if (sstr == "")
+            sstr += ("?srn=" + srn)
+        else
+            sstr += ("&srn=" + srn)
+    }
+    str+=sstr
     xhttp.open("GET", str, true);
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));

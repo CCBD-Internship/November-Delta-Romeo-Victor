@@ -7,15 +7,17 @@ var PRC_setInt = null
 function PRC_time_modal(e) {
     $('.alert').alert()
     var title = "Set Review-"
-    rno = e.target.getAttribute('name').split('_')[1]
-    title += rno
-    title += ' Evaluation Timings'
-    document.getElementById("PRC_time_title").innerHTML = title
-    var open_time = moment(PanelReviewValues[rno - 1]["open_time"])
-    var close_time = moment(PanelReviewValues[rno - 1]["close_time"])
-    document.getElementById("PRC_time_form").elements[0].value = open_time.format('YYYY-MM-DDThh:mm')
-    document.getElementById("PRC_time_form").elements[1].value = close_time.format('YYYY-MM-DDThh:mm')
-    $('#PRC_time_modal').modal('show')
+    if (e.target.getAttribute('name')) {
+        rno = e.target.getAttribute('name').split('_')[1]
+        title += rno
+        title += ' Evaluation Timings'
+        document.getElementById("PRC_time_title").innerHTML = title
+        var open_time = moment(PanelReviewValues[rno - 1]["open_time"])
+        var close_time = moment(PanelReviewValues[rno - 1]["close_time"])
+        document.getElementById("PRC_time_form").elements[0].value = open_time.format('YYYY-MM-DDThh:mm')
+        document.getElementById("PRC_time_form").elements[1].value = close_time.format('YYYY-MM-DDThh:mm')
+        $('#PRC_time_modal').modal('show')
+    }
 }
 
 function PRC_display_modal(e) {
@@ -35,7 +37,7 @@ function PRC_submit() {
     PanelReviewValues[rno - 1]["close_time"] = (new Date(moment(document.getElementById("PRC_time_form").elements[1].value).format())).toISOString()
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 202) {
+        if (this.readyState == XMLHttpRequest.DONE && this.status == 202) {
             panel_review_refresh_coordinator()
             $('#PRC_time_modal').modal('hide')
         }
@@ -66,7 +68,7 @@ function panel_review_refresh_coordinator() {
     }
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
+        if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
             PanelReviewValues = JSON.parse(this.responseText)
             PRC_setColor()
             if (PRC_setInt != null) {
@@ -92,10 +94,10 @@ function PRC_setColor() {
         var close_time = new Date(PanelReviewValues[i - 1]["close_time"])
         var now = new Date()
         if (now.getTime() < open_time.getTime() && open_time.getTime() < close_time.getTime()) {
-            elem.setAttribute('class', 'card bg-success')
+            elem.setAttribute('class', 'card bg-warning ')
         }
         else if (now.getTime() > open_time.getTime() && now.getTime() < close_time.getTime()) {
-            elem.setAttribute('class', 'card bg-warning blink_me')
+            elem.setAttribute('class', 'card bg-success blink_me')
         }
         else {
             elem.setAttribute('class', 'card bg-danger')
@@ -117,7 +119,7 @@ function PRC_display_status(e) {
         elem.textContent = "Evaluation window opens on " + open_time.toLocaleDateString() + " at " + open_time.toLocaleTimeString()
     }
     else if (now.getTime() > open_time.getTime() && now.getTime() < close_time.getTime()) {
-        elem.textContent = "Evaluation window is open now!! shall close in approximately " + diff_hours(close_time, now)[0]+" days "+diff_hours(close_time, now)[1] + " hours " + diff_hours(close_time, now)[2] + " minutes"
+        elem.textContent = "Evaluation window is open now!! shall close in approximately " + diff_hours(close_time, now)[0] + " days " + diff_hours(close_time, now)[1] + " hours " + diff_hours(close_time, now)[2] + " minutes"
     }
     else {
         elem.textContent = "Evaluation window was closed on " + close_time.toLocaleDateString() + " at " + close_time.toLocaleTimeString()
@@ -127,11 +129,11 @@ function PRC_display_status(e) {
 function diff_hours(dt2, dt1) {
 
     var diff = (dt2.getTime() - dt1.getTime()) / 1000;
-    var days=diff/(24*60*60)
-    diff%=(24*60*60)
-    var hour = diff/(60 * 60);
-    diff %= (60*60);
-    var minute = diff/60;
-    return [Math.floor(days),Math.floor(hour),Math.abs(Math.round(minute))];
+    var days = diff / (24 * 60 * 60)
+    diff %= (24 * 60 * 60)
+    var hour = diff / (60 * 60);
+    diff %= (60 * 60);
+    var minute = diff / 60;
+    return [Math.floor(days), Math.floor(hour), Math.abs(Math.round(minute))];
 
 }

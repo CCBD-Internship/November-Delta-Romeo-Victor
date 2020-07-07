@@ -161,7 +161,7 @@ function time_refresh(open_time, close_time) {
     }
     else if (now.getTime() > open_time.getTime() && now.getTime() < close_time.getTime()) {
         elem.innerHTML = "<pre>Evaluation window is open now!! shall close in approximately " + diff_hours_E(close_time, now)[0] + " days " + diff_hours_E(close_time, now)[1] + " hours " + diff_hours_E(close_time, now)[2] + " minutes" + "</pre>"
-        elem.setAttribute("style", "color:#FFCC00")
+        elem.setAttribute("style", "color:#11EAA1")
     }
     else {
         elem.innerHTML = "<pre>Evaluation window was closed on " + close_time.toLocaleDateString() + " at " + close_time.toLocaleTimeString() + "</pre>"

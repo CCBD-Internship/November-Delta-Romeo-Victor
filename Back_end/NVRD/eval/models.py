@@ -104,7 +104,6 @@ class Review1(models.Model):
             models.CheckConstraint(
                 name='1_knowledge_on_the_project', check=models.Q(knowledge_on_the_project__lte=10) & models.Q(knowledge_on_the_project__gte=0))
         ]
-        #db_table = 'review_1'
         unique_together = (('srn', 'fac_id'),)
 
 

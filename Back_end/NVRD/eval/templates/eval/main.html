@@ -175,9 +175,9 @@
         function cardMaker(panel_id, panel_name, is_active, ctime) {
             var color
             if (is_active)
-                color = 'bg-success'
+                color = 'bg-info'
             else
-                color = 'bg-danger'
+                color = 'bg-secondary'
             str = '<div class="col mb-4"><div class="card ' + color + '" name="panels_main"><div class="card-header" name="panels_main">' + panel_id + '</div><div class="card-body" name="panels_main"><h5 class="card-title" name="panels_main">' + panel_name + '</h5><p name="panels_main">' + ctime + '</p></div></div></div>'
             return str
         }
@@ -195,7 +195,6 @@
                     jsonarray[data.placeholder]=data.value
                 data=data.nextElementSibling
             }
-            console.log(jsonarray)
             var xhttp = new XMLHttpRequest()
             xhttp.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
@@ -249,7 +248,7 @@
             xhttp.onreadystatechange = function () {
                 if (this.readyState == XMLHttpRequest.DONE) {
                     if (this.status == 200) {
-                        console.log("Logged-In")
+                        
                     }
                     else {
                         window.location.replace('/logout/')
@@ -268,7 +267,6 @@
             xhttp.onreadystatechange = function () {
                 if (this.readyState == XMLHttpRequest.DONE) {
                     if (this.status == 200) {
-                        console.log("Logged-In")
                         setTree()
                     }
                     else {
@@ -367,7 +365,7 @@
                 lst.push(e.target.parentNode.parentNode.firstChild.innerHTML)
                 crumbMaker(true)
             }
-            else if (e.target.getAttribute('class') == "list-group-item list-group-item-action" || e.target.getAttribute('class') == 'list-group-item list-group-item-action bg-warning blink_me_main') {
+            else if (e.target.getAttribute('class') == "list-group-item list-group-item-action" || e.target.getAttribute('class') == 'list-group-item list-group-item-action bg-success blink_me_main') {
                 lst.push(e.target.innerHTML)
                 crumbMaker(true)
             }
@@ -426,7 +424,7 @@
                                     var open_time = new Date(pnr[i]["open_time"])
                                     var close_time = new Date(pnr[i]["close_time"])
                                     if (now.getTime() > open_time.getTime() && now.getTime() < close_time.getTime()) {
-                                        elem.setAttribute('class', 'list-group-item list-group-item-action bg-warning blink_me_main');
+                                        elem.setAttribute('class', 'list-group-item list-group-item-action bg-success blink_me_main');
                                     }
                                     else {
                                         elem.setAttribute('class', 'list-group-item list-group-item-action');

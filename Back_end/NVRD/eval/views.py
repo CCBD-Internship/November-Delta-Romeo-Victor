@@ -379,7 +379,8 @@ class Faculty_List(APIView):
             if(prof.is_admin and prof.fac_id == user):
                 faculty_as_object = Faculty.objects.filter(is_active=True)
                 if "fac_id" in request.GET:
-                    faculty_as_object = faculty_as_object.filter(fac_id__contains=request.GET['fac_id'])
+                    faculty_as_object = faculty_as_object.filter(
+                        fac_id__contains=request.GET['fac_id'])
                 if 'inactive' in request.GET:
                     active_panels = Panel.objects.filter(is_active=True)
                     active_faculty = FacultyPanel.objects.filter(
@@ -487,7 +488,7 @@ class FacultyPanel_List(APIView):
                     facultypanel_as_object = FacultyPanel.objects.all()
                     if 'fac_id' in request.GET:
                         facultypanel_as_object = facultypanel_as_object.filter(
-                            fac_id__startswith=request.GET['fac_id'])
+                            fac_id__contains=request.GET['fac_id'])
                     if 'panel_year_code' in request.GET:
                         facultypanel_as_object = facultypanel_as_object.filter(
                             panel_id__in=Panel.objects.filter(panel_year_code=request.GET['panel_year_code']))
@@ -509,7 +510,7 @@ class FacultyPanel_List(APIView):
                         panel_id=Panel.objects.filter(panel_year_code=panel_year_code, panel_id=panel_id).first())
                     if 'fac_id' in request.GET:
                         facultypanel_as_object = facultypanel_as_object.filter(
-                            fac_id__startswith=request.GET['fac_id'])
+                            fac_id__contains=request.GET['fac_id'])
                     content = FacultyPanel_Serializer(
                         facultypanel_as_object, many=True)
                     response_list = []
@@ -761,7 +762,8 @@ class Panel_List(APIView):
                             for k in range(1, 6):
                                 # PanelReview(review_number=k, panel_id=p, open_time=timezone.now(), close_time=timezone.make_aware(datetime.datetime.now(
                                 # )+datetime.timedelta(days=365), timezone.get_default_timezone()), id=i["panel_year_code"].value+'_'+i["panel_id"].value+'_'+str(k)).save()
-                                PanelReview(review_number=k, panel_id=p, open_time=p.ctime, close_time=p.ctime, id=i["panel_year_code"].value+'_'+i["panel_id"].value+'_'+str(k)).save()
+                                PanelReview(review_number=k, panel_id=p, open_time=p.ctime, close_time=p.ctime,
+                                            id=i["panel_year_code"].value+'_'+i["panel_id"].value+'_'+str(k)).save()
                         return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
                     else:
                         return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
@@ -958,6 +960,16 @@ class Student_List(APIView):
                 if 'name' in request.GET:
                     student_as_object = student_as_object.filter(
                         name__contains=request.GET['name'])
+                if 'team_id' in request.GET:
+                    team_idl = Team.objects.filter(
+                        team_id__endswith=request.GET['team_id'])
+                    student_as_object = student_as_object.filter(
+                        team_id__in=[i.id for i in team_idl])
+                if 'team_year_code' in request.GET:
+                    team_year_codel = Team.objects.filter(
+                        team_year_code__contains=request.GET['team_year_code'])
+                    student_as_object = student_as_object.filter(
+                        team_id__in=[i.id for i in team_year_codel])
                 d = list(student_as_object.values())
                 for i in d:
                     if "team_id_id" in i and i["team_id_id"] != None:
@@ -1118,10 +1130,10 @@ class Team_List(APIView):
                 if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     if 'panel_year_code' in request.GET:
                         team_as_object = team_as_object.filter(
-                            panel_id__in=Panel.objects.filter(panel_year_code__startswith=request.GET['panel_year_code']))
+                            panel_id__in=Panel.objects.filter(panel_year_code__contains=request.GET['panel_year_code']))
                     if 'panel_id' in request.GET:
                         team_as_object = team_as_object.filter(
-                            panel_id__in=Panel.objects.filter(panel_id__startswith=request.GET['panel_id']))
+                            panel_id__in=Panel.objects.filter(panel_id__endswith=request.GET['panel_id']))
                 elif(FacultyPanel.objects.filter(fac_id=user, panel_id=Panel.objects.filter(panel_year_code=panel_year_code, panel_id=panel_id).first()).exists()):
                     id = Panel.objects.filter(
                         panel_year_code=panel_year_code, panel_id=panel_id).first().id
@@ -1787,6 +1799,16 @@ class GeneralMarksView(APIView):
                     if "name" in request.GET:
                         student_as_object = student_as_object.filter(
                             name__contains=request.GET["name"])
+                    if 'team_id' in request.GET:
+                        team_idl = Team.objects.filter(
+                            team_id__endswith=request.GET['team_id'])
+                        student_as_object = student_as_object.filter(
+                            team_id__in=[i.id for i in team_idl])
+                    if 'team_year_code' in request.GET:
+                        team_year_codel = Team.objects.filter(
+                            team_year_code__contains=request.GET['team_year_code'])
+                        student_as_object = student_as_object.filter(
+                            team_id__in=[i.id for i in team_year_codel])
                     content = list(student_as_object.values())
                     for i in content:
                         i.pop("phone")

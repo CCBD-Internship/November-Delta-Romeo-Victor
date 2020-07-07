@@ -14,7 +14,18 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-
+      <!-- toast on delete -->
+      <div class="toast" id="C_TFR_delete_toast" role="alert" style="position:fixed;" aria-live="assertive"
+        aria-atomic="true" data-animation="true" data-delay="5000">
+        <div class="toast-header">
+          <div id="C_TFR_delete_svg"></div>
+          <strong class="mr-auto" id="C_TFR_delete_toast_header"></strong>
+          <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="toast-body" id="C_TFR_delete_toast_body"></div>
+      </div>
       <!-- accordian -->
       <div class="modal-body">
         <div class="accordion" id="C_TFR_accordian">
@@ -37,10 +48,7 @@
                   </b>
                 </button>
               </h2>
-
-
             </div>
-
             <div id="review_collapseOne" class="collapse" aria-labelledby="C_TFR_Review1_card"
               data-parent="#C_TFR_accordian">
               <div class="card-body" id="C_TFR_R1_table">
@@ -81,7 +89,6 @@
                 </button>
               </h2>
             </div>
-
             <div id="review_collapseTwo" class="collapse" aria-labelledby="C_TFR_Review2_card"
               data-parent="#C_TFR_accordian">
               <div class="card-body" id="C_TFR_R2_table">
@@ -97,7 +104,6 @@
                   <tbody id="C_TFR_R2_tbody">
                   </tbody>
                 </table>
-
               </div>
               <div id="C_TFR_R2_tbody_error">
               </div>
@@ -123,7 +129,6 @@
                 </button>
               </h2>
             </div>
-
             <div id="review_collapseThree" class="collapse" aria-labelledby="C_TFR_Review3_card"
               data-parent="#C_TFR_accordian">
               <div class="card-body" id="C_TFR_R3_table">
@@ -164,7 +169,6 @@
                 </button>
               </h2>
             </div>
-
             <div id="review_collapseFour" class="collapse" aria-labelledby="C_TFR_Review4_card"
               data-parent="#C_TFR_accordian">
               <div class="card-body" id="C_TFR_R4_table">
@@ -205,7 +209,6 @@
                 </button>
               </h2>
             </div>
-
             <div id="review_collapseFive" class="collapse" aria-labelledby="C_TFR_Review5_card"
               data-parent="#C_TFR_accordian">
               <div class="card-body" id="C_TFR_R5_table">
@@ -226,62 +229,48 @@
               </div>
             </div>
           </div>
-
         </div>
       </div>
+    </div>
+  </div>
+</div>
 
-      <div class="toast" id="C_TFR_delete_toast" role="alert" style="position:fixed;"
-      aria-live="assertive" aria-atomic="true" data-animation="true" data-delay="5000">
-      <div class="toast-header">
-        <div id="C_TFR_delete_svg"></div>
-        <strong class="mr-auto" id="C_TFR_delete_toast_header"></strong>
-        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+<!-- modal for insert a fac -->
+<div class="modal fade hide" id="C_TFR_PostModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="text-align: center;" class="modal-title" id="C_TFR_post_model_header"></h3>
+        <button type="button" class="close" data-dismiss="modal" data-target="#C_TFR_PostModal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="toast-body" id="C_TFR_delete_toast_body"></div>
-    </div>
-    </div>
-  </div>
-
-
-  <!-- modal for insert a fac -->
-  <div class="modal fade" id="C_TFR_PostModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3 style="text-align: center;" class="modal-title" id="C_TFR_post_model_header"></h3>
-          <button type="button" class="close" data-dismiss="modal" data-target="#C_TFR_PostModal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+      <div class="modal-body">
+        <div class="form-group">
+          <form id="C_TFR_post" onsubmit="event.preventDefault()">
+            <label for="recipient-name" class="col-form-label">Faculty Id</label>
+            <select id="faclist-C_TFR" class="form-control"></select>
+            <br>
+          </form>
+          <button type="button" class="btn btn-primary" id="C_TFR_postsave" onclick="C_TFR_post(event,this)">Add
+            Faculty</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" data-target="#C_TFR_PostModal"
+            id="C_TFR_post_modal_close">Close</button>
         </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <form id="C_TFR_post" onsubmit="event.preventDefault()">
-              <label for="recipient-name" class="col-form-label">Faculty Id</label>
-              <select id="faclist-C_TFR" class="form-control"></select>
-              <br>
-              <button type="button" class="btn btn-primary" id="C_TFR_postsave" onclick="C_TFR_post(event,this)">Add
-                Faculty</button>
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </form>
+        <!-- post toast -->
+        <div class="toast" id="C_TFR_post_toast" role="alert" style=" top: 0; right: -150px;" aria-live="assertive"
+          aria-atomic="true" data-animation="true" data-delay="5000">
+          <div class="toast-header">
+            <div id="C_TFR_post_svg"></div>
+            <strong class="mr-auto" id="C_TFR_post_toast_header"></strong>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
-          <div class="toast" id="C_TFR_post_toast" role="alert" style=" top: 0; right: -150px;" aria-live="assertive"
-            aria-atomic="true" data-animation="true" data-delay="5000">
-            <div class="toast-header">
-              <div id="C_TFR_post_svg"></div>
-              <strong class="mr-auto" id="C_TFR_post_toast_header"></strong>
-              <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="toast-body" id="C_TFR_post_toast_body"></div>
-          </div>
+          <div class="toast-body" id="C_TFR_post_toast_body"></div>
         </div>
-
       </div>
     </div>
   </div>
-
 </div>

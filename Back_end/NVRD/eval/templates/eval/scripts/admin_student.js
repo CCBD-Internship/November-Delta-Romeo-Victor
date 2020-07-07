@@ -55,18 +55,34 @@ function student_search_A() {
     var srn = document.getElementById("student_search_srn_A").value
     var name = document.getElementById("student_search_name_A").value
     var str = "/api/" + getCookie("username") + "/student/"
-    if (name != "" || srn != "") {
-        str += '?'
-        if (name != "") {
-            str += ("name=" + name)
-        }
-        if (srn != "") {
-            if (name != "") {
-                str += '&'
-            }
-            str += ("srn=" + srn)
-        }
+    var Team_year_code = document.getElementById("student_search_team_year_code_A").value
+    var Team_id = document.getElementById("student_search_team_id_A").value
+    var sstr=''
+    if (Team_year_code != "") {
+        if (sstr == "")
+            sstr += ("?team_year_code=" + Team_year_code)
+        else
+            sstr += ("&team_year_code=" + Team_year_code)
     }
+    if (Team_id != "") {
+        if (sstr == "")
+            sstr += ("?team_id=" + Team_id)
+        else
+            sstr += ("&team_id=" + Team_id)
+    }
+    if (name != "") {
+        if (sstr == "")
+            sstr += ("?name=" + name)
+        else
+            sstr += ("&name=" + name)
+    }
+    if (srn != "") {
+        if (sstr == "")
+            sstr += ("?srn=" + srn)
+        else
+            sstr += ("&srn=" + srn)
+    }
+    str+=sstr
     xhttp.open("GET", str, true);
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
