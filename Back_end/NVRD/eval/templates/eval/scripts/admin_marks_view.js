@@ -183,7 +183,16 @@ function download(filename, text) {
     element.click();
     document.body.removeChild(element);
 }
-
+function getCheckedBoxes_A_marksview(chkboxName) {
+    var checkboxes = document.getElementsByName(chkboxName);
+    var checkboxesChecked = [];
+    for (var i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].checked) {
+            checkboxesChecked.push(checkboxes[i].parentElement.nextElementSibling.textContent);
+        }
+    }
+    return checkboxesChecked.length > 0 ? checkboxesChecked : null;
+}
 function Admin_print() {
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
@@ -191,11 +200,13 @@ function Admin_print() {
             download("results.csv", this.responseText);
         }
     }
+    var students = getCheckedBoxes_A_marksview("marks_view_boxes_A")
     refreshLoader(xhttp)
     xhttp.open("POST", "/api/" + getCookie("username") + "/file/", true);
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
-    xhttp.send();
+    xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+    xhttp.send(JSON.stringify(students));
 }
 
 admin_refresh = marks_view_refresh_A

@@ -57,7 +57,7 @@ urlpatterns = [
     path('', views.loginpage),
     path('logout/', views.logoutUser, name="logout"),
     path('<str:user>/refresh/', views.refresh),
-    path('api/<str:user>/file/', views.file.as_view()),
+    path('api/<str:user>/file/', views.File_List.as_view()),
     #     path('api/<str:user>/<int:panel>/<str:type>/team/',
     #          views.Team_List.as_view(), name='index'),
     #     path('api/<str:user>/team/', views.Team_List.as_view(), name='index'),
