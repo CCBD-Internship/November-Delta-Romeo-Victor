@@ -146,9 +146,9 @@ function marks_view_modal_A(e) {
             rows[c_c].children[3].innerHTML = i["percentage"].toFixed(2) + "%";
             c_c++
         }
-        rows[c_c].children[1].innerHTML = val["review"]["total"]["marks_scored"];
-        rows[c_c].children[2].innerHTML = val["review"]["total"]["total_marks"];
-        rows[c_c].children[3].innerHTML = val["review"]["total"]["percentage"].toFixed(2) + "%";
+        rows[c_c].children[1].innerHTML = '<b>'+val["review"]["total"]["marks_scored"]+'</b>';
+        rows[c_c].children[2].innerHTML = '<b>'+val["review"]["total"]["total_marks"]+'</b>';
+        rows[c_c].children[3].innerHTML = '<b>'+val["review"]["total"]["percentage"].toFixed(2) + "%"+'</b>';
         $('#modal_admin_marks_view').modal({
             show: true
         })
@@ -206,7 +206,8 @@ function Admin_print() {
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");
-    xhttp.send(JSON.stringify(students));
+    if(students && students.length)
+        xhttp.send(JSON.stringify(students));
 }
 
 admin_refresh = marks_view_refresh_A

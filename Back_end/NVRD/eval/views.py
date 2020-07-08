@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.views import APIView
 from rest_framework.parsers import JSONParser
-from rest_framework_jwt.utils import jwt_decode_handler
+# from rest_framework_jwt.utils import jwt_decode_handler
 from django.contrib.auth.models import User
 from rest_framework import authentication, exceptions
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -388,37 +388,38 @@ class File_List(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request, user):
-        # try:
-        if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
-            if(Faculty.objects.get(fac_id=user).is_admin == True):
-                response = HttpResponse(content_type='text/csv')
-                response['Content-Disposition'] = 'attachment; filename="results.csv"'
-                writer = csv.writer(response)
-                writer.writerow(['SRN', 'Name', 'Review 1(40)', 'Review 2(40)',
-                                 'Review 3(35)', 'Review 4(40)', 'Review 5(40)', 'Total(195)', 'Percentage'])
-                # based on srns in a list in request
-                # request contains a list of srns
-                for srns in request.data:
-                    i = Student.objects.filter(srn=srns).first()
-                    if i.team_id != None:
-                        r1 = Review1.objects.filter(srn=i.srn)
-                        r2 = Review2.objects.filter(srn=i.srn)
-                        r3 = Review3.objects.filter(srn=i.srn)
-                        r4 = Review4.objects.filter(srn=i.srn)
-                        r5 = Review5.objects.filter(srn=i.srn)
-                        marks = [individual_review_dict(x, y) for x, y in zip(
-                            [r1.values(), r2.values(), r3.values(), r4.values(), r5.values()], [1, 2, 3, 4, 5])]
-                        mark1 = [individual_review_dict_download(x, y) for x, y in zip(
-                            [r1.values(), r2.values(), r3.values(), r4.values(), r5.values()], [1, 2, 3, 4, 5])]
-                        writer.writerow(
-                            [i.srn, i.name, *mark1, *compute_total_download(marks)])
-                #     pass
-                # add write.addrow(response)
-                return response
-            # else:
-            #     return Response(status=status.HTTP_403_FORBIDDEN)
-        # except:
-        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+        try:
+            if(user == User.objects.get(username=request.user.username).get_username()):
+                if(Faculty.objects.get(fac_id=user).is_admin == True):
+                    response = HttpResponse(content_type='text/csv')
+                    response['Content-Disposition'] = 'attachment; filename="results.csv"'
+                    writer = csv.writer(response)
+                    writer.writerow(['SRN', 'Name', 'Review 1(40)', 'Review 2(40)',
+                                    'Review 3(35)', 'Review 4(40)', 'Review 5(40)', 'Total(195)', 'Percentage'])
+                    # based on srns in a list in request
+                    # request contains a list of srns
+                    for srns in request.data:
+                        i = Student.objects.filter(srn=srns).first()
+                        if i.team_id != None:
+                            r1 = Review1.objects.filter(srn=i.srn)
+                            r2 = Review2.objects.filter(srn=i.srn)
+                            r3 = Review3.objects.filter(srn=i.srn)
+                            r4 = Review4.objects.filter(srn=i.srn)
+                            r5 = Review5.objects.filter(srn=i.srn)
+                            marks = [individual_review_dict(x, y) for x, y in zip(
+                                [r1.values(), r2.values(), r3.values(), r4.values(), r5.values()], [1, 2, 3, 4, 5])]
+                            mark1 = [individual_review_dict_download(x, y) for x, y in zip(
+                                [r1.values(), r2.values(), r3.values(), r4.values(), r5.values()], [1, 2, 3, 4, 5])]
+                            writer.writerow(
+                                [i.srn, i.name, *mark1, *compute_total_download(marks)])
+                
+                    return response
+                else:
+                    return Response({"detail":"User is not an Admin"},status=status.HTTP_403_FORBIDDEN)
+            else:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class Dept_List(APIView):
@@ -441,8 +442,7 @@ class Faculty_List(APIView):
 
     def get(self, request, user):
         try:
-            fid = User.objects.get(id=jwt_decode_handler(
-                request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()
+            fid = User.objects.get(username=request.user.username).get_username()
             prof = Faculty.objects.get(fac_id=fid)
             if(prof.is_admin and prof.fac_id == user):
                 faculty_as_object = Faculty.objects.filter(is_active=True)
@@ -465,7 +465,7 @@ class Faculty_List(APIView):
 
     def post(self, request, user):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 if(Faculty.objects.filter(fac_id=user).first().is_admin == True):
                     valid_list = []
                     response_list = []
@@ -494,7 +494,7 @@ class Faculty_List(APIView):
 
     def put(self, request, user):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 if(Faculty.objects.get(fac_id=user).is_admin == True):
                     valid_list = []
                     response_list = []
@@ -550,7 +550,7 @@ class FacultyPanel_List(APIView):
 
     def get(self, request, user, panel_year_code=None, panel_id=None):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     facultypanel_as_object = FacultyPanel.objects.all()
                     if 'fac_id' in request.GET:
@@ -597,7 +597,7 @@ class FacultyPanel_List(APIView):
 
     def post(self, request, user, panel_year_code=None, panel_id=None):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     serial_list = []
                     response_list = []
@@ -644,7 +644,7 @@ class FacultyPanel_List(APIView):
 
     def put(self, request, user, panel_year_code=None, panel_id=None):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     serial_list = []
                     response_list = []
@@ -724,7 +724,7 @@ class FacultyPanel_List(APIView):
 
     def delete(self, request, user, panel_year_code=None, panel_id=None):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     response_list = []
                     for i in request.data:
@@ -777,7 +777,7 @@ class Panel_List(APIView):
 
     def get(self, request, user, panel_id=None, panel_year_code=None):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 # admin
                 if(Faculty.objects.get(fac_id=user).is_admin == True):
                     if(panel_id == None and panel_year_code == None):
@@ -808,7 +808,7 @@ class Panel_List(APIView):
 
     def post(self, request, user, panel_year_code=None, panel_id=None):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     response_list = []
                     serial_list = []
@@ -843,7 +843,7 @@ class Panel_List(APIView):
 
     def put(self, request, user, panel_id=None, panel_year_code=None):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 if((Faculty.objects.get(fac_id=user).is_admin == True)):
                     response_list = []
                     valid_list = []
@@ -912,7 +912,7 @@ class Panel_List(APIView):
 
     def delete(self, request, user):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 if(Faculty.objects.get(fac_id=user).is_admin == True):
                     valid_list = []
                     response_list = []
@@ -945,7 +945,7 @@ class PanelReview_List(APIView):
 
     def get(self, request, user, panel_year_code, panel_id):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 p = Panel.objects.filter(
                     panel_id=panel_id, panel_year_code=panel_year_code).first()
                 if(FacultyPanel.objects.filter(fac_id=user, panel_id=p.id).exists()):
@@ -971,7 +971,7 @@ class PanelReview_List(APIView):
                 panel_id=panel_id, panel_year_code=panel_year_code).first().id
             c2 = FacultyPanel.objects.filter(
                 fac_id=user, panel_id=p_id).first().is_coordinator
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username() and c2 == True):
+            if(user == User.objects.get(username=request.user.username).get_username() and c2 == True):
                 valid_list = []
                 response_list = []
                 for i in request.data:
@@ -1006,7 +1006,7 @@ class Student_List(APIView):
 
     def get(self, request, user, panel_year_code=None, panel_id=None, review_number=None):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 student_as_object = Student.objects.all().order_by('-srn')
                 if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     pass
@@ -1057,7 +1057,7 @@ class Student_List(APIView):
 
     def post(self, request, user, panel_year_code=None, panel_id=None):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     response_list = []
                     serial_list = []
@@ -1099,7 +1099,7 @@ class Student_List(APIView):
 
     def put(self, request, user, panel_year_code=None, panel_id=None):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     response_list = []
                     serial_list = []
@@ -1146,7 +1146,7 @@ class Student_List(APIView):
 
     def delete(self, request, user, panel_year_code=None, panel_id=None):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     response_list = []
                     serial_list = []
@@ -1192,7 +1192,7 @@ class Team_List(APIView):
 
     def get(self, request, user, panel_year_code=None, panel_id=None, review_number=None):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 team_as_object = Team.objects.all().order_by("-team_year_code", "team_id")
                 if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     if 'panel_year_code' in request.GET:
@@ -1243,7 +1243,7 @@ class Team_List(APIView):
 
     def post(self, request, user, panel_year_code=None, panel_id=None):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     response_list = []
                     serial_list = []
@@ -1285,7 +1285,7 @@ class Team_List(APIView):
 
     def put(self, request, user, panel_year_code=None, panel_id=None):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     response_list = []
                     serial_list = []
@@ -1330,7 +1330,7 @@ class Team_List(APIView):
 
     def delete(self, request, user, panel_year_code=None, panel_id=None):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
                     response_list = []
                     serial_list = []
@@ -1374,7 +1374,7 @@ class TeamFacultyReview_List(APIView):
                 panel_id=panel_id, panel_year_code=panel_year_code).id
             c2 = FacultyPanel.objects.filter(
                 fac_id=user, panel_id=p_id).first().is_coordinator
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username() and c2):
+            if(user == User.objects.get(username=request.user.username).get_username() and c2):
                 team_info = Team.objects.filter(panel_id__in=Panel.objects.filter(
                     panel_year_code=panel_year_code, panel_id=panel_id))
                 if 'team_id' in request.GET:
@@ -1403,7 +1403,7 @@ class TeamFacultyReview_List(APIView):
 
     def post(self, request, user, panel_year_code, panel_id):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 accept = []
                 fail = []
                 for i in request.data:
@@ -1491,7 +1491,7 @@ class TeamFacultyReview_List(APIView):
 
     def delete(self, request, user, panel_year_code, panel_id):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 accept = []
                 fail = []
                 for i in request.data:
@@ -1578,7 +1578,7 @@ class Team_Student_CSV(APIView):
 
     def post(self, request, user):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 response_list = []
                 null_set_list = []
                 team_list = []
@@ -1717,9 +1717,8 @@ class ChangePassword(APIView):
 
     def post(self, request, user):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
-                U = User.objects.get(id=jwt_decode_handler(
-                    request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"])
+            if(user == User.objects.get(username=request.user.username).get_username()):
+                U = User.objects.get(username=request.user.username)
                 if("new_password" in request.data and "confirm_password" in request.data and "old_password" in request.data):
                     if(U.check_password(request.data["old_password"])):
                         if((request.data["new_password"] == request.data["confirm_password"]) and (request.data["new_password"] != "") and (request.data["new_password"] != "")):
@@ -1744,7 +1743,7 @@ class EvaluatorMarksView(APIView):
 
     def get(self, request, user, panel_id=None, panel_year_code=None, team_id=None, team_year_code=None, review_number=None):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 t = Team.objects.filter(
                     team_id=team_id, team_year_code=team_year_code)
                 t_serial = list(t.values())[0]
@@ -1787,7 +1786,7 @@ class EvaluatorMarksView(APIView):
 
     def put(self, request, user, panel_id=None, panel_year_code=None, team_id=None, team_year_code=None, review_number=None):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 t = Team.objects.filter(
                     team_id=team_id, team_year_code=team_year_code).first()
                 if TeamFacultyReview.objects.filter(fac_id=Faculty.objects.get(fac_id=user), team_id=t, review_number=review_number).exists():
@@ -1885,7 +1884,7 @@ class GeneralMarksView(APIView):
 
     def get(self, request, user):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 if(Faculty.objects.get(fac_id=user).is_admin == True):
                     student_as_object = Student.objects.all().order_by("-srn")
                     if "srn" in request.GET:
@@ -1966,7 +1965,7 @@ class GenerateFacultyPanel(APIView):
 
     def post(self, request, user):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 if(Faculty.objects.get(fac_id=user).is_admin == True):
                     if(len(request.data["panel_year_code"]) == len(request.data["panel_id"])):
                         faculty_list = []
