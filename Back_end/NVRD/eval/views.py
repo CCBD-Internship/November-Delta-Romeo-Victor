@@ -1784,6 +1784,35 @@ class EvaluatorMarksView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+def individual_review_dict(l, rno):
+    marks_scored = 0
+    c = 0
+    for i in l:
+        if i["is_evaluated"]:
+            c += 1
+            for j in i:
+                print(j)
+                if type(i[j]) == int:
+                    marks_scored += i[j]
+    total_marks = 40
+    if (rno == 3):
+        total_marks = 35
+    if(c):
+        avg = marks_scored/c
+    else:
+        avg = 0
+    return{"marks_scored": avg, "total_marks": total_marks, "percentage": avg/total_marks*100}
+
+
+def compute_total(d):
+    marks_scored = 0
+    total_marks = 0
+    for i in d["total_individual"]:
+        marks_scored += i["marks_scored"]
+        total_marks += i["total_marks"]
+    return{"marks_scored": marks_scored, "total_marks": total_marks, "percentage": marks_scored/total_marks}
+
+
 class GeneralMarksView(APIView):
 
     parser_classes = [JSONParser]
@@ -1838,15 +1867,20 @@ class GeneralMarksView(APIView):
                             if r5.exists():
                                 i["review"].update(
                                     {"5": r5.values()})
+                            i["review"].update({"total_individual": [individual_review_dict(x, y) for x, y in zip(
+                                [r1.values(), r2.values(), r3.values(), r4.values(), r5.values()], [1, 2, 3, 4, 5])]})
+                            i["review"].update(
+                                {"total": compute_total(i["review"])})
                             for j in i["review"]:
                                 for k in i["review"][j]:
-                                    k.pop("id")
-                                    k["fac_id"] = k.pop("fac_id_id")
-                                    fac = Faculty.objects.get(
-                                        fac_id=k["fac_id"])
-                                    k["fac_name"] = fac.name
-                                    k["fac_type"] = fac.fac_type
-                                    k.pop("srn_id")
+                                    if(j in [str(z) for z in range(1, 6)]):
+                                        k.pop("id")
+                                        k["fac_id"] = k.pop("fac_id_id")
+                                        fac = Faculty.objects.get(
+                                            fac_id=k["fac_id"])
+                                        k["fac_name"] = fac.name
+                                        k["fac_type"] = fac.fac_type
+                                        k.pop("srn_id")
                         else:
                             i.pop("team_id_id")
                             i["team_id"] = None

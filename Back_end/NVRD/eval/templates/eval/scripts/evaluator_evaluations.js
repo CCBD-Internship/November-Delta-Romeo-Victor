@@ -50,16 +50,13 @@ function E_evaluations_opentip(e, t) {
     document.getElementById("back_EE").style = "visibility:visible"
     document.getElementById("reset_EE").style = "display:inline-block"
     document.getElementById("check_all_EE").style = "display:inline-block"
-    // str="<table class='table table-striped'><thead><tr><th scope='col'></th><th scope='col'></th><th scope='col'></th><th scope='col'></th></tr></thead><tbody id='C_TFR_R1_tbody'></tbody></table>"
-    // document.getElementById('evaluation_views').innerHTML=str
-    // console.log(t)
+    document.getElementById("Evaluator_download_button").style = "display:inline-block"
     if (t) {
         team_year_code = t.children[0].textContent.split("   ")[0];
         team_id = t.children[0].textContent.split("   ")[1];
         team_name = t.children[1].children[0].textContent.split(":")[1]
         team_desc = t.children[1].children[1].textContent.split(":")[1]
     }
-    // console.log(team_id, team_year_code, team_name)
     document.getElementById('evaluation_views_card_header').textContent = team_year_code + "-" + team_id;
     var curr_list = returnCurrentList()
     var review_number = curr_list[2].split("-")[1];
@@ -68,6 +65,7 @@ function E_evaluations_opentip(e, t) {
     document.getElementById('evaluation_views_card_body_review').textContent = curr_list[2]
     document.getElementById('evaluation_views_card_body_head').textContent = team_name
     document.getElementById('evaluation_views_card_body_description').textContent = team_desc
+    document.getElementById('evaluation_views_card_body_fac_id').textContent = getCookie('username')
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
         if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
@@ -75,18 +73,19 @@ function E_evaluations_opentip(e, t) {
             Evaluation_format = data
             var thead = ''
             max_vals = {
-                1: [-2, -2, 10, 10, 10, 10, -2, -2, -1, -3],
-                2: [-2, -2, 10, 10, 10, 10, -2, -2, -1, -3],
-                3: [-2, -2, 10, 10, 5, 5, 5, -2, -2, -1, -3],
-                4: [-2, -2, 10, 10, 10, 10, -2, -2, -1, -3],
-                5: [-2, -2, 10, 10, 10, 10, -2, -2, -1, -3]
+                1: [-2, -2, -2, 10, 10, 10, 10, 40, -1, -3],
+                2: [-2, -2, -2, 10, 10, 10, 10, 40, -1, -3],
+                3: [-2, -2, -2, 10, 10, 5, 5, 5, 35, -1, -3],
+                4: [-2, -2, -2, 10, 10, 10, 10, 40, -1, -3],
+                5: [-2, -2, -2, 10, 10, 10, 10, 40, -1, -3]
             }
-            lst = ["srn", "name"]
+            lst = ["srn", "name", "email"]
             for (let i of Object.keys(data["individual_review"][0])) {
-                if (lst.indexOf(i) == -1 && ["is_evaluated", "comments", "fac_id"].indexOf(i) == -1) {
+                if (lst.indexOf(i) == -1 && ["is_evaluated", "comments", "fac_id", "phone"].indexOf(i) == -1) {
                     lst.push(i)
                 }
             }
+            lst.push("total")
             lst.push("comments")
             lst.push("is_evaluated")
             var c = 0
@@ -103,7 +102,9 @@ function E_evaluations_opentip(e, t) {
             for (let i of data["individual_review"]) {
                 tbody += "<tr class='w-100'>"
                 var c = 0;
+                var sum = 0;
                 for (let j of lst) {
+                    
                     if (max_vals[review_number][c] == -2) {
                         tbody += ("<td>" + i[j] + "</td>")
                     }
@@ -112,12 +113,13 @@ function E_evaluations_opentip(e, t) {
                     }
                     else if (max_vals[review_number][c] == -3) {
                         tbody += ("<td><input type=\"checkbox\"></td>")
-                        // tbody += ("<td>" + "<label class=\"switch\"><input type='checkbox' default='" + i[j] + "' size='10'><span class=\"slider round\"></span></label></td>")
-                        // // tbody += "<td>"+"<span class=\"custom-control custom-switch\"><input type=\"checkbox\" class=\"custom-control-input\"><label class=\"custom-control-label\" for=\"customSwitch1\"></label></span>"+"</td>"
-
+                    }
+                    else if (max_vals[review_number][c] > 20) {
+                        tbody += ("<td name=\"total_marks\">" + sum + "</td>")
                     }
                     else {
-                        tbody += ("<td>" + "<input class=\"form-control bg-transparent text-white text-center\" style='min-width: 5em' type='number' value='" + i[j] + "'  min=\"0\" max='" + max_vals[review_number][c] + "'></td>")
+                        tbody += ("<td>" + "<input class=\"form-control bg-transparent text-white text-center\" style='min-width: 5em' type='number' value='" + i[j] + "'  min=\"0\" max='" + max_vals[review_number][c] + "' onchange=\"update_total_marks(event,this)\"></td>")
+                        sum += Number(i[j])
                     }
                     c++;
                 }
@@ -240,7 +242,6 @@ function submit_evaluation(e, t) {
             var svg_cross = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle-fill" fill="red" xmlns="http://www.w3.org/2000/svg">'
             svg_cross += '<path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.146-3.146a.5.5 0 0 0-.708-.708L8 7.293 4.854 4.146a.5.5 0 1 0-.708.708L7.293 8l-3.147 3.146a.5.5 0 0 0 .708.708L8 8.707l3.146 3.147a.5.5 0 0 0 .708-.708L8.707 8l3.147-3.146z"/>'
             svg_cross += '</svg>'
-            // document.getElementById('evaluation_toast_E').setAttribute("style","display:inline")
             if (e != 'local') {
                 if (this.status == 400) {
                     document.getElementById('evaluation_toast_E_header').innerHTML = 'FAILURE'
@@ -261,7 +262,6 @@ function submit_evaluation(e, t) {
                     $('#evaluation_toast_E').toast('show');
                 }
             }
-            // document.getElementById('evaluation_toast_E').setAttribute("style","display:none")
             E_evaluations_opentip()
         }
     }
@@ -280,6 +280,8 @@ function back_to_cards_E() {
     document.getElementById("back_EE").style = "visibility:hidden"
     document.getElementById("reset_EE").style = "display:none"
     document.getElementById("check_all_EE").style = "display:none"
+    document.getElementById("Evaluator_download_button").style = "display:none"
+
     evaluator_evaluations_refresh()
 }
 
@@ -309,7 +311,7 @@ function reset_all_E() {
             else if (col.type && col.getAttribute("type") == "checkbox") {
                 col.checked = false
             }
-            else if( col.type == "textarea"){
+            else if (col.type == "textarea") {
                 col.value = "not yet scored"
             }
         }
@@ -320,4 +322,28 @@ function reset_all_E() {
     document.getElementById('evaluation_toast_E_svg').innerHTML = ''
     $('#evaluation_toast_E').toast('show');
     submit_evaluation('local')
+}
+
+
+function update_total_marks(e, t) {
+    var datas = (e.srcElement.parentElement.parentElement.children)
+    var sum = 0
+    var tots;
+    for (let i of datas) {
+        if (i.firstElementChild && i.firstElementChild.tagName == 'INPUT' && i.firstElementChild.type == 'number')
+            sum += Number(i.firstElementChild.value)
+
+        if (i.getAttribute('name') == "total_marks")
+            tots = i
+    }
+    tots.textContent = sum
+}
+
+function Evaluator_print() {
+    submit_evaluation()
+    document.getElementById("Evaluator_save_button").style = "display:none"
+    document.getElementById("NVRDbreadcrumb").style = "visibility:hidden"
+    window.print()
+    document.getElementById("Evaluator_save_button").style = "display:inline-block"
+    document.getElementById("NVRDbreadcrumb").style = "visibility:visible"
 }
