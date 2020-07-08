@@ -175,7 +175,17 @@ function admin_marks_return_status(val) {
 }
 
 function Admin_print() {
-    console.log("TODO")
+    var xhttp = new XMLHttpRequest()
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+            console.log(this)
+        }
+    }
+    refreshLoader(xhttp)
+    xhttp.open("GET", "/api/" + getCookie("username") + "/file/", true);
+    xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
+    xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+    xhttp.send();
 }
 
 admin_refresh = marks_view_refresh_A

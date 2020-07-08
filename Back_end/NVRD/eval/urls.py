@@ -57,6 +57,7 @@ urlpatterns = [
     path('', views.loginpage),
     path('logout/', views.logoutUser, name="logout"),
     path('<str:user>/refresh/', views.refresh),
+    path('api/<str:user>/file/', views.file.as_view()),
     #     path('api/<str:user>/<int:panel>/<str:type>/team/',
     #          views.Team_List.as_view(), name='index'),
     #     path('api/<str:user>/team/', views.Team_List.as_view(), name='index'),
@@ -99,7 +100,7 @@ urlpatterns += [
     path('<str:user>/home/evaluator/<str:panel_year_code>-<str:panel_id>/faculty-panel/HTML/',
          views.evaluator_facpanelHTML),
     path('<str:user>/home/evaluator/<str:panel_year_code>-<str:panel_id>/review-<int:review_number>/evaluations/HTML/',
-         views.evaluator_evaluationsHTML),     
+         views.evaluator_evaluationsHTML),
 ]
 
 # frontend JS
@@ -131,7 +132,7 @@ urlpatterns += [
          views.evaluator_studentJS),
     path('<str:user>/home/evaluator/<str:panel_year_code>-<str:panel_id>/faculty-panel/JS/',
          views.evaluator_facpanelJS),
-     path('<str:user>/home/evaluator/<str:panel_year_code>-<str:panel_id>/review-<int:review_number>/evaluations/JS/',
-         views.evaluator_evaluationsJS),     
+    path('<str:user>/home/evaluator/<str:panel_year_code>-<str:panel_id>/review-<int:review_number>/evaluations/JS/',
+         views.evaluator_evaluationsJS),
 
 ]
