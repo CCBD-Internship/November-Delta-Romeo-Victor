@@ -55,7 +55,7 @@ function search_panels_A() {
                         str += ("<td>" + date.toLocaleString() + "</td>")
                     }
                     else if (j == "is_active")
-                        str += ("<td>" + (data[i][j] ? 'Yes' : 'No') + "</td>")
+                         str += ("<td>" + (data[i][j] ? '&#9989;' : '&#10060;') + "</td>")
                     else if (j == "id")
                         continue
                     else
