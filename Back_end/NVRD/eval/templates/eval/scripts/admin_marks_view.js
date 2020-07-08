@@ -174,15 +174,25 @@ function admin_marks_return_status(val) {
     return str
 }
 
+function download(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+}
+
 function Admin_print() {
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
         if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
-            console.log(this)
+            download("results.csv", this.responseText);
         }
     }
     refreshLoader(xhttp)
-    xhttp.open("GET", "/api/" + getCookie("username") + "/file/", true);
+    xhttp.open("POST", "/api/" + getCookie("username") + "/file/", true);
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     xhttp.send();

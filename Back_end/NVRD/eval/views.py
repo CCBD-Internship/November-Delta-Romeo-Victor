@@ -355,6 +355,7 @@ def add_one_team(team_year_code, serializer_list=None):
 
 
 class file(APIView):
+
     parser_classes = [JSONParser]
     permission_classes = (AllowAny,)
 
@@ -369,55 +370,55 @@ class file(APIView):
                                     'Review 3', 'Review 4', 'Review 5', 'Total'])
                     # based on srns in a list in request
                     # request contains a list of srns
-                    for srns in request.data:
-                        i = Student.objects.filter(srn=srns).first()
-                        # writer.writerow(['Second row', 'A', 'B', 'C','"Testing"', "Here's a quote"])
-                        i.pop("phone")
-                        i.pop("email")
-                        i["review"] = {}
-                        if i["team_id_id"] != None:
-                            t = Team.objects.get(id=i.pop("team_id_id"))
-                            i["team_id"] = t.team_id
-                            i["team_year_code"] = t.team_year_code
-                            r1 = Review1.objects.filter(srn=i["srn"])
-                            r2 = Review2.objects.filter(srn=i["srn"])
-                            r3 = Review3.objects.filter(srn=i["srn"])
-                            r4 = Review4.objects.filter(srn=i["srn"])
-                            r5 = Review5.objects.filter(srn=i["srn"])
-                            if r1.exists():
-                                i["review"].update(
-                                    {"1": r1.values()})
-                            if r2.exists():
-                                i["review"].update(
-                                    {"2": r2.values()})
-                            if r3.exists():
-                                i["review"].update(
-                                    {"3": r3.values()})
-                            if r4.exists():
-                                i["review"].update(
-                                    {"4": r4.values()})
-                            if r5.exists():
-                                i["review"].update(
-                                    {"5": r5.values()})
-                            i["review"].update({"total_individual": [individual_review_dict(x, y) for x, y in zip(
-                                [r1.values(), r2.values(), r3.values(), r4.values(), r5.values()], [1, 2, 3, 4, 5])]})
-                            i["review"].update(
-                                {"total": compute_total(i["review"])})
-                            for j in i["review"]:
-                                for k in i["review"][j]:
-                                    if(j in [str(z) for z in range(1, 6)]):
-                                        k.pop("id")
-                                        k["fac_id"] = k.pop("fac_id_id")
-                                        fac = Faculty.objects.get(
-                                            fac_id=k["fac_id"])
-                                        k["fac_name"] = fac.name
-                                        k["fac_type"] = fac.fac_type
-                                        k.pop("srn_id")
-                        pass
+                    # for srns in request.data:
+                    #     i = Student.objects.filter(srn=srns).first()
+                    #     # writer.writerow(['Second row', 'A', 'B', 'C','"Testing"', "Here's a quote"])
+                    #     i.pop("phone")
+                    #     i.pop("email")
+                    #     i["review"] = {}
+                    #     if i["team_id_id"] != None:
+                    #         t = Team.objects.get(id=i.pop("team_id_id"))
+                    #         i["team_id"] = t.team_id
+                    #         i["team_year_code"] = t.team_year_code
+                    #         r1 = Review1.objects.filter(srn=i["srn"])
+                    #         r2 = Review2.objects.filter(srn=i["srn"])
+                    #         r3 = Review3.objects.filter(srn=i["srn"])
+                    #         r4 = Review4.objects.filter(srn=i["srn"])
+                    #         r5 = Review5.objects.filter(srn=i["srn"])
+                    #         if r1.exists():
+                    #             i["review"].update(
+                    #                 {"1": r1.values()})
+                    #         if r2.exists():
+                    #             i["review"].update(
+                    #                 {"2": r2.values()})
+                    #         if r3.exists():
+                    #             i["review"].update(
+                    #                 {"3": r3.values()})
+                    #         if r4.exists():
+                    #             i["review"].update(
+                    #                 {"4": r4.values()})
+                    #         if r5.exists():
+                    #             i["review"].update(
+                    #                 {"5": r5.values()})
+                    #         i["review"].update({"total_individual": [individual_review_dict(x, y) for x, y in zip(
+                    #             [r1.values(), r2.values(), r3.values(), r4.values(), r5.values()], [1, 2, 3, 4, 5])]})
+                    #         i["review"].update(
+                    #             {"total": compute_total(i["review"])})
+                    #         for j in i["review"]:
+                    #             for k in i["review"][j]:
+                    #                 if(j in [str(z) for z in range(1, 6)]):
+                    #                     k.pop("id")
+                    #                     k["fac_id"] = k.pop("fac_id_id")
+                    #                     fac = Faculty.objects.get(
+                    #                         fac_id=k["fac_id"])
+                    #                     k["fac_name"] = fac.name
+                    #                     k["fac_type"] = fac.fac_type
+                    #                     k.pop("srn_id")
+                    #     pass
                     # add write.addrow(response)
                     return response
-                else:
-                    return Response(status=status.HTTP_403_FORBIDDEN)
+                # else:
+                #     return Response(status=status.HTTP_403_FORBIDDEN)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
