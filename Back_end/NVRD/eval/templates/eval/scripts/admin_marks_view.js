@@ -62,7 +62,7 @@ function marks_view_search_A() {
     var Team_year_code = document.getElementById("marks_view_search_team_year_code_A").value
     var Team_id = document.getElementById("marks_view_search_team_id_A").value
     var str = "/api/" + getCookie("username") + "/marks-view/"
-    var sstr=''
+    var sstr = ''
     if (Team_year_code != "") {
         if (sstr == "")
             sstr += ("?team_year_code=" + Team_year_code)
@@ -87,7 +87,7 @@ function marks_view_search_A() {
         else
             sstr += ("&srn=" + srn)
     }
-    str+=sstr
+    str += sstr
     xhttp.open("GET", str, true);
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
@@ -137,6 +137,18 @@ function marks_view_modal_A(e) {
             }
             tbody.innerHTML = str
         }
+        var tot_body = document.getElementById("marks_view_body_A_Total")
+        var rows = tot_body.children
+        var c_c = 0;
+        for (let i of val["review"]["total_individual"]) {
+            rows[c_c].children[1].innerHTML = i["marks_scored"];
+            rows[c_c].children[2].innerHTML = i["total_marks"];
+            rows[c_c].children[3].innerHTML = i["percentage"].toFixed(2) + "%";
+            c_c++
+        }
+        rows[c_c].children[1].innerHTML = val["review"]["total"]["marks_scored"];
+        rows[c_c].children[2].innerHTML = val["review"]["total"]["total_marks"];
+        rows[c_c].children[3].innerHTML = val["review"]["total"]["percentage"].toFixed(2) + "%";
         $('#modal_admin_marks_view').modal({
             show: true
         })
@@ -160,6 +172,10 @@ function admin_marks_return_status(val) {
         }
     }
     return str
+}
+
+function Admin_print() {
+    console.log("TODO")
 }
 
 admin_refresh = marks_view_refresh_A

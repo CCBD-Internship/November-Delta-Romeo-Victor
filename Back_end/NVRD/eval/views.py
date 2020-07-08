@@ -111,7 +111,6 @@ def force_logoutUser(request):
 @ensure_csrf_cookie
 def loginpage(request):
     if request.user.is_authenticated:
-        print(request.user)
         return redirect(str(request.user)+'/home')
     else:
         context = {}
@@ -426,7 +425,6 @@ class Faculty_List(APIView):
 
     def put(self, request, user):
         try:
-            print(request.data)
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
                 if(Faculty.objects.get(fac_id=user).is_admin == True):
                     valid_list = []
@@ -1791,7 +1789,6 @@ def individual_review_dict(l, rno):
         if i["is_evaluated"]:
             c += 1
             for j in i:
-                print(j)
                 if type(i[j]) == int:
                     marks_scored += i[j]
     total_marks = 40
