@@ -1644,7 +1644,7 @@ class AboutMe_List(APIView):
 
     def get(self, request, user):
         try:
-            if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+            if(user == User.objects.get(username=request.user.username).get_username()):
                 fp = FacultyPanel.objects.filter(fac_id=user)
                 res = {}
                 res["user"] = Faculty.objects.filter(fac_id=user).values()[0]

@@ -249,7 +249,7 @@
             xhttp.onreadystatechange = function () {
                 if (this.readyState == XMLHttpRequest.DONE) {
                     if (this.status == 200) {
-
+                        console.log('Logged-In')
                     }
                     else {
                         window.location.replace('/logout/')
@@ -268,6 +268,7 @@
             xhttp.onreadystatechange = function () {
                 if (this.readyState == XMLHttpRequest.DONE) {
                     if (this.status == 200) {
+                        console.log('Logged-In')
                         setTree()
                     }
                     else {
@@ -283,316 +284,321 @@
         }
 
         function setTree() {
-            setInterval(refreshToken, 1000 * 3600 / 2);
+            setInterval(refreshToken, 1000 * 300);
             var xhttp = new XMLHttpRequest()
             xhttp.onreadystatechange = function () {
-                if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
-                    let data = JSON.parse(this.responseText)
-                    fillprofile_tab(data["user"])
-                    User = data["user"]
-                    Panels = data["panels"]
-                    if (data["user"]["is_admin"] == true) {
-                        Tree.Admin = adminview
-                    }
-                    for (let i = 0; i < data["panels"].length; i++) {
-                        if (Tree.Evaluator.includes(data["panels"][i]["panel_year_code"] + '-' + data["panels"][i]["panel_id"]) == false) {
-                            var st = data["panels"][i]["panel_year_code"] + '-' + data["panels"][i]["panel_id"]
-                            Tree.Evaluator[st] = evalview
+                if (this.readyState == XMLHttpRequest.DONE) {
+                    if (this.status == 200) {
+                        let data = JSON.parse(this.responseText)
+                        fillprofile_tab(data["user"])
+                        User = data["user"]
+                        Panels = data["panels"]
+                        if (data["user"]["is_admin"] == true) {
+                            Tree.Admin = adminview
                         }
-                        if (data["panels"][i]["is_coordinator"] == true && Tree.Coordinator.includes(["panels"][i]["panel_year_code"] + '-' + data["panels"][i]["panel_id"]) == false) {
-                            var st = data["panels"][i]["panel_year_code"] + '-' + data["panels"][i]["panel_id"]
-                            Tree.Coordinator[st] = coordview
-                        }
-                    }
-                    Admin_BC.push("Admin")
-                    Coordinator_BC.push("Coordinator")
-                    Evaluator_BC.push("Evaluator")
-                    navbarGenerate()
-                    if(allowedBars.length){
-                        window.location.hash=allowedBars[0]+'/'                        
-                    }
-                }
-            }
-            xhttp.open("GET", "/api/" + getCookie("username") + "/aboutme/", true);
-            xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
-            xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
-            xhttp.setRequestHeader("sessionid", getCookie("sessionid"));
-            xhttp.send()
-        }
-        function crumbMaker(loadbool) {
-            lst = returnCurrentList()
-            NVRDbreadcrumb = document.getElementById(id = "NVRDbreadcrumb")
-            len = NVRDbreadcrumb.children.length
-            for (let i = 0; i < len; i++) {
-                NVRDbreadcrumb.removeChild(NVRDbreadcrumb.children[0])
-            }
-            for (let i = 0; i < lst.length; i++) {
-                elem = document.createElement("li")
-                elem.innerHTML = lst[i]
-                if (i + 1 == lst.length) {
-                    elem.setAttribute('aria-current', 'page')
-                    elem.setAttribute('class', 'breadcrumb-item active')
-                }
-                else {
-                    elem.setAttribute('class', 'breadcrumb-item')
-                }
-                elem.addEventListener('click', crumbPopper)
-                NVRDbreadcrumb.appendChild(elem)
-            }
-            NVRDbreadcrumb = document.getElementById(id = "NVRDbreadcrumb")
-            //elem = document.createElement("li")
-            //elem.setAttribute('class', 'breadcrumb-item')
-            //elem.addEventListener('click', crumbPopper)
-            //NVRDbreadcrumb.appendChild(elem)
-            urlstr = ""
-            for (let i = 0; i < lst.length; i++) {
-                urlstr += (lst[i] + '/')
-            }
-            window.location.hash = urlstr
-            listMaker(loadbool)
-        }
-        function crumbPopper(e) {
-            lst = returnCurrentList()
-            ind = lst.indexOf(e.target.innerHTML)
-            len = lst.length
-            for (let i = ind + 1; i < len; i++)
-                lst.pop()
-            crumbMaker(true)
-        }
-        function crumbPusher(e) {
-            lst = returnCurrentList()
-            if (e.target.name = "panels_main" && (e.target.getAttribute('class') == "card-body" || e.target.getAttribute('class') == "card-header")) {
-                lst.push(e.target.parentNode.firstChild.innerHTML)
-                crumbMaker(true)
-            }
-            else if (e.target.name = "panels_main" && e.target.getAttribute('class') == "card-title") {
-                lst.push(e.target.parentNode.parentNode.firstChild.innerHTML)
-                crumbMaker(true)
-            }
-            else if (e.target.getAttribute('class') == "list-group-item list-group-item-action" || e.target.getAttribute('class') == 'list-group-item list-group-item-action bg-success blink_me_main') {
-                lst.push(e.target.innerHTML)
-                crumbMaker(true)
-            }
-        }
-        function returnPanel(val) {
-            for (let i = 0; i < Panels.length; i++) {
-                if (val == Panels[i]["panel_year_code"] + '-' + Panels[i]["panel_id"])
-                    return Panels[i]
-            }
-            return NaN
-        }
-        function listMaker(loadbool) {
-            lst = returnCurrentList()
-            obj = Tree;
-            for (let i = 0; i < lst.length; i++) {
-                obj = obj[lst[i]]
-            }
-            if (Object.keys(obj).length > 0) {
-                returnCurrentHTML().innerHTML = ""
-                document.getElementById("admin_HTML").setAttribute('style', 'display:none')
-                document.getElementById("coordinator_HTML").setAttribute('style', 'display:none')
-                document.getElementById("evaluator_HTML").setAttribute('style', 'display:none')
-                document.getElementById('NVRDlist').setAttribute('style', 'display:none')
-                document.getElementById('NVRDpanelcard').setAttribute('style', 'display:none')
-                if (obj == Tree.Coordinator || obj == Tree.Evaluator) {
-                    panelcard = document.getElementById('NVRDpanelcard')
-                    panelcard.setAttribute('style', 'display:inline')
-                    panelcard.innerHTML = ""
-                    var str = '<div class="row row-cols-1 row-cols-md-3" id="panelcardmainchild">';
-                    for (let i = 0; i < Object.keys(obj).length; i++) {
-                        var panel = returnPanel(Object.keys(obj)[i])
-                        str += cardMaker(Object.keys(obj)[i], panel["panel_name"], panel["is_active"], panel["ctime"])
-                    }
-                    str += '</div>'
-                    panelcard.innerHTML = str
-                    cardchild = document.getElementById('panelcardmainchild')
-                    for (var i = 0; i < cardchild.children.length; i++) {
-                        cardchild.children[i].firstChild.addEventListener('click', crumbPusher)
-                    }
-                }
-                else if (returnCurrentList() == Evaluator_BC && returnCurrentList().length == 2) {
-                    xhttp = new XMLHttpRequest()
-                    xhttp.onreadystatechange = function () {
-                        if (this.readyState == 4 && this.status == 200) {
-                            document.getElementById('NVRDlist').setAttribute('style', 'display:inline')
-                            NVRDlist = document.getElementById("NVRDlist")
-                            len = NVRDlist.children.length
-                            for (let i = 0; i < len; i++) {
-                                NVRDlist.removeChild(NVRDlist.children[0])
+                        for (let i = 0; i < data["panels"].length; i++) {
+                            if (Tree.Evaluator.includes(data["panels"][i]["panel_year_code"] + '-' + data["panels"][i]["panel_id"]) == false) {
+                                var st = data["panels"][i]["panel_year_code"] + '-' + data["panels"][i]["panel_id"]
+                                Tree.Evaluator[st] = evalview
                             }
-                            var pnr = JSON.parse(this.responseText)
-                            var now = new Date()
-                            for (let i = 0; i < Object.keys(obj).length; i++) {
-                                elem = document.createElement("button")
-                                if (i <= 4) {
-                                    var open_time = new Date(pnr[i]["open_time"])
-                                    var close_time = new Date(pnr[i]["close_time"])
-                                    if (now.getTime() > open_time.getTime() && now.getTime() < close_time.getTime()) {
-                                        elem.setAttribute('class', 'list-group-item list-group-item-action bg-success blink_me_main');
+                            if (data["panels"][i]["is_coordinator"] == true && Tree.Coordinator.includes(["panels"][i]["panel_year_code"] + '-' + data["panels"][i]["panel_id"]) == false) {
+                                var st = data["panels"][i]["panel_year_code"] + '-' + data["panels"][i]["panel_id"]
+                                Tree.Coordinator[st] = coordview
+                            }
+                        }
+                        Admin_BC.push("Admin")
+                        Coordinator_BC.push("Coordinator")
+                        Evaluator_BC.push("Evaluator")
+                        navbarGenerate()
+                        if (allowedBars.length) {
+                            window.location.hash = allowedBars[0] + '/'
+                        }
+
+                    }
+                    else {
+                        window.location.replace('/logout/')
+                    }
+                }
+                xhttp.open("GET", "/api/" + getCookie("username") + "/aboutme/", true);
+                xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
+                xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+                xhttp.setRequestHeader("sessionid", getCookie("sessionid"));
+                xhttp.send()
+            }
+            function crumbMaker(loadbool) {
+                lst = returnCurrentList()
+                NVRDbreadcrumb = document.getElementById(id = "NVRDbreadcrumb")
+                len = NVRDbreadcrumb.children.length
+                for (let i = 0; i < len; i++) {
+                    NVRDbreadcrumb.removeChild(NVRDbreadcrumb.children[0])
+                }
+                for (let i = 0; i < lst.length; i++) {
+                    elem = document.createElement("li")
+                    elem.innerHTML = lst[i]
+                    if (i + 1 == lst.length) {
+                        elem.setAttribute('aria-current', 'page')
+                        elem.setAttribute('class', 'breadcrumb-item active')
+                    }
+                    else {
+                        elem.setAttribute('class', 'breadcrumb-item')
+                    }
+                    elem.addEventListener('click', crumbPopper)
+                    NVRDbreadcrumb.appendChild(elem)
+                }
+                NVRDbreadcrumb = document.getElementById(id = "NVRDbreadcrumb")
+                //elem = document.createElement("li")
+                //elem.setAttribute('class', 'breadcrumb-item')
+                //elem.addEventListener('click', crumbPopper)
+                //NVRDbreadcrumb.appendChild(elem)
+                urlstr = ""
+                for (let i = 0; i < lst.length; i++) {
+                    urlstr += (lst[i] + '/')
+                }
+                window.location.hash = urlstr
+                listMaker(loadbool)
+            }
+            function crumbPopper(e) {
+                lst = returnCurrentList()
+                ind = lst.indexOf(e.target.innerHTML)
+                len = lst.length
+                for (let i = ind + 1; i < len; i++)
+                    lst.pop()
+                crumbMaker(true)
+            }
+            function crumbPusher(e) {
+                lst = returnCurrentList()
+                if (e.target.name = "panels_main" && (e.target.getAttribute('class') == "card-body" || e.target.getAttribute('class') == "card-header")) {
+                    lst.push(e.target.parentNode.firstChild.innerHTML)
+                    crumbMaker(true)
+                }
+                else if (e.target.name = "panels_main" && e.target.getAttribute('class') == "card-title") {
+                    lst.push(e.target.parentNode.parentNode.firstChild.innerHTML)
+                    crumbMaker(true)
+                }
+                else if (e.target.getAttribute('class') == "list-group-item list-group-item-action" || e.target.getAttribute('class') == 'list-group-item list-group-item-action bg-success blink_me_main') {
+                    lst.push(e.target.innerHTML)
+                    crumbMaker(true)
+                }
+            }
+            function returnPanel(val) {
+                for (let i = 0; i < Panels.length; i++) {
+                    if (val == Panels[i]["panel_year_code"] + '-' + Panels[i]["panel_id"])
+                        return Panels[i]
+                }
+                return NaN
+            }
+            function listMaker(loadbool) {
+                lst = returnCurrentList()
+                obj = Tree;
+                for (let i = 0; i < lst.length; i++) {
+                    obj = obj[lst[i]]
+                }
+                if (Object.keys(obj).length > 0) {
+                    returnCurrentHTML().innerHTML = ""
+                    document.getElementById("admin_HTML").setAttribute('style', 'display:none')
+                    document.getElementById("coordinator_HTML").setAttribute('style', 'display:none')
+                    document.getElementById("evaluator_HTML").setAttribute('style', 'display:none')
+                    document.getElementById('NVRDlist').setAttribute('style', 'display:none')
+                    document.getElementById('NVRDpanelcard').setAttribute('style', 'display:none')
+                    if (obj == Tree.Coordinator || obj == Tree.Evaluator) {
+                        panelcard = document.getElementById('NVRDpanelcard')
+                        panelcard.setAttribute('style', 'display:inline')
+                        panelcard.innerHTML = ""
+                        var str = '<div class="row row-cols-1 row-cols-md-3" id="panelcardmainchild">';
+                        for (let i = 0; i < Object.keys(obj).length; i++) {
+                            var panel = returnPanel(Object.keys(obj)[i])
+                            str += cardMaker(Object.keys(obj)[i], panel["panel_name"], panel["is_active"], panel["ctime"])
+                        }
+                        str += '</div>'
+                        panelcard.innerHTML = str
+                        cardchild = document.getElementById('panelcardmainchild')
+                        for (var i = 0; i < cardchild.children.length; i++) {
+                            cardchild.children[i].firstChild.addEventListener('click', crumbPusher)
+                        }
+                    }
+                    else if (returnCurrentList() == Evaluator_BC && returnCurrentList().length == 2) {
+                        xhttp = new XMLHttpRequest()
+                        xhttp.onreadystatechange = function () {
+                            if (this.readyState == 4 && this.status == 200) {
+                                document.getElementById('NVRDlist').setAttribute('style', 'display:inline')
+                                NVRDlist = document.getElementById("NVRDlist")
+                                len = NVRDlist.children.length
+                                for (let i = 0; i < len; i++) {
+                                    NVRDlist.removeChild(NVRDlist.children[0])
+                                }
+                                var pnr = JSON.parse(this.responseText)
+                                var now = new Date()
+                                for (let i = 0; i < Object.keys(obj).length; i++) {
+                                    elem = document.createElement("button")
+                                    if (i <= 4) {
+                                        var open_time = new Date(pnr[i]["open_time"])
+                                        var close_time = new Date(pnr[i]["close_time"])
+                                        if (now.getTime() > open_time.getTime() && now.getTime() < close_time.getTime()) {
+                                            elem.setAttribute('class', 'list-group-item list-group-item-action bg-success blink_me_main');
+                                        }
+                                        else {
+                                            elem.setAttribute('class', 'list-group-item list-group-item-action');
+                                        }
                                     }
                                     else {
-                                        elem.setAttribute('class', 'list-group-item list-group-item-action');
+                                        elem.setAttribute('class', 'list-group-item list-group-item-action')
                                     }
+                                    elem.addEventListener('click', crumbPusher)
+                                    elem.innerHTML = Object.keys(obj)[i]
+                                    NVRDlist.appendChild(elem)
                                 }
-                                else {
-                                    elem.setAttribute('class', 'list-group-item list-group-item-action')
-                                }
-                                elem.addEventListener('click', crumbPusher)
-                                elem.innerHTML = Object.keys(obj)[i]
-                                NVRDlist.appendChild(elem)
                             }
                         }
+                        var curr_list = returnCurrentList()
+                        var panel_id = curr_list[1].slice(0, curr_list[1].indexOf("-"))
+                        var panel_year_code = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
+                        refreshLoader(xhttp)
+                        xhttp.open("GET", "/api/" + getCookie("username") + "/" + panel_id + "-" + panel_year_code + "/panel-review/", true);
+                        xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
+                        xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+                        xhttp.send()
                     }
-                    var curr_list = returnCurrentList()
-                    var panel_id = curr_list[1].slice(0, curr_list[1].indexOf("-"))
-                    var panel_year_code = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
-                    refreshLoader(xhttp)
-                    xhttp.open("GET", "/api/" + getCookie("username") + "/" + panel_id + "-" + panel_year_code + "/panel-review/", true);
-                    xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
-                    xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
-                    xhttp.send()
+                    else {
+                        document.getElementById('NVRDlist').setAttribute('style', 'display:inline')
+                        NVRDlist = document.getElementById("NVRDlist")
+                        len = NVRDlist.children.length
+                        for (let i = 0; i < len; i++) {
+                            NVRDlist.removeChild(NVRDlist.children[0])
+                        }
+                        for (let i = 0; i < Object.keys(obj).length; i++) {
+                            elem = document.createElement("button")
+                            elem.setAttribute('class', 'list-group-item list-group-item-action');
+                            elem.addEventListener('click', crumbPusher)
+                            elem.innerHTML = Object.keys(obj)[i]
+                            NVRDlist.appendChild(elem)
+                        }
+                    }
                 }
                 else {
-                    document.getElementById('NVRDlist').setAttribute('style', 'display:inline')
-                    NVRDlist = document.getElementById("NVRDlist")
-                    len = NVRDlist.children.length
-                    for (let i = 0; i < len; i++) {
-                        NVRDlist.removeChild(NVRDlist.children[0])
+                    if (loadbool) {
+                        loadJS(urlGenerate())
+                        loadHTML(urlGenerate())
                     }
-                    for (let i = 0; i < Object.keys(obj).length; i++) {
-                        elem = document.createElement("button")
-                        elem.setAttribute('class', 'list-group-item list-group-item-action');
-                        elem.addEventListener('click', crumbPusher)
-                        elem.innerHTML = Object.keys(obj)[i]
-                        NVRDlist.appendChild(elem)
+                    document.getElementById("admin_HTML").setAttribute('style', 'display:none')
+                    document.getElementById("coordinator_HTML").setAttribute('style', 'display:none')
+                    document.getElementById("evaluator_HTML").setAttribute('style', 'display:none')
+                    document.getElementById('NVRDlist').setAttribute('style', 'display:none')
+                    document.getElementById('NVRDpanelcard').setAttribute('style', 'display:none')
+                    returnCurrentHTML().setAttribute('style', 'display:inline')
+                }
+            }
+            function urlGenerate() {
+                var lst = returnCurrentList()
+                return "/" + getCookie("username") + ("/home/" + lst.join("/") + '/').toLowerCase()
+            }
+            function onClickNavbar(e) {
+                NVRDnavbar = document.getElementById('NVRDnavbar').children;
+                for (let i = 0; i < NVRDnavbar.length; i++) {
+                    if (e.target.innerHTML == NVRDnavbar[i].innerHTML) {
+                        NVRDnavbar[i].setAttribute('class', 'nav-item nav-link active')
+                        currenttab = NVRDnavbar[i].innerHTML
+                    }
+                    else {
+                        NVRDnavbar[i].setAttribute('class', 'nav-item nav-link')
                     }
                 }
+                crumbMaker(false)
             }
-            else {
-                if (loadbool) {
-                    loadJS(urlGenerate())
-                    loadHTML(urlGenerate())
+            function navbarGenerate() {
+                NVRDnavbar = document.getElementById("NVRDnavbar")
+                profile = document.getElementById("profile").innerHTML = User.name
+                NVRDnavbar.innerHTML = ""
+                if (Object.keys(Tree.Admin).length > 0) {
+                    elem = document.createElement('a')
+                    elem.innerHTML = "Admin"
+                    elem.addEventListener('click', onClickNavbar)
+                    elem.setAttribute('class', 'nav-item nav-link')
+                    elem.setAttribute('style', 'cursor:pointer')
+                    NVRDnavbar.appendChild(elem)
+                    allowedBars.push("Admin")
                 }
-                document.getElementById("admin_HTML").setAttribute('style', 'display:none')
-                document.getElementById("coordinator_HTML").setAttribute('style', 'display:none')
-                document.getElementById("evaluator_HTML").setAttribute('style', 'display:none')
-                document.getElementById('NVRDlist').setAttribute('style', 'display:none')
-                document.getElementById('NVRDpanelcard').setAttribute('style', 'display:none')
-                returnCurrentHTML().setAttribute('style', 'display:inline')
-            }
-        }
-        function urlGenerate() {
-            var lst = returnCurrentList()
-            return "/" + getCookie("username") + ("/home/" + lst.join("/") + '/').toLowerCase()
-        }
-        function onClickNavbar(e) {
-            NVRDnavbar = document.getElementById('NVRDnavbar').children;
-            for (let i = 0; i < NVRDnavbar.length; i++) {
-                if (e.target.innerHTML == NVRDnavbar[i].innerHTML) {
-                    NVRDnavbar[i].setAttribute('class', 'nav-item nav-link active')
-                    currenttab = NVRDnavbar[i].innerHTML
+                if (Object.keys(Tree.Coordinator).length > 0) {
+                    elem = document.createElement('a')
+                    elem.addEventListener('click', onClickNavbar)
+                    elem.setAttribute('class', 'nav-item nav-link')
+                    elem.setAttribute('style', 'cursor:pointer')
+                    elem.innerHTML = "Coordinator"
+                    NVRDnavbar.appendChild(elem)
+                    allowedBars.push("Coordinator")
                 }
-                else {
-                    NVRDnavbar[i].setAttribute('class', 'nav-item nav-link')
-                }
-            }
-            crumbMaker(false)
-        }
-        function navbarGenerate() {
-            NVRDnavbar = document.getElementById("NVRDnavbar")
-            profile = document.getElementById("profile").innerHTML = User.name
-            NVRDnavbar.innerHTML = ""
-            if (Object.keys(Tree.Admin).length > 0) {
-                elem = document.createElement('a')
-                elem.innerHTML = "Admin"
-                elem.addEventListener('click', onClickNavbar)
-                elem.setAttribute('class', 'nav-item nav-link')
-                elem.setAttribute('style', 'cursor:pointer')
-                NVRDnavbar.appendChild(elem)
-                allowedBars.push("Admin")
-            }
-            if (Object.keys(Tree.Coordinator).length > 0) {
-                elem = document.createElement('a')
-                elem.addEventListener('click', onClickNavbar)
-                elem.setAttribute('class', 'nav-item nav-link')
-                elem.setAttribute('style', 'cursor:pointer')
-                elem.innerHTML = "Coordinator"
-                NVRDnavbar.appendChild(elem)
-                allowedBars.push("Coordinator")
-            }
-            if (Object.keys(Tree.Evaluator).length > 0) {
-                elem = document.createElement('a')
-                elem.addEventListener('click', onClickNavbar)
-                elem.setAttribute('class', 'nav-item nav-link')
-                elem.setAttribute('style', 'cursor:pointer')
-                elem.innerHTML = "Evaluator"
-                NVRDnavbar.appendChild(elem)
-                allowedBars.push("Evaluator")
-            }
-        }
-        function getCookie(cname) {
-            var name = cname + "=";
-            var ca = document.cookie.split(';');
-            for (var i = 0; i < ca.length; i++) {
-                var c = ca[i];
-                while (c.charAt(0) == ' ') {
-                    c = c.substring(1);
-                }
-                if (c.indexOf(name) == 0) {
-                    return c.substring(name.length, c.length);
+                if (Object.keys(Tree.Evaluator).length > 0) {
+                    elem = document.createElement('a')
+                    elem.addEventListener('click', onClickNavbar)
+                    elem.setAttribute('class', 'nav-item nav-link')
+                    elem.setAttribute('style', 'cursor:pointer')
+                    elem.innerHTML = "Evaluator"
+                    NVRDnavbar.appendChild(elem)
+                    allowedBars.push("Evaluator")
                 }
             }
-            return "";
-        }
+            function getCookie(cname) {
+                var name = cname + "=";
+                var ca = document.cookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') {
+                        c = c.substring(1);
+                    }
+                    if (c.indexOf(name) == 0) {
+                        return c.substring(name.length, c.length);
+                    }
+                }
+                return "";
+            }
 
-        function checkerInit(main_id, check_name) {
-            document.getElementById(main_id).addEventListener('click', function (e) {
-                var checkboxes = document.getElementsByName(check_name);
-                if (e.target.checked)
-                    for (var i = 0; i < checkboxes.length; i++)
-                        checkboxes[i].checked = true
-                else
-                    for (var i = 0; i < checkboxes.length; i++)
-                        checkboxes[i].checked = false
-            })
-            checks = document.getElementsByName(check_name)
-            for (let i = 0; i < checks.length; i++) {
-                checks[i].addEventListener("click", function (e) {
-                    if (!e.target.checked) {
-                        document.getElementById(main_id).checked = false
-                    }
-                    else if (e.target.checked) {
-                        var flag = true
-                        var elem = document.getElementsByName(e.target.name)
-                        for (let i = 0; i < elem.length; i++) {
-                            if (elem[i].checked == false) {
-                                flag = false
-                            }
-                        }
-                        if (flag) {
-                            document.getElementById(main_id).checked = true
-                        }
-                    }
+            function checkerInit(main_id, check_name) {
+                document.getElementById(main_id).addEventListener('click', function (e) {
+                    var checkboxes = document.getElementsByName(check_name);
+                    if (e.target.checked)
+                        for (var i = 0; i < checkboxes.length; i++)
+                            checkboxes[i].checked = true
+                    else
+                        for (var i = 0; i < checkboxes.length; i++)
+                            checkboxes[i].checked = false
                 })
-            }
-        }
-
-        function main_panel_review_refresh() {
-            var xhttp = new XMLHttpRequest()
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    return JSON.parse(this.responseText)
+                checks = document.getElementsByName(check_name)
+                for (let i = 0; i < checks.length; i++) {
+                    checks[i].addEventListener("click", function (e) {
+                        if (!e.target.checked) {
+                            document.getElementById(main_id).checked = false
+                        }
+                        else if (e.target.checked) {
+                            var flag = true
+                            var elem = document.getElementsByName(e.target.name)
+                            for (let i = 0; i < elem.length; i++) {
+                                if (elem[i].checked == false) {
+                                    flag = false
+                                }
+                            }
+                            if (flag) {
+                                document.getElementById(main_id).checked = true
+                            }
+                        }
+                    })
                 }
             }
-            var curr_list = returnCurrentList()
-            var panel_id = curr_list[1].slice(0, curr_list[1].indexOf("-"))
-            var panel_year_code = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
-            refreshLoader(xhttp)
-            xhttp.open("GET", "/api/" + getCookie("username") + "/" + panel_id + "-" + panel_year_code + "/panel-review/", true);
-            xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
-            xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
-            xhttp.send()
-        }
+
+            function main_panel_review_refresh() {
+                var xhttp = new XMLHttpRequest()
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        return JSON.parse(this.responseText)
+                    }
+                }
+                var curr_list = returnCurrentList()
+                var panel_id = curr_list[1].slice(0, curr_list[1].indexOf("-"))
+                var panel_year_code = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
+                refreshLoader(xhttp)
+                xhttp.open("GET", "/api/" + getCookie("username") + "/" + panel_id + "-" + panel_year_code + "/panel-review/", true);
+                xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
+                xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+                xhttp.send()
+            }
     </script>
 </head>
 
