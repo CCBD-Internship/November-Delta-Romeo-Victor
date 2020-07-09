@@ -206,6 +206,7 @@ function Admin_print() {
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+    console.log(students)
     if(students && students.length)
         xhttp.send(JSON.stringify(students));
 }

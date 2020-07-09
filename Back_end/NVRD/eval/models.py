@@ -8,23 +8,24 @@
 from django.db import models
 from django.utils import timezone
 from django.core.validators import RegexValidator
+from django_bleach.models import BleachField
 
 
 class Department(models.Model):
-    dept = models.CharField(primary_key=True, max_length=50)
+    dept = BleachField(primary_key=True, max_length=50)
 
     class Meta:
         managed = True
 
 
 class Faculty(models.Model):
-    fac_id = models.CharField(primary_key=True, max_length=50)
-    name = models.CharField(max_length=100)
+    fac_id = BleachField(primary_key=True, max_length=50)
+    name = BleachField(max_length=100)
     email = models.EmailField()
-    phone = models.CharField(max_length=10, validators=[RegexValidator(
+    phone = BleachField(max_length=10, validators=[RegexValidator(
         regex='^[0-9]{10}$', message='Invalid Phone number')])
     dept = models.ForeignKey('Department', models.DO_NOTHING)
-    fac_type = models.CharField(max_length=20, choices=[("Assistant Professor", "Assistant Professor"), (
+    fac_type = BleachField(max_length=20, choices=[("Assistant Professor", "Assistant Professor"), (
         "Associate Professor", "Associate Professor"), ("Professor", "Professor")], default="Professor")
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
@@ -53,11 +54,12 @@ class FacultyPanel(models.Model):
 
 class Panel(models.Model):
 
-    panel_year_code = models.CharField(
+    panel_year_code = BleachField(
         db_column="panel_year_code", max_length=10)
-    panel_id = models.CharField(db_column="panel_id", max_length=10)
-    panel_name = models.CharField(
-        db_column="panel_name", max_length=100, blank=True, null=True)
+    panel_id = BleachField(db_column="panel_id", max_length=10)
+    # panel_name = BleachField(
+    #     db_column="panel_name", max_length=100, blank=True, null=True)
+    panel_name=BleachField(max_length=100, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     ctime = models.DateTimeField(default=timezone.now)
     id = models.AutoField(db_column="id", primary_key=True)
@@ -73,7 +75,7 @@ class PanelReview(models.Model):
     panel_id = models.ForeignKey('Panel', models.CASCADE, db_column="panel_id")
     open_time = models.DateTimeField()
     close_time = models.DateTimeField()
-    id = models.CharField(max_length=23, db_column="id", primary_key=True)
+    id = BleachField(max_length=23, db_column="id", primary_key=True)
 
     class Meta:
         managed = True
@@ -88,9 +90,9 @@ class Review1(models.Model):
     methodology_proposed = models.IntegerField()
     literature_survey = models.IntegerField()
     knowledge_on_the_project = models.IntegerField()
-    comments = models.CharField(max_length=200, blank=True, null=True)
+    comments = BleachField(max_length=200, blank=True, null=True)
     is_evaluated = models.BooleanField(default=False)
-    id = models.CharField(max_length=200, primary_key=True)
+    id = BleachField(max_length=200, primary_key=True)
 
     class Meta:
         managed = True
@@ -115,9 +117,9 @@ class Review2(models.Model):
     user_interface_use_cases = models.IntegerField()
     understanding_of_technology_platform_middleware = models.IntegerField()
     viva_voce = models.IntegerField()
-    comments = models.CharField(max_length=200, blank=True, null=True)
+    comments = BleachField(max_length=200, blank=True, null=True)
     is_evaluated = models.BooleanField(default=False)
-    id = models.CharField(max_length=200, primary_key=True)
+    id = BleachField(max_length=200, primary_key=True)
 
     class Meta:
         managed = True
@@ -145,9 +147,9 @@ class Review3(models.Model):
     suitably_of_design_in_comparison_to_the_technology_proposed = models.IntegerField()
     progress_of_the_project_work = models.IntegerField()
     viva_voce = models.IntegerField()
-    comments = models.CharField(max_length=200, blank=True, null=True)
+    comments = BleachField(max_length=200, blank=True, null=True)
     is_evaluated = models.BooleanField(default=False)
-    id = models.CharField(max_length=200, primary_key=True)
+    id = BleachField(max_length=200, primary_key=True)
 
     class Meta:
         managed = True
@@ -174,9 +176,9 @@ class Review4(models.Model):
     quality_of_demo = models.IntegerField()
     project_report = models.IntegerField()
     viva_voce = models.IntegerField()
-    comments = models.CharField(max_length=200, blank=True, null=True)
+    comments = BleachField(max_length=200, blank=True, null=True)
     is_evaluated = models.BooleanField(default=False)
-    id = models.CharField(max_length=200, primary_key=True)
+    id = BleachField(max_length=200, primary_key=True)
 
     class Meta:
         managed = True
@@ -201,9 +203,9 @@ class Review5(models.Model):
     quality_of_demo = models.IntegerField()
     project_report = models.IntegerField()
     viva_voce = models.IntegerField()
-    comments = models.CharField(max_length=200, blank=True, null=True)
+    comments = BleachField(max_length=200, blank=True, null=True)
     is_evaluated = models.BooleanField(default=False)
-    id = models.CharField(max_length=200, primary_key=True)
+    id = BleachField(max_length=200, primary_key=True)
 
     class Meta:
         managed = True
@@ -221,11 +223,11 @@ class Review5(models.Model):
 
 
 class Student(models.Model):
-    srn = models.CharField(primary_key=True, max_length=20, validators=[
+    srn = BleachField(primary_key=True, max_length=20, validators=[
                            RegexValidator(regex='^PES', message='SRN incorrect')])
-    name = models.CharField(max_length=100)
+    name = BleachField(max_length=100)
     email = models.EmailField()
-    phone = models.CharField(max_length=10, validators=[RegexValidator(
+    phone = BleachField(max_length=10, validators=[RegexValidator(
         regex='^[0-9]{10}$', message='Invalid Phone number')])
     dept = models.ForeignKey(Department, models.DO_NOTHING)
     team_id = models.ForeignKey('Team', models.SET_NULL, null=True, blank=True)
@@ -235,11 +237,11 @@ class Student(models.Model):
 
 
 class Team(models.Model):
-    team_year_code = models.CharField(
+    team_year_code = BleachField(
         db_column="team_year_code", max_length=10)
-    team_id = models.CharField(db_column="team_id", max_length=10)
-    team_name = models.CharField(max_length=100, blank=True, null=True)
-    description = models.CharField(max_length=200, blank=True, null=True)
+    team_id = BleachField(db_column="team_id", max_length=10)
+    team_name = BleachField(max_length=100, blank=True, null=True)
+    description = BleachField(max_length=200, blank=True, null=True)
     guide = models.ForeignKey(
         Faculty, models.SET_NULL, blank=True, null=True)
     panel_id = models.ForeignKey(Panel, models.SET_NULL, blank=True, null=True)
@@ -255,7 +257,7 @@ class TeamFacultyReview(models.Model):
     fac_id = models.ForeignKey(
         Faculty, models.SET_NULL, null=True, blank=True)
     review_number = models.IntegerField()
-    remark = models.CharField(max_length=200, blank=True, null=True)
+    remark = BleachField(max_length=200, blank=True, null=True)
     id = models.AutoField(db_column="id", primary_key=True)
 
     class Meta:
