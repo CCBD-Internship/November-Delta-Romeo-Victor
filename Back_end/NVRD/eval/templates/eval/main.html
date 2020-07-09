@@ -127,23 +127,27 @@
         function refreshLoader(xhttp) {
             xhttp.onloadstart = function (e) {
                 p = document.getElementById("progress")
-                p.setAttribute('style', 'width:' + 0 + '%')
+                p.setAttribute('style', 'width:' + 10 + '%')
                 p.setAttribute('aria-valuemax', e.total)
-                p.setAttribute('aria-valuenow', '0')
+                p.setAttribute('aria-valuenow', 0)
             }
             xhttp.onprogress = function (e) {
                 p = document.getElementById("progress")
-                p.setAttribute('style', 'width:' + e.loaded + '%')
+                p.setAttribute('style', 'width:' + e.loaded/e.total*100 + '%')
                 p.setAttribute('aria-valuemax', e.total)
-                p.setAttribute('aria-value', e.loaded)
+                p.setAttribute('aria-valuenow', e.loaded)
             }
             xhttp.onloadend = function (e) {
+                p = document.getElementById("progress")
+                p.setAttribute('style', 'width:' + e.loaded/e.total*100 + '%')
+                p.setAttribute('aria-valuemax', e.total)
+                p.setAttribute('aria-valuenow', e.loaded)
                 setTimeout(function () {
                     p = document.getElementById("progress")
                     p.setAttribute('style', 'display:none')
                     p.setAttribute('aria-valuemax', e.total)
-                    p.setAttribute('aria-value', e.loaded)
-                }, 750)
+                    p.setAttribute('aria-valuenow', 0)
+                }, 1250)
             }
         }
         function hasher(e) {
