@@ -1886,7 +1886,7 @@ class GeneralMarksView(APIView):
         try:
             if(user == User.objects.get(username=request.user.username).get_username()):
                 if(Faculty.objects.get(fac_id=user).is_admin == True):
-                    student_as_object = Student.objects.all().order_by("-srn")
+                    student_as_object = Student.objects.exclude(team_id=None).order_by("-srn")
                     if "srn" in request.GET:
                         student_as_object = student_as_object.filter(
                             srn__contains=request.GET["srn"])
@@ -1993,5 +1993,7 @@ class GenerateFacultyPanel(APIView):
                         return Response({"detail": "bad input"}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     return Response(status=status.HTTP_403_FORBIDDEN)
+            else:
+                return Response(status=status.HTTP_403_FORBIDDEN)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
