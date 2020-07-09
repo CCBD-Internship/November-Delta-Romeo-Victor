@@ -43,7 +43,7 @@
           <!-- <label>team_name</label> -->
           <input type="text" class="form-control" id="team_search_team_name_A" placeholder="team_name">
         </div>
-        <button onclick="team_search_A()" class="btn btn-primary">Search</button>
+        <button onclick="team_refresh_A()" class="btn btn-primary">Search</button>
       </form>
     </div>
     <button type="button" style="visibility: hidden"></button>
@@ -101,6 +101,13 @@
   </table>
 </div>
 
+<div class="card border-light w-75 align-center mx-auto" id="team_initial_A">
+  <div class="card-body text-light text-center">
+      <pre><code><h5 class="card-title" id="team_initial_title_A">Filter your data by using Search !!</h5></code></pre>
+      <pre><code></code><p class="card-text text-muted" id="team_initial_body_A">Leave search parameters blank if you want all the records</p></code></pre>
+  </div>
+</div>
+
 
 <div class="modal fade bd-example-modal-xl" id="teamUploadCsvModal_A" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
   aria-hidden="true">
@@ -114,7 +121,7 @@
       </div>
       <div class="modal-body text-center">
         <input type="file" id="admin_team_upload_file"
-          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+          accept=".csv, .xlsx, .xls"
           onchange="admin_team_upload_csv(this)" /><br /><br />
         <div class="card">
           <button type="button" class="btn btn-secondary dropdown-toggle btn-info" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

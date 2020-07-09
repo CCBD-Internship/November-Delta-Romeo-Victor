@@ -90,17 +90,19 @@ function panel_review_refresh_coordinator() {
 function PRC_setColor() {
     for (var i = 1; i <= 5; i++) {
         elem = document.getElementById("review_board_" + i.toString())
-        var open_time = new Date(PanelReviewValues[i - 1]["open_time"])
-        var close_time = new Date(PanelReviewValues[i - 1]["close_time"])
-        var now = new Date()
-        if (now.getTime() < open_time.getTime() && open_time.getTime() < close_time.getTime()) {
-            elem.setAttribute('class', 'card bg-warning ')
-        }
-        else if (now.getTime() > open_time.getTime() && now.getTime() < close_time.getTime()) {
-            elem.setAttribute('class', 'card bg-success blink_me')
-        }
-        else {
-            elem.setAttribute('class', 'card bg-danger')
+        if (elem) {
+            var open_time = new Date(PanelReviewValues[i - 1]["open_time"])
+            var close_time = new Date(PanelReviewValues[i - 1]["close_time"])
+            var now = new Date()
+            if (now.getTime() < open_time.getTime() && open_time.getTime() < close_time.getTime()) {
+                elem.setAttribute('class', 'card bg-warning ')
+            }
+            else if (now.getTime() > open_time.getTime() && now.getTime() < close_time.getTime()) {
+                elem.setAttribute('class', 'card bg-success blink_me')
+            }
+            else {
+                elem.setAttribute('class', 'card bg-danger')
+            }
         }
     }
 }

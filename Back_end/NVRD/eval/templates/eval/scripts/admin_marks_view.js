@@ -37,7 +37,6 @@ function marks_view_search_A() {
     var tbody
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        console.log('loading', this.readyState, this.LOADING)
         if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
             let data = JSON.parse(this.responseText)
             marks_store_A = data

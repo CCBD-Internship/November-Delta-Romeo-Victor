@@ -254,7 +254,7 @@
             xhttp.onreadystatechange = function () {
                 if (this.readyState == XMLHttpRequest.DONE) {
                     if (this.status == 200) {
-                        console.log('Logged-In')
+                        console.log('Logged-In '+(new Date()).toLocaleTimeString())
                     }
                     else {
                         window.location.replace('/logout/')
@@ -273,7 +273,7 @@
             xhttp.onreadystatechange = function () {
                 if (this.readyState == XMLHttpRequest.DONE) {
                     if (this.status == 200) {
-                        console.log('Logged-In')
+                        console.log('Logged-In '+(new Date()).toLocaleTimeString())
                         setTree()
                     }
                     else {

@@ -104,7 +104,7 @@ function E_evaluations_opentip(e, t) {
                 var c = 0;
                 var sum = 0;
                 for (let j of lst) {
-                    
+
                     if (max_vals[review_number][c] == -2) {
                         tbody += ("<td>" + i[j] + "</td>")
                     }
@@ -157,17 +157,19 @@ function diff_hours_E(dt2, dt1) {
 function time_refresh(open_time, close_time) {
     var now = new Date()
     var elem = document.getElementById("disptime-evalutator")
-    if (now.getTime() < open_time.getTime() && open_time.getTime() < close_time.getTime()) {
-        elem.innerHTML = "<pre>Evaluation window opens on " + open_time.toLocaleDateString() + " at " + open_time.toLocaleTimeString() + "</pre>"
-        elem.setAttribute("style", "")
-    }
-    else if (now.getTime() > open_time.getTime() && now.getTime() < close_time.getTime()) {
-        elem.innerHTML = "<pre>Evaluation window is open now!! shall close in approximately " + diff_hours_E(close_time, now)[0] + " days " + diff_hours_E(close_time, now)[1] + " hours " + diff_hours_E(close_time, now)[2] + " minutes" + "</pre>"
-        elem.setAttribute("style", "color:#11EAA1")
-    }
-    else {
-        elem.innerHTML = "<pre>Evaluation window was closed on " + close_time.toLocaleDateString() + " at " + close_time.toLocaleTimeString() + "</pre>"
-        elem.setAttribute("style", "")
+    if (elem) {
+        if (now.getTime() < open_time.getTime() && open_time.getTime() < close_time.getTime()) {
+            elem.innerHTML = "<pre>Evaluation window opens on " + open_time.toLocaleDateString() + " at " + open_time.toLocaleTimeString() + "</pre>"
+            elem.setAttribute("style", "")
+        }
+        else if (now.getTime() > open_time.getTime() && now.getTime() < close_time.getTime()) {
+            elem.innerHTML = "<pre>Evaluation window is open now!! shall close in approximately " + diff_hours_E(close_time, now)[0] + " days " + diff_hours_E(close_time, now)[1] + " hours " + diff_hours_E(close_time, now)[2] + " minutes" + "</pre>"
+            elem.setAttribute("style", "color:#11EAA1")
+        }
+        else {
+            elem.innerHTML = "<pre>Evaluation window was closed on " + close_time.toLocaleDateString() + " at " + close_time.toLocaleTimeString() + "</pre>"
+            elem.setAttribute("style", "")
+        }
     }
 
 }

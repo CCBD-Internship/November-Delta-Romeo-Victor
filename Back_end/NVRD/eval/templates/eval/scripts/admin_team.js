@@ -1,33 +1,34 @@
-function team_refresh_A() {
-    tbody = document.getElementById("team_body")
-    var xhttp = new XMLHttpRequest()
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
-            let data = JSON.parse(this.responseText)
-            var str = ''
-            var svgstr = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil" fill="currentColor" xmlns="http://www.w3.org/2000/svg">'
-            svgstr += '<path fill-rule="evenodd" d="M11.293 1.293a1 1 0 0 1 1.414 0l2 2a1 1 0 0 1 0 1.414l-9 9a1 1 0 0 1-.39.242l-3 1a1 1 0 0 1-1.266-1.265l1-3a1 1 0 0 1 .242-.391l9-9zM12 2l2 2-9 9-3 1 1-3 9-9z"/>'
-            svgstr += '<path fill-rule="evenodd" d="M12.146 6.354l-2.5-2.5.708-.708 2.5 2.5-.707.708zM3 10v.5a.5.5 0 0 0 .5.5H4v.5a.5.5 0 0 0 .5.5H5v.5a.5.5 0 0 0 .5.5H6v-1.5a.5.5 0 0 0-.5-.5H5v-.5a.5.5 0 0 0-.5-.5H3z"/>'
-            svgstr += '</svg>'
-            for (let i in data) {
-                str += '<tr><td scope="row" style="text-align:right"><input name="team_boxes_A" class="form-check-input position-static" type="checkbox"></input></td>'
-                for (let j in data[i]) {
-                    str += ("<td>" + data[i][j] + "</td>")
-                }
-                str += '<td scope="col"><button type="button" class="btn btn-dark active btn" data-toggle="modal" data-target="#modal_admin_team_put" onclick="admin_team_put_form(this)">' + svgstr + '</button></td></tr>'
-            }
-            document.getElementById("team_body_A").innerHTML = str
-            checkerInit("team_boxes_main_A", "team_boxes_A")
-        }
-    }
-    refreshLoader(xhttp)
-    xhttp.open("GET", "/api/" + getCookie("username") + "/team/", true);
-    xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
-    xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
-    xhttp.send();
-}
+// function team_refresh_A() {
+//     tbody = document.getElementById("team_body")
+//     var xhttp = new XMLHttpRequest()
+//     xhttp.onreadystatechange = function () {
+//         if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+//             let data = JSON.parse(this.responseText)
+//             var str = ''
+//             var svgstr = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil" fill="currentColor" xmlns="http://www.w3.org/2000/svg">'
+//             svgstr += '<path fill-rule="evenodd" d="M11.293 1.293a1 1 0 0 1 1.414 0l2 2a1 1 0 0 1 0 1.414l-9 9a1 1 0 0 1-.39.242l-3 1a1 1 0 0 1-1.266-1.265l1-3a1 1 0 0 1 .242-.391l9-9zM12 2l2 2-9 9-3 1 1-3 9-9z"/>'
+//             svgstr += '<path fill-rule="evenodd" d="M12.146 6.354l-2.5-2.5.708-.708 2.5 2.5-.707.708zM3 10v.5a.5.5 0 0 0 .5.5H4v.5a.5.5 0 0 0 .5.5H5v.5a.5.5 0 0 0 .5.5H6v-1.5a.5.5 0 0 0-.5-.5H5v-.5a.5.5 0 0 0-.5-.5H3z"/>'
+//             svgstr += '</svg>'
+//             for (let i in data) {
+//                 str += '<tr><td scope="row" style="text-align:right"><input name="team_boxes_A" class="form-check-input position-static" type="checkbox"></input></td>'
+//                 for (let j in data[i]) {
+//                     str += ("<td>" + data[i][j] + "</td>")
+//                 }
+//                 str += '<td scope="col"><button type="button" class="btn btn-dark active btn" data-toggle="modal" data-target="#modal_admin_team_put" onclick="admin_team_put_form(this)">' + svgstr + '</button></td></tr>'
+//             }
+//             document.getElementById("team_body_A").innerHTML = str
+//             checkerInit("team_boxes_main_A", "team_boxes_A")
+//         }
+//     }
+//     refreshLoader(xhttp)
+//     xhttp.open("GET", "/api/" + getCookie("username") + "/team/", true);
+//     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
+//     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+//     xhttp.send();
+// }
 
-function team_search_A() {
+function team_refresh_A() {
+    document.getElementById("team_initial_A").setAttribute('style', 'display:none')
     tbody = document.getElementById("team_body")
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
@@ -221,7 +222,6 @@ function admin_team_put_form(arg) {
     modal[13].value = head[7].innerHTML
 }
 
-
 function team_post_Admin() {
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
@@ -291,7 +291,9 @@ function team_post_Admin() {
     xhttp.send(JSON.stringify([jsonarray]));
 }
 
-admin_refresh = team_refresh_A
+admin_refresh = function () {
+    var a = 10
+}
 
 function admin_team_upload_csv(event) {
     const selectedFile = document.getElementById('admin_team_upload_file').files[0];
@@ -341,6 +343,7 @@ function admin_team_upload_csv(event) {
                         resp += "<tr><td>" + suc_data["assumption"][i]["value"][0]["team_name"] + "</td><td>" + suc_data["assumption"][i]["detail"] + "</td></tr>"
                     resp += '</table>'
                     document.getElementById('admin_team_upload_response').innerHTML = resp
+                    document.getElementById('admin_team_upload_file').value=null
                 }
                 else {
                     var svg_cross = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle-fill" fill="red" xmlns="http://www.w3.org/2000/svg">'
@@ -373,6 +376,7 @@ function admin_team_upload_csv(event) {
                     }
                     str += '</table>'
                     document.getElementById('admin_team_upload_response').innerHTML = str
+                    document.getElementById('admin_team_upload_file').value=null
                 }
             }
         }

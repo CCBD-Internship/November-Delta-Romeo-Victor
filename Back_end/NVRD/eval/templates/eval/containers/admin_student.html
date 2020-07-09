@@ -27,7 +27,7 @@
         <div class="form-group">
           <input type="name" class="form-control" id="student_search_team_id_A" placeholder="team_id">
         </div>
-        <button onclick="student_search_A()" class="btn btn-primary">Search</button>
+        <button onclick="student_refresh_A()" class="btn btn-primary">Search</button>
       </form>
     </div>
     <button type="button" style="visibility: hidden"></button>
@@ -86,7 +86,12 @@
   </table>
 </div>
 
-
+<div class="card border-light w-75 align-center mx-auto" id="student_initial_A">
+  <div class="card-body text-light text-center">
+      <pre><code><h5 class="card-title" id="student_initial_title_A">Filter your data by using Search !!</h5></code></pre>
+      <pre><code></code><p class="card-text text-muted" id="student_initial_body_A">Leave search parameters blank if you want all the records</p></code></pre>
+  </div>
+</div>
 
 <div class="modal fade" id="A_Student_DeleteConfirm" tabindex="-1">
   <div id="step1" class="modal-footer">

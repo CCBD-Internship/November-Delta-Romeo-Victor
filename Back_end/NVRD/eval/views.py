@@ -1216,11 +1216,10 @@ class Team_List(APIView):
                         team_id__endswith=request.GET['team_id'])
                 if 'team_year_code' in request.GET:
                     team_as_object = team_as_object.filter(
-                        team_year_code__endswith=request.GET['team_year_code'])
+                        team_year_code__contains=request.GET['team_year_code'])
                 if 'team_name' in request.GET:
                     team_as_object = team_as_object.filter(
                         team_name__contains=request.GET['team_name'])
-
                 d = list(team_as_object.values())
                 for i in d:
                     i.pop("id")

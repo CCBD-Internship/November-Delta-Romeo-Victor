@@ -1,35 +1,36 @@
-function student_refresh_A() {
-    tbody = document.getElementById("student_body")
-    var xhttp = new XMLHttpRequest()
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == XMLHttpRequest.DONE) {
-            if (this.status == 200) {
-                let data = JSON.parse(this.responseText)
-                var str = ''
-                var svgstr = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil" fill="currentColor" xmlns="http://www.w3.org/2000/svg">'
-                svgstr += '<path fill-rule="evenodd" d="M11.293 1.293a1 1 0 0 1 1.414 0l2 2a1 1 0 0 1 0 1.414l-9 9a1 1 0 0 1-.39.242l-3 1a1 1 0 0 1-1.266-1.265l1-3a1 1 0 0 1 .242-.391l9-9zM12 2l2 2-9 9-3 1 1-3 9-9z"/>'
-                svgstr += '<path fill-rule="evenodd" d="M12.146 6.354l-2.5-2.5.708-.708 2.5 2.5-.707.708zM3 10v.5a.5.5 0 0 0 .5.5H4v.5a.5.5 0 0 0 .5.5H5v.5a.5.5 0 0 0 .5.5H6v-1.5a.5.5 0 0 0-.5-.5H5v-.5a.5.5 0 0 0-.5-.5H3z"/>'
-                svgstr += '</svg>'
-                for (let i in data) {
-                    str += '<tr><td scope="row" style="text-align:right"><input name="student_boxes_A" class="form-check-input position-static" type="checkbox"></input></td>'
-                    for (let j in data[i]) {
-                        str += ("<td>" + data[i][j] + "</td>")
-                    }
-                    str += '<td scope="col"><button type="button" class="btn btn-dark active btn" data-toggle="modal" data-target="#modal_admin_student_put" onclick="admin_student_put_form(this)">' + svgstr + '</button></td></tr>'
-                }
-                document.getElementById("student_body_A").innerHTML = str
-                checkerInit("student_boxes_main_A", "student_boxes_A")
-            }
-        }
-    }
-    refreshLoader(xhttp)
-    xhttp.open("GET", "/api/" + getCookie("username") + "/student/", true);
-    xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
-    xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
-    xhttp.send();
-}
+// function student_refresh_A() {
+//     tbody = document.getElementById("student_body")
+//     var xhttp = new XMLHttpRequest()
+//     xhttp.onreadystatechange = function () {
+//         if (this.readyState == XMLHttpRequest.DONE) {
+//             if (this.status == 200) {
+//                 let data = JSON.parse(this.responseText)
+//                 var str = ''
+//                 var svgstr = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil" fill="currentColor" xmlns="http://www.w3.org/2000/svg">'
+//                 svgstr += '<path fill-rule="evenodd" d="M11.293 1.293a1 1 0 0 1 1.414 0l2 2a1 1 0 0 1 0 1.414l-9 9a1 1 0 0 1-.39.242l-3 1a1 1 0 0 1-1.266-1.265l1-3a1 1 0 0 1 .242-.391l9-9zM12 2l2 2-9 9-3 1 1-3 9-9z"/>'
+//                 svgstr += '<path fill-rule="evenodd" d="M12.146 6.354l-2.5-2.5.708-.708 2.5 2.5-.707.708zM3 10v.5a.5.5 0 0 0 .5.5H4v.5a.5.5 0 0 0 .5.5H5v.5a.5.5 0 0 0 .5.5H6v-1.5a.5.5 0 0 0-.5-.5H5v-.5a.5.5 0 0 0-.5-.5H3z"/>'
+//                 svgstr += '</svg>'
+//                 for (let i in data) {
+//                     str += '<tr><td scope="row" style="text-align:right"><input name="student_boxes_A" class="form-check-input position-static" type="checkbox"></input></td>'
+//                     for (let j in data[i]) {
+//                         str += ("<td>" + data[i][j] + "</td>")
+//                     }
+//                     str += '<td scope="col"><button type="button" class="btn btn-dark active btn" data-toggle="modal" data-target="#modal_admin_student_put" onclick="admin_student_put_form(this)">' + svgstr + '</button></td></tr>'
+//                 }
+//                 document.getElementById("student_body_A").innerHTML = str
+//                 checkerInit("student_boxes_main_A", "student_boxes_A")
+//             }
+//         }
+//     }
+//     refreshLoader(xhttp)
+//     xhttp.open("GET", "/api/" + getCookie("username") + "/student/", true);
+//     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
+//     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+//     xhttp.send();
+// }
 
-function student_search_A() {
+function student_refresh_A() {
+    document.getElementById("student_initial_A").setAttribute('style', 'display:none')
     tbody = document.getElementById("student_body")
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
@@ -57,7 +58,7 @@ function student_search_A() {
     var str = "/api/" + getCookie("username") + "/student/"
     var Team_year_code = document.getElementById("student_search_team_year_code_A").value
     var Team_id = document.getElementById("student_search_team_id_A").value
-    var sstr=''
+    var sstr = ''
     if (Team_year_code != "") {
         if (sstr == "")
             sstr += ("?team_year_code=" + Team_year_code)
@@ -82,7 +83,7 @@ function student_search_A() {
         else
             sstr += ("&srn=" + srn)
     }
-    str+=sstr
+    str += sstr
     xhttp.open("GET", str, true);
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
@@ -303,4 +304,6 @@ function student_post_Admin() {
     xhttp.send(JSON.stringify([jsonarray]));
 }
 
-admin_refresh = student_refresh_A
+admin_refresh = function () {
+    var a = 10
+}
