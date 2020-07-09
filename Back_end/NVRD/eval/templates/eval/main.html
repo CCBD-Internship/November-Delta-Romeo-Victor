@@ -175,11 +175,12 @@
         }
         function cardMaker(panel_id, panel_name, is_active, ctime) {
             var color
+            ctime_d=new Date(ctime).toLocaleString()
             if (is_active)
                 color = 'bg-info'
             else
                 color = 'bg-secondary'
-            str = '<div class="col mb-4"><div class="card ' + color + '" name="panels_main"><div class="card-header" name="panels_main">' + panel_id + '</div><div class="card-body" name="panels_main"><h5 class="card-title" name="panels_main">' + panel_name + '</h5><p name="panels_main">' + ctime + '</p></div></div></div>'
+            str = '<div class="col mb-4"><div class="card ' + color + '" name="panels_main"><div class="card-header" name="panels_main">' + panel_id + '</div><div class="card-body" name="panels_main"><h5 class="card-title" name="panels_main">' + panel_name + '</h5><p name="panels_main">' + ctime_d + '</p></div></div></div>'
             return str
         }
         window.addEventListener('hashchange', hasher);
@@ -405,7 +406,7 @@
                     panelcard = document.getElementById('NVRDpanelcard')
                     panelcard.setAttribute('style', 'display:inline')
                     panelcard.innerHTML = ""
-                    var str = '<div class="row row-cols-1 row-cols-md-3" id="panelcardmainchild">';
+                    var str = '<div class="row row-cols-1 row-cols-md-3 w-100" id="panelcardmainchild">';
                     for (let i = 0; i < Object.keys(obj).length; i++) {
                         var panel = returnPanel(Object.keys(obj)[i])
                         str += cardMaker(Object.keys(obj)[i], panel["panel_name"], panel["is_active"], panel["ctime"])

@@ -130,7 +130,7 @@ function panel_delete_A() {
         }
         var modal = $("#A_panel_DeleteconfirmModal");
         modal.modal("show");
-        $("#A_panel_DeleteconfirmMessage").empty().append("Do you want to delete " + a.length + " students");
+        $("#A_panel_DeleteconfirmMessage").empty().append("Do you want to delete " + a.length + " panels");
         $('#A_panel_DeleteconfirmOk')
             .on('click', function (e) {
                 e.preventDefault();

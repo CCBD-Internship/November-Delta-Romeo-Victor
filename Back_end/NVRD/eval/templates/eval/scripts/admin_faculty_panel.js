@@ -5,7 +5,7 @@ function fpcardMaker(panel_year_code, panel_id, panel_name, is_active, ctime) {
     else
         color = 'bg-secondary'
     let date = new Date(ctime)
-    str = '<div class="col mb-4"><div onclick="openmodal(event,this)" class="card ' + color + '" ><div class="card-header">' + panel_year_code + '   ' + panel_id + '    </div><div class="card-body"><h5 class="card-title">' + panel_name + '</h5><p>  ' + date.toLocaleString() + '</p></div></div></div>'
+    str = '<div class="col mb-4 w-100"><div onclick="openmodal(event,this)" class="card ' + color + '" ><div class="card-header">' + panel_year_code + '   ' + panel_id + '    </div><div class="card-body"><h5 class="card-title">' + panel_name + '</h5><p>  ' + date.toLocaleString() + '</p></div></div></div>'
     return str
 }
 
@@ -51,7 +51,7 @@ function admin_faculty_panel_refresh() {
     xhttp.onreadystatechange = function () {
         if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
             let data = JSON.parse(this.responseText)
-            var str = '<div class="row row-cols-1 row-cols-md-3" id="panelcardchild">'
+            var str = '<div class="row row-cols-1 row-cols-md-3 w-100" id="panelcardchild">'
             for (let i in data) {
                 str += fpcardMaker(data[i]["panel_year_code"], data[i]["panel_id"], data[i]["panel_name"], data[i]["is_active"], data[i]["ctime"])
             }

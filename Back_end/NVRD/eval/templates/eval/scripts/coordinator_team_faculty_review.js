@@ -10,7 +10,7 @@ function C_TFR_refresh() {
     xhttp.onreadystatechange = function () {
         if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
             let data = JSON.parse(this.responseText)
-            var str = '<div class="row row-cols-1 row-cols-md-3" id="C_TFRcardchild">'
+            var str = '<div class="row row-cols-1 row-cols-md-3 w-100" id="C_TFRcardchild">'
             for (let i in data) {
                 str += C_team_fac_review_cardmaker(data[i]["team_year_code"], data[i]["team_id"], data[i]["team_name"], data[i]["description"], data[i]["guide"])
             }
