@@ -306,7 +306,7 @@
                                 var st = data["panels"][i]["panel_year_code"] + '-' + data["panels"][i]["panel_id"]
                                 Tree.Evaluator[st] = evalview
                             }
-                            if (data["panels"][i]["is_coordinator"] == true && Tree.Coordinator.includes(["panels"][i]["panel_year_code"] + '-' + data["panels"][i]["panel_id"]) == false) {
+                            if (data["panels"][i]["is_coordinator"] == true && Tree.Coordinator.includes(data["panels"][i]["panel_year_code"] + '-' + data["panels"][i]["panel_id"]) == false) {
                                 var st = data["panels"][i]["panel_year_code"] + '-' + data["panels"][i]["panel_id"]
                                 Tree.Coordinator[st] = coordview
                             }

@@ -300,22 +300,22 @@ function admin_team_upload_csv(event) {
     const reader = new FileReader();
     reader.onload = function () {
         var result = []
-        var team_fields = ["team_year_code", "team_name", "description", "guide", "panel_year_code", "panel_id", "dept"]
+        var team_fields = ["team_year_code", "team_name", "description", "guide","dept"]
         var stud_fields = ["srn", "name", "email", "phone"]
         var linearray = reader.result.split('\n');
         for (var i = 1; i < linearray.length; i++) {
             if (linearray[i] != "") {
                 var dict = {};
                 var arr = linearray[i].split(',')
-                for (var j = 0; j < 7; j++) {
+                for (var j = 0; j < team_fields.length; j++) {
                     dict[team_fields[j]] = (arr[j] == '' || arr[j] == 'null') ? null : arr[j]
                 }
                 dict["student"] = []
-                for (var j = 0; j < (arr.length - 7) / 4; j++) {
-                    if (arr[j * 4 + 7] != '') {
+                for (var j = 0; j < (arr.length - team_fields.length) / stud_fields.length; j++) {
+                    if (arr[j * stud_fields.length + team_fields.length] != '') {
                         var stud_dict = {}
-                        for (var k = 0; k < 4; k++) {
-                            stud_dict[stud_fields[k]] = arr[j * 4 + 7 + k]
+                        for (var k = 0; k < stud_fields.length; k++) {
+                            stud_dict[stud_fields[k]] = arr[j * stud_fields.length + team_fields.length + k]
                         }
                         dict["student"].push(stud_dict)
                     }

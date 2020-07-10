@@ -781,7 +781,7 @@ class Panel_List(APIView):
                 # admin
                 if(Faculty.objects.get(fac_id=user).is_admin == True):
                     if(panel_id == None and panel_year_code == None):
-                        panel_as_object = Panel.objects.all().order_by("panel_id", "-panel_year_code")
+                        panel_as_object = Panel.objects.all().order_by("-panel_year_code","panel_id")
                     else:
                         panel_as_object = Panel.objects.filter(
                             panel_id=panel_id, panel_year_code=panel_year_code).order_by("-ctime")
