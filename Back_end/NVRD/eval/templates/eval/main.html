@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NVRD-PLogger</title>
-    <link rel="stylesheet" href="https://bootswatch.com/4/darkly/bootstrap.css">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href='{% static "css/bootstrap.css" %}'>
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js" type="text/javascript"></script>
     <style>
         .blink_me_main {
@@ -133,13 +134,13 @@
             }
             xhttp.onprogress = function (e) {
                 p = document.getElementById("progress")
-                p.setAttribute('style', 'width:' + e.loaded/e.total*100 + '%')
+                p.setAttribute('style', 'width:' + e.loaded / e.total * 100 + '%')
                 p.setAttribute('aria-valuemax', e.total)
                 p.setAttribute('aria-valuenow', e.loaded)
             }
             xhttp.onloadend = function (e) {
                 p = document.getElementById("progress")
-                p.setAttribute('style', 'width:' + e.loaded/e.total*100 + '%')
+                p.setAttribute('style', 'width:' + e.loaded / e.total * 100 + '%')
                 p.setAttribute('aria-valuemax', e.total)
                 p.setAttribute('aria-valuenow', e.loaded)
                 setTimeout(function () {
@@ -179,7 +180,7 @@
         }
         function cardMaker(panel_id, panel_name, is_active, ctime) {
             var color
-            ctime_d=new Date(ctime).toLocaleString()
+            ctime_d = new Date(ctime).toLocaleString()
             if (is_active)
                 color = 'bg-info'
             else
@@ -254,7 +255,7 @@
             xhttp.onreadystatechange = function () {
                 if (this.readyState == XMLHttpRequest.DONE) {
                     if (this.status == 200) {
-                        console.log('Logged-In '+(new Date()).toLocaleTimeString())
+                        console.log('Logged-In ' + (new Date()).toLocaleTimeString())
                     }
                     else {
                         window.location.replace('/logout/')
@@ -273,7 +274,7 @@
             xhttp.onreadystatechange = function () {
                 if (this.readyState == XMLHttpRequest.DONE) {
                     if (this.status == 200) {
-                        console.log('Logged-In '+(new Date()).toLocaleTimeString())
+                        console.log('Logged-In ' + (new Date()).toLocaleTimeString())
                         setTree()
                     }
                     else {
@@ -352,10 +353,6 @@
                 NVRDbreadcrumb.appendChild(elem)
             }
             NVRDbreadcrumb = document.getElementById(id = "NVRDbreadcrumb")
-            //elem = document.createElement("li")
-            //elem.setAttribute('class', 'breadcrumb-item')
-            //elem.addEventListener('click', crumbPopper)
-            //NVRDbreadcrumb.appendChild(elem)
             urlstr = ""
             for (let i = 0; i < lst.length; i++) {
                 urlstr += (lst[i] + '/')
@@ -618,10 +615,6 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav" id='NVRDnavbar'>
-                    <!-- <a class="nav-item nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
- <a class="nav-item nav-link" href="#">Features</a>
- <a class="nav-item nav-link" href="#">Pricing</a>
- <a class="nav-item nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a> -->
                 </div>
             </div>
 
@@ -636,9 +629,6 @@
         </nav>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb" id="NVRDbreadcrumb">
-                <!-- <li class="breadcrumb-item"><a href="#">Home</a></li>
- <li class="breadcrumb-item"><a href="#">Library</a></li>
- <li class="breadcrumb-item active">Data</li> -->
             </ol>
         </nav>
         <div class="progress fixed-bottom" id="progressParent">
@@ -649,26 +639,8 @@
         </div>
     </div>
     <div class="list-group" id="NVRDlist">
-        <!-- <button type="button" class="list-group-item list-group-item-action active">
- Cras justo odio
- </button>
- <button type="button" class="list-group-item list-group-item-action">Dapibus ac facilisis in</button>
- <button type="button" class="list-group-item list-group-item-action">Morbi leo risus</button>
- <button type="button" class="list-group-item list-group-item-action">Porta ac consectetur ac</button>
- <button type="button" class="list-group-item list-group-item-action" disabled>Vestibulum at eros</button> -->
     </div>
     <div style="max-width: 100%" id="NVRDpanelcard">
-
-        <!-- <div class="col mb-4">
- <div class="card">
- <div class="card-header">Header</div>
- <div class="card-body">
- <h5 class="card-title">Card title</h5>
- <p class="card-text">This is a longer card with supporting text below as a natural lead-in to
- additional content. This content is a little bit longer.</p>
- </div>
- </div>
- </div> -->
     </div>
 
     <div id="admin_HTML"></div>
@@ -683,26 +655,6 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
         crossorigin="anonymous"></script>
-    <!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
- integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
- crossorigin="anonymous"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
- integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
- crossorigin="anonymous"></script>
- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
- integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
- crossorigin="anonymous"></script> -->
-    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
-
-
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-
- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script> -->
-
     <div class="modal fade" id="change_passwordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">

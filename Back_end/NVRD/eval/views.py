@@ -149,7 +149,6 @@ def logoutUser(request):
     response.delete_cookie('username')
     return response
 
-
 @login_required(login_url='')
 def coordinator_teamHTML(request, panel_id, panel_year_code, user):
     return render(request, "eval/containers/coordinator_team.html")
