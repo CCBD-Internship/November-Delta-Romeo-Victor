@@ -56,6 +56,7 @@ function team_refresh_A() {
     var Team_name = document.getElementById("team_search_team_name_A").value
     var Panel_year_code = document.getElementById("team_search_panel_year_code_A").value
     var Panel_id = document.getElementById("team_search_panel_id_A").value
+    var Guide = document.getElementById("team_search_guide_A").value
     var str = ""
     if (Team_year_code != "") {
         if (str == "")
@@ -86,6 +87,12 @@ function team_refresh_A() {
             str += ("?panel_id=" + Panel_id)
         else
             str += ("&panel_id=" + Panel_id)
+    }
+    if (Guide != "") {
+        if (str == "")
+            str += ("?guide=" + Guide)
+        else
+            str += ("&guide=" + Guide)
     }
     xhttp.open("GET", "/api/" + getCookie("username") + "/team/" + str, true);
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));

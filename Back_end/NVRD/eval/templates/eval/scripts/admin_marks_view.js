@@ -64,6 +64,8 @@ function marks_view_search_A() {
     var Team_year_code = document.getElementById("marks_view_search_team_year_code_A").value
     var Team_id = document.getElementById("marks_view_search_team_id_A").value
     var str = "/api/" + getCookie("username") + "/marks-view/"
+    var guide_weight = document.getElementById("guide_weight_search_team_id_A").value
+    var guide = document.getElementById("guide_search_team_id_A").value
     var sstr = ''
     if (Team_year_code != "") {
         if (sstr == "")
@@ -88,6 +90,23 @@ function marks_view_search_A() {
             sstr += ("?srn=" + srn)
         else
             sstr += ("&srn=" + srn)
+    }
+    if (guide != "") {
+        if (sstr == "")
+            sstr += ("?guide=" + guide)
+        else
+            sstr += ("&guide=" + guide)
+    }
+    if (guide_weight != "") {
+        if (sstr == "")
+            sstr += ("?guide_weight=" + guide_weight)
+        else
+            sstr += ("&guide_weight=" + guide_weight)
+    } else {
+        if (sstr == "")
+            sstr += ("?guide_weight=" + 0)
+        else
+            sstr += ("&guide_weight=" + 0)
     }
     str += sstr
     xhttp.open("GET", str, true);
@@ -200,8 +219,8 @@ function Admin_print() {
     var mainstr = "SRN,Name,Review 1(40),Review 2(40),Review 3(35),Review 4(40),Review 5(40),Total(195),Percentage,\n"
     if (students && students.length) {
         for (let i of marks_store_A) {
-            if (students.indexOf(i["srn"])!=-1) {
-                var str = i["srn"]+','+i["name"]+','
+            if (students.indexOf(i["srn"]) != -1) {
+                var str = i["srn"] + ',' + i["name"] + ','
                 for (j of i["review"]["total_individual"]) {
                     str += (j["marks_scored"] + ',')
                 }

@@ -58,6 +58,7 @@ function student_refresh_A() {
     var str = "/api/" + getCookie("username") + "/student/"
     var Team_year_code = document.getElementById("student_search_team_year_code_A").value
     var Team_id = document.getElementById("student_search_team_id_A").value
+    var guide = document.getElementById("student_search_guide_A").value
     var sstr = ''
     if (Team_year_code != "") {
         if (sstr == "")
@@ -82,6 +83,12 @@ function student_refresh_A() {
             sstr += ("?srn=" + srn)
         else
             sstr += ("&srn=" + srn)
+    }
+    if (guide != "") {
+        if (sstr == "")
+            sstr += ("?guide=" + guide)
+        else
+            sstr += ("&guide=" + guide)
     }
     str += sstr
     xhttp.open("GET", str, true);

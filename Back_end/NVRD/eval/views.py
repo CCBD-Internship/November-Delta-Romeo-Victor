@@ -1036,6 +1036,11 @@ class Student_List(APIView):
                         team_year_code__contains=request.GET['team_year_code'])
                     student_as_object = student_as_object.filter(
                         team_id__in=[i.id for i in team_year_codel])
+                if 'guide' in request.GET:
+                    team_guidel = Team.objects.filter(
+                        guide__in=Faculty.objects.filter(fac_id__contains=request.GET['guide']))
+                    student_as_object = student_as_object.filter(
+                        team_id__in=[i.id for i in team_guidel])
                 d = list(student_as_object.values())
                 for i in d:
                     if "team_id_id" in i and i["team_id_id"] != None:
@@ -1219,6 +1224,9 @@ class Team_List(APIView):
                 if 'team_name' in request.GET:
                     team_as_object = team_as_object.filter(
                         team_name__contains=request.GET['team_name'])
+                if 'guide' in request.GET:
+                    team_as_object = team_as_object.filter(
+                        guide__in=Faculty.objects.filter(fac_id__contains=request.GET['guide']))
                 d = list(team_as_object.values())
                 for i in d:
                     i.pop("id")
@@ -1848,15 +1856,24 @@ class EvaluatorMarksView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-def individual_review_dict(l, rno):
+def individual_review_dict(l, rno,weight):
     marks_scored = 0
     c = 0
+    # print('weight',weight)
     for i in l:
         if i["is_evaluated"]:
-            c += 1
+            # print(i)
+            ind_marks=0
             for j in i:
                 if type(i[j]) == int:
-                    marks_scored += i[j]
+                    ind_marks += i[j]
+            if(weight!=100 and Student.objects.filter(team_id__in=[j.id for j in Team.objects.filter(guide=i["fac_id_id"])],srn=i["srn_id"]).exists()):
+                marks_scored+=(ind_marks*weight/100)
+                c+=(1*weight/100)
+            else:
+                marks_scored+=ind_marks
+                c+=1
+        print(marks_scored)
     total_marks = 40
     if (rno == 3):
         total_marks = 35
@@ -1873,7 +1890,7 @@ def compute_total(d):
     for i in d["total_individual"]:
         marks_scored += i["marks_scored"]
         total_marks += i["total_marks"]
-    return{"marks_scored": marks_scored, "total_marks": total_marks, "percentage": marks_scored/total_marks}
+    return{"marks_scored": marks_scored, "total_marks": total_marks, "percentage": marks_scored/total_marks*100}
 
 
 class GeneralMarksView(APIView):
@@ -1881,7 +1898,7 @@ class GeneralMarksView(APIView):
     parser_classes = [JSONParser]
 
     def get(self, request, user):
-        try:
+        # try:
             if(user == User.objects.get(username=request.user.username).get_username()):
                 if(Faculty.objects.get(fac_id=user).is_admin == True):
                     student_as_object = Student.objects.exclude(team_id=None).order_by("-srn")
@@ -1901,6 +1918,11 @@ class GeneralMarksView(APIView):
                             team_year_code__contains=request.GET['team_year_code'])
                         student_as_object = student_as_object.filter(
                             team_id__in=[i.id for i in team_year_codel])
+                    if 'guide' in request.GET:
+                        team_guidel = Team.objects.filter(
+                            guide__in=Faculty.objects.filter(fac_id__contains=request.GET['guide']))
+                        student_as_object = student_as_object.filter(
+                            team_id__in=[i.id for i in team_guidel])
                     content = list(student_as_object.values())
                     for i in content:
                         i.pop("phone")
@@ -1930,7 +1952,7 @@ class GeneralMarksView(APIView):
                             if r5.exists():
                                 i["review"].update(
                                     {"5": r5.values()})
-                            i["review"].update({"total_individual": [individual_review_dict(x, y) for x, y in zip(
+                            i["review"].update({"total_individual": [individual_review_dict(x, y, int(request.GET["guide_weight"])) for x, y in zip(
                                 [r1.values(), r2.values(), r3.values(), r4.values(), r5.values()], [1, 2, 3, 4, 5])]})
                             i["review"].update(
                                 {"total": compute_total(i["review"])})
@@ -1953,8 +1975,8 @@ class GeneralMarksView(APIView):
                     return Response(status=status.HTTP_403_FORBIDDEN)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        # except:
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class GenerateFacultyPanel(APIView):

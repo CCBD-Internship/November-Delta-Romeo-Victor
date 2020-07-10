@@ -40,6 +40,17 @@
                 <div class="form-group">
                     <input type="name" class="form-control" id="marks_view_search_team_id_A" placeholder="team_id">
                 </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="guide_search_team_id_A"
+                        placeholder="guide">
+                </div>
+                <div class="form-group">
+                    <input type="number" class="form-control" id="guide_weight_search_team_id_A"
+                        placeholder="guide_weight" value="100">
+                </div>
+                <!-- <div class="form-group">
+                    <input type="name" class="form-control" id="non_guide_search_team_id_A" placeholder="team_id">
+                </div> -->
                 <button onclick="marks_view_search_A()" class="btn btn-primary">Search</button>
             </form>
         </div>
@@ -95,61 +106,128 @@
             </div>
             <div class="modal-body">
                 <h5 class="card-title" id="marks_modal_A_title">Card title</h5>
-                <h5 class="card-subtitle mb-2 text-muted" id="marks_modal_A_subtitle">Card subtitle</h6>
-                    <div class="accordion" id="accordionExample">
-                        <div class="card" id="Card_A_Review1">
-                            <div class="card-header" id="admin_marks_view_headingOne">
+                <h5 class="card-subtitle mb-2 text-muted" id="marks_modal_A_subtitle">Card subtitle</h5>
+                <div class="accordion" id="accordionExample">
+                    <div class="card" id="Card_A_Review1">
+                        <div class="card-header" id="admin_marks_view_headingOne">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse"
+                                    data-target="#admin_marks_view_collapse1" aria-expanded="true"
+                                    aria-controls="collapse1" id="Card_A_Title_Review1">
+                                    Review-1
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="admin_marks_view_collapse1" class="collapse show"
+                            aria-labelledby="admin_marks_view_headingOne" data-parent="#accordionExample">
+                            <div class="card-body">
+                                <table id="table" class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Concept Of The Work (10)</th>
+                                            <th scope="col">Methodology Proposed (10)</th>
+                                            <th scope="col">Literature Survey (10)</th>
+                                            <th scope="col">Knowledge On The Project (10)</th>
+                                            <th scope="col">Comments</th>
+                                            <th scope="col">Is Evaluated</th>
+                                            <th scope="col">Faculty ID</th>
+                                            <th scope="col">Faculty Name</th>
+                                            <th scope="col">Faculty Type</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="marks_view_body_A_Review1">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" id="Card_A_Review2">
+                        <div class="card-header" id="admin_marks_view_headingTwo">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                    data-target="#admin_marks_view_collapse2" aria-expanded="false"
+                                    aria-controls="collapse2" id="Card_A_Title_Review2">
+                                    Review-2
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="admin_marks_view_collapse2" class="collapse"
+                            aria-labelledby="admin_marks_view_headingTwo" data-parent="#accordionExample">
+                            <div class="card-body" id="Card_A_Title_Review2">
+                                <table id="table" class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Requirements Specification (10)</th>
+                                            <th scope="col">User Interface Use Cases (10)</th>
+                                            <th scope="col">Understanding Of Technology Platform Middleware (10)
+                                            </th>
+                                            <th scope="col">Viva Voce (10)</th>
+                                            <th scope="col">Comments</th>
+                                            <th scope="col">Faculty ID</th>
+                                            <th scope="col">Faculty Name</th>
+                                            <th scope="col">Faculty Type</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="marks_view_body_A_Review2">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" id="Card_A_Review3">
+                        <div class="card-header" id="admin_marks_view_headingThree">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                    data-target="#admin_marks_view_collapse3" aria-expanded="false"
+                                    aria-controls="collapse3" id="Card_A_Title_Review3">
+                                    Review-3
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="admin_marks_view_collapse3" class="collapse"
+                            aria-labelledby="admin_marks_view_headingThree" data-parent="#accordionExample">
+                            <div class="card-body" id="Card_A_Title_Review3">
+                                <table id="table" class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Design Philosophy Methodology (10)</th>
+                                            <th scope="col">User Interface Design Backend Design And Design For Any
+                                                Algorithms (10)</th>
+                                            <th scope="col">Suitably Of Design In Comparison To The Technology
+                                                Proposed
+                                                (5)</th>
+                                            <th scope="col">Progress Of The Project Work (5)</th>
+                                            <th scope="col">Viva Voce (5)</th>
+                                            <th scope="col">Comments</th>
+                                            <th scope="col">Faculty ID</th>
+                                            <th scope="col">Faculty Name</th>
+                                            <th scope="col">Faculty Type</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="marks_view_body_A_Review3">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card" id="Card_A_Review4">
+                            <div class="card-header" id="admin_marks_view_headingFour">
                                 <h2 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-toggle="collapse"
-                                        data-target="#admin_marks_view_collapse1" aria-expanded="true"
-                                        aria-controls="collapse1" id="Card_A_Title_Review1">
-                                        Review-1
+                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                        data-target="#admin_marks_view_collapse4" aria-expanded="false"
+                                        aria-controls="collapse4" id="Card_A_Title_Review4">
+                                        Review-4
                                     </button>
                                 </h2>
                             </div>
-                            <div id="admin_marks_view_collapse1" class="collapse show"
-                                aria-labelledby="admin_marks_view_headingOne" data-parent="#accordionExample">
+                            <div id="admin_marks_view_collapse4" class="collapse"
+                                aria-labelledby="admin_marks_view_headingFour" data-parent="#accordionExample">
                                 <div class="card-body">
                                     <table id="table" class="table table-striped">
                                         <thead>
                                             <tr>
-                                                <th scope="col">Concept Of The Work (10)</th>
-                                                <th scope="col">Methodology Proposed (10)</th>
-                                                <th scope="col">Literature Survey (10)</th>
-                                                <th scope="col">Knowledge On The Project (10)</th>
-                                                <th scope="col">Comments</th>
-                                                <th scope="col">Is Evaluated</th>
-                                                <th scope="col">Faculty ID</th>
-                                                <th scope="col">Faculty Name</th>
-                                                <th scope="col">Faculty Type</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="marks_view_body_A_Review1">
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card" id="Card_A_Review2">
-                            <div class="card-header" id="admin_marks_view_headingTwo">
-                                <h2 class="mb-0">
-                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
-                                        data-target="#admin_marks_view_collapse2" aria-expanded="false"
-                                        aria-controls="collapse2" id="Card_A_Title_Review2">
-                                        Review-2
-                                    </button>
-                                </h2>
-                            </div>
-                            <div id="admin_marks_view_collapse2" class="collapse"
-                                aria-labelledby="admin_marks_view_headingTwo" data-parent="#accordionExample">
-                                <div class="card-body" id="Card_A_Title_Review2">
-                                    <table id="table" class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Requirements Specification (10)</th>
-                                                <th scope="col">User Interface Use Cases (10)</th>
-                                                <th scope="col">Understanding Of Technology Platform Middleware (10)
-                                                </th>
+                                                <th scope="col">Project Work Results (10)</th>
+                                                <th scope="col">Quality Of Demo (10)</th>
+                                                <th scope="col">Project Report (10)</th>
                                                 <th scope="col">Viva Voce (10)</th>
                                                 <th scope="col">Comments</th>
                                                 <th scope="col">Faculty ID</th>
@@ -157,177 +235,110 @@
                                                 <th scope="col">Faculty Type</th>
                                             </tr>
                                         </thead>
-                                        <tbody id="marks_view_body_A_Review2">
+                                        <tbody id="marks_view_body_A_Review4">
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
-                        <div class="card" id="Card_A_Review3">
-                            <div class="card-header" id="admin_marks_view_headingThree">
+                        <div class="card" id="Card_A_Review5">
+                            <div class="card-header" id="admin_marks_view_headingFive">
                                 <h2 class="mb-0">
                                     <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
-                                        data-target="#admin_marks_view_collapse3" aria-expanded="false"
-                                        aria-controls="collapse3" id="Card_A_Title_Review3">
-                                        Review-3
+                                        data-target="#admin_marks_view_collapse5" aria-expanded="false"
+                                        aria-controls="collapse5" id="Card_A_Title_Review5">
+                                        Review-5
                                     </button>
                                 </h2>
                             </div>
-                            <div id="admin_marks_view_collapse3" class="collapse"
-                                aria-labelledby="admin_marks_view_headingThree" data-parent="#accordionExample">
-                                <div class="card-body" id="Card_A_Title_Review3">
+                            <div id="admin_marks_view_collapse5" class="collapse"
+                                aria-labelledby="admin_marks_view_headingFive" data-parent="#accordionExample">
+                                <div class="card-body">
                                     <table id="table" class="table table-striped">
                                         <thead>
                                             <tr>
-                                                <th scope="col">Design Philosophy Methodology (10)</th>
-                                                <th scope="col">User Interface Design Backend Design And Design For Any
-                                                    Algorithms (10)</th>
-                                                <th scope="col">Suitably Of Design In Comparison To The Technology
-                                                    Proposed
-                                                    (5)</th>
-                                                <th scope="col">Progress Of The Project Work (5)</th>
-                                                <th scope="col">Viva Voce (5)</th>
+                                                <th scope="col">Project Work Results (10)</th>
+                                                <th scope="col">Quality Of Demo (10)</th>
+                                                <th scope="col">Project Report (10)</th>
+                                                <th scope="col">Viva Voce (10)</th>
                                                 <th scope="col">Comments</th>
                                                 <th scope="col">Faculty ID</th>
                                                 <th scope="col">Faculty Name</th>
                                                 <th scope="col">Faculty Type</th>
                                             </tr>
                                         </thead>
-                                        <tbody id="marks_view_body_A_Review3">
+                                        <tbody id="marks_view_body_A_Review5">
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
-                            <div class="card" id="Card_A_Review4">
-                                <div class="card-header" id="admin_marks_view_headingFour">
-                                    <h2 class="mb-0">
-                                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
-                                            data-target="#admin_marks_view_collapse4" aria-expanded="false"
-                                            aria-controls="collapse4" id="Card_A_Title_Review4">
-                                            Review-4
-                                        </button>
-                                    </h2>
-                                </div>
-                                <div id="admin_marks_view_collapse4" class="collapse"
-                                    aria-labelledby="admin_marks_view_headingFour" data-parent="#accordionExample">
-                                    <div class="card-body">
-                                        <table id="table" class="table table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">Project Work Results (10)</th>
-                                                    <th scope="col">Quality Of Demo (10)</th>
-                                                    <th scope="col">Project Report (10)</th>
-                                                    <th scope="col">Viva Voce (10)</th>
-                                                    <th scope="col">Comments</th>
-                                                    <th scope="col">Faculty ID</th>
-                                                    <th scope="col">Faculty Name</th>
-                                                    <th scope="col">Faculty Type</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="marks_view_body_A_Review4">
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                        </div>
+                        <div class="card" id="Card_A_total">
+                            <div class="card-header" id="admin_marks_view_total_main">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                        data-target="#admin_marks_view_total" aria-expanded="false"
+                                        aria-controls="total" id="Card_A_Title_total">
+                                        Total
+                                    </button>
+                                </h2>
                             </div>
-                            <div class="card" id="Card_A_Review5">
-                                <div class="card-header" id="admin_marks_view_headingFive">
-                                    <h2 class="mb-0">
-                                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
-                                            data-target="#admin_marks_view_collapse5" aria-expanded="false"
-                                            aria-controls="collapse5" id="Card_A_Title_Review5">
-                                            Review-5
-                                        </button>
-                                    </h2>
-                                </div>
-                                <div id="admin_marks_view_collapse5" class="collapse"
-                                    aria-labelledby="admin_marks_view_headingFive" data-parent="#accordionExample">
-                                    <div class="card-body">
-                                        <table id="table" class="table table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">Project Work Results (10)</th>
-                                                    <th scope="col">Quality Of Demo (10)</th>
-                                                    <th scope="col">Project Report (10)</th>
-                                                    <th scope="col">Viva Voce (10)</th>
-                                                    <th scope="col">Comments</th>
-                                                    <th scope="col">Faculty ID</th>
-                                                    <th scope="col">Faculty Name</th>
-                                                    <th scope="col">Faculty Type</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="marks_view_body_A_Review5">
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card" id="Card_A_total">
-                                <div class="card-header" id="admin_marks_view_total">
-                                    <h2 class="mb-0">
-                                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
-                                            data-target="#admin_marks_view_total" aria-expanded="false"
-                                            aria-controls="total" id="Card_A_Title_total">
-                                            Total
-                                        </button>
-                                    </h2>
-                                </div>
-                                <div id="admin_marks_view_total" class="collapse"
-                                    aria-labelledby="admin_marks_view_headingFive" data-parent="#accordionExample">
-                                    <div class="card-body">
-                                        <table id="table" class="table table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">Review Number</th>
-                                                    <th scope="col">Marks obtained</th>
-                                                    <th scope="col">Total marks</th>
-                                                    <th scope="col">Percentage</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="marks_view_body_A_Total">
-                                                <tr>
-                                                    <td>Review 1</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Review 2</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Review 3</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Review 4</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Review 5</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><b>Total</b></td>
-                                                    <td><b></b></td>
-                                                    <td><b></b></td>
-                                                    <td><b></b></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                            <div id="admin_marks_view_total" class="collapse"
+                                aria-labelledby="admin_marks_view_headingFive" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <table id="table" class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Review Number</th>
+                                                <th scope="col">Marks obtained</th>
+                                                <th scope="col">Total marks</th>
+                                                <th scope="col">Percentage</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="marks_view_body_A_Total">
+                                            <tr>
+                                                <td>Review 1</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Review 2</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Review 3</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Review 4</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Review 5</td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Total</b></td>
+                                                <td><b></b></td>
+                                                <td><b></b></td>
+                                                <td><b></b></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
             </div>
         </div>
     </div>
