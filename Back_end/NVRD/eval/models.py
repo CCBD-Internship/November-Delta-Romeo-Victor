@@ -90,7 +90,8 @@ class Review1(models.Model):
     methodology_proposed = models.IntegerField()
     literature_survey = models.IntegerField()
     knowledge_on_the_project = models.IntegerField()
-    comments = BleachField(max_length=200, blank=True, null=True,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+    private_comments = BleachField(max_length=200, blank=True, null=True)
+    public_comments = BleachField(max_length=200, blank=True, null=True)
     is_evaluated = models.BooleanField(default=False)
     id = BleachField(max_length=200, primary_key=True,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
 
@@ -117,7 +118,8 @@ class Review2(models.Model):
     user_interface_use_cases = models.IntegerField()
     understanding_of_technology_platform_middleware = models.IntegerField()
     viva_voce = models.IntegerField()
-    comments = BleachField(max_length=200, blank=True, null=True,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+    private_comments = BleachField(max_length=200, blank=True, null=True)
+    public_comments = BleachField(max_length=200, blank=True, null=True)
     is_evaluated = models.BooleanField(default=False)
     id = BleachField(max_length=200, primary_key=True,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
 
@@ -147,7 +149,8 @@ class Review3(models.Model):
     suitably_of_design_in_comparison_to_the_technology_proposed = models.IntegerField()
     progress_of_the_project_work = models.IntegerField()
     viva_voce = models.IntegerField()
-    comments = BleachField(max_length=200, blank=True, null=True)
+    private_comments = BleachField(max_length=200, blank=True, null=True)
+    public_comments = BleachField(max_length=200, blank=True, null=True)
     is_evaluated = models.BooleanField(default=False)
     id = BleachField(max_length=200, primary_key=True)
 
@@ -176,7 +179,8 @@ class Review4(models.Model):
     quality_of_demo = models.IntegerField()
     project_report = models.IntegerField()
     viva_voce = models.IntegerField()
-    comments = BleachField(max_length=200, blank=True, null=True,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+    private_comments = BleachField(max_length=200, blank=True, null=True)
+    public_comments = BleachField(max_length=200, blank=True, null=True)
     is_evaluated = models.BooleanField(default=False)
     id = BleachField(max_length=200, primary_key=True,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
 
@@ -203,7 +207,8 @@ class Review5(models.Model):
     quality_of_demo = models.IntegerField()
     project_report = models.IntegerField()
     viva_voce = models.IntegerField()
-    comments = BleachField(max_length=200, blank=True, null=True,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+    private_comments = BleachField(max_length=200, blank=True, null=True)
+    public_comments = BleachField(max_length=200, blank=True, null=True)
     is_evaluated = models.BooleanField(default=False)
     id = BleachField(max_length=200, primary_key=True,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
 

@@ -1458,35 +1458,35 @@ class TeamFacultyReview_List(APIView):
                                     team_id=team_pk)
                                 for studs in students:
                                     Review1(srn=studs, fac_id=f, concept_of_the_work=0, methodology_proposed=0, literature_survey=0, knowledge_on_the_project=0,
-                                            comments="not yet scored", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
+                                            public_comments="not yet scored",private_comments="private_comments", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
                             elif i["review_number"].value == 2:
                                 team_pk = i["team_id"].value
                                 students = Student.objects.filter(
                                     team_id=team_pk)
                                 for studs in students:
                                     Review2(srn=studs, fac_id=f, requirements_specification=0, user_interface_use_cases=0, understanding_of_technology_platform_middleware=0, viva_voce=0,
-                                            comments="not yet scored", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
+                                            public_comments="not yet scored",private_comments="private_comments", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
                             elif i["review_number"].value == 3:
                                 team_pk = i["team_id"].value
                                 students = Student.objects.filter(
                                     team_id=team_pk)
                                 for studs in students:
                                     Review3(srn=studs, fac_id=f, design_philosophy_methodology=0, user_interface_design_backend_design_and_design_for_any_algorithms=0, suitably_of_design_in_comparison_to_the_technology_proposed=0, progress_of_the_project_work=0, viva_voce=0,
-                                            comments="not yet scored", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
+                                            public_comments="not yet scored",private_comments="private_comments", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
                             elif i["review_number"].value == 4:
                                 team_pk = i["team_id"].value
                                 students = Student.objects.filter(
                                     team_id=team_pk)
                                 for studs in students:
                                     Review4(srn=studs, fac_id=f, project_work_results=0, quality_of_demo=0, project_report=0, viva_voce=0,
-                                            comments="not yet scored", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
+                                            public_comments="not yet scored",private_comments="private_comments", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
                             elif i["review_number"].value == 5:
                                 team_pk = i["team_id"].value
                                 students = Student.objects.filter(
                                     team_id=team_pk)
                                 for studs in students:
                                     Review5(srn=studs, fac_id=f, project_work_results=0, quality_of_demo=0, project_report=0, viva_voce=0,
-                                            comments="not yet scored", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
+                                            public_comments="not yet scored",private_comments="private_comments", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
                     return Response({"detail": "OK"}, status=status.HTTP_200_OK)
                 else:
                     return Response(fail, status=status.HTTP_400_BAD_REQUEST)
@@ -1859,10 +1859,8 @@ class EvaluatorMarksView(APIView):
 def individual_review_dict(l, rno,weight):
     marks_scored = 0
     c = 0
-    # print('weight',weight)
     for i in l:
         if i["is_evaluated"]:
-            # print(i)
             ind_marks=0
             for j in i:
                 if type(i[j]) == int:
@@ -1873,7 +1871,6 @@ def individual_review_dict(l, rno,weight):
             else:
                 marks_scored+=ind_marks
                 c+=1
-        print(marks_scored)
     total_marks = 40
     if (rno == 3):
         total_marks = 35
@@ -1898,7 +1895,7 @@ class GeneralMarksView(APIView):
     parser_classes = [JSONParser]
 
     def get(self, request, user):
-        # try:
+        try:
             if(user == User.objects.get(username=request.user.username).get_username()):
                 if(Faculty.objects.get(fac_id=user).is_admin == True):
                     student_as_object = Student.objects.exclude(team_id=None).order_by("-srn")
@@ -1960,6 +1957,8 @@ class GeneralMarksView(APIView):
                                 for k in i["review"][j]:
                                     if(j in [str(z) for z in range(1, 6)]):
                                         k.pop("id")
+                                        k.pop("private_comments")
+                                        k["comments"]=k.pop("public_comments")
                                         k["fac_id"] = k.pop("fac_id_id")
                                         fac = Faculty.objects.get(
                                             fac_id=k["fac_id"])
@@ -1975,8 +1974,8 @@ class GeneralMarksView(APIView):
                     return Response(status=status.HTTP_403_FORBIDDEN)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
-        # except:
-        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class GenerateFacultyPanel(APIView):

@@ -72,21 +72,23 @@ function E_evaluations_opentip(e, t) {
             let data = JSON.parse(this.responseText)
             Evaluation_format = data
             var thead = ''
+            console.log(data)
             max_vals = {
-                1: [-2, -2, -2, 10, 10, 10, 10, 40, -1, -3],
-                2: [-2, -2, -2, 10, 10, 10, 10, 40, -1, -3],
-                3: [-2, -2, -2, 10, 10, 5, 5, 5, 35, -1, -3],
-                4: [-2, -2, -2, 10, 10, 10, 10, 40, -1, -3],
-                5: [-2, -2, -2, 10, 10, 10, 10, 40, -1, -3]
+                1: [-2, -2, -2, 10, 10, 10, 10, 40, -1, -1, -3],
+                2: [-2, -2, -2, 10, 10, 10, 10, 40, -1, -1, -3],
+                3: [-2, -2, -2, 10, 10, 5, 5, 5, 35, -1, -1, -3],
+                4: [-2, -2, -2, 10, 10, 10, 10, 40, -1, -1, -3],
+                5: [-2, -2, -2, 10, 10, 10, 10, 40, -1, -1, -3]
             }
             lst = ["srn", "name", "email"]
             for (let i of Object.keys(data["individual_review"][0])) {
-                if (lst.indexOf(i) == -1 && ["is_evaluated", "comments", "fac_id", "phone"].indexOf(i) == -1) {
+                if (lst.indexOf(i) == -1 && ["is_evaluated", "private_comments", "public_comments", "fac_id", "phone"].indexOf(i) == -1) {
                     lst.push(i)
                 }
             }
             lst.push("total")
-            lst.push("comments")
+            lst.push("private_comments")
+            lst.push("public_comments")
             lst.push("is_evaluated")
             var c = 0
             for (let i of lst) {
@@ -109,7 +111,7 @@ function E_evaluations_opentip(e, t) {
                         tbody += ("<td>" + i[j] + "</td>")
                     }
                     else if (max_vals[review_number][c] == -1) {
-                        tbody += ("<td>" + "<textarea class=\"form-control bg-transparent text-white text-center border-white\" style='min-width: 15em'>" + i[j] + "</textarea></td>")
+                        tbody += ("<td>" + "<textarea class=\"form-control bg-transparent text-white text-center border-white\" style='min-width: 10em'>" + i[j] + "</textarea></td>")
                     }
                     else if (max_vals[review_number][c] == -3) {
                         tbody += ("<td><input type=\"checkbox\"></td>")
@@ -341,11 +343,28 @@ function update_total_marks(e, t) {
     tots.textContent = sum
 }
 
+// function Evaluator_print() {
+//     submit_evaluation()
+//     document.getElementById("Evaluator_save_button").style = "display:none"
+//     document.getElementById("NVRDbreadcrumb").style = "visibility:hidden"
+//     window.print()
+//     document.getElementById("Evaluator_save_button").style = "display:inline-block"
+//     document.getElementById("NVRDbreadcrumb").style = "visibility:visible"
+// }
+
 function Evaluator_print() {
     submit_evaluation()
     document.getElementById("Evaluator_save_button").style = "display:none"
-    document.getElementById("NVRDbreadcrumb").style = "visibility:hidden"
+    var my_head = '<head><style type="text/css" media="print">@page {size:landscape}</style></head>'
+    var sripts_init = '<script src="https://lh3.googleusercontent.com/proxy/4j0c0VApd8T3Tx9YvwWhVSUBt0_nTFP9RpMKgnbfVUej1WLbd1_DwcDDPJy2gapdMJCDrOg79Y3aRQ0GtU5DpWhuSb0AdrsUUQUhk8uduj54_Wr-7UFRG2VJtqlto2YXdwKPTzbhrnqYmPJcnc-pyekvqXMdBKwwWYHzJjeo1tH5s13gzv1UXjaRvq5eVZFDsA" crossorigin="anonymous"></script>'
+    var logo_div = "<div><img src='https://cdn.explara.com/pes-universit20190301125131.jpg' width=1300 height=180></div><br/>";
+    var req_div = document.getElementById('evaluation_views').innerHTML
+    var original_content = document.body.innerHTML
+    document.body.innerHTML = my_head
+    document.body.innerHTML += sripts_init
+    document.body.innerHTML += logo_div
+    document.body.innerHTML += req_div
     window.print()
+    document.body.innerHTML = original_content
     document.getElementById("Evaluator_save_button").style = "display:inline-block"
-    document.getElementById("NVRDbreadcrumb").style = "visibility:visible"
 }
