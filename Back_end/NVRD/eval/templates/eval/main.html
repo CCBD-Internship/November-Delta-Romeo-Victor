@@ -243,10 +243,47 @@
             for (let info of requiredinfo)
                 str += "<p class='dropdown-item' style='cursor:pointer;'><b>" + info[0].toUpperCase() + info.slice(1,) + "</b>&emsp;" + data[info] + "</p>"
             str += "<p class='dropdown-item' style='cursor:pointer;'><b>Dept</b>&emsp;" + data["dept_id"] + "</p>"
-
-            str += '<button type="button" class="dropdown-item" data-toggle="modal" data-target="#change_passwordModal">Change Password</button>'
+            str += '<div class="dropdown-divider"></div><button type="button" class="dropdown-item" data-toggle="modal" data-target="#notepadModal" onclick="myNotesGet()"><b>My Notepad</b></button>'
+            str += '<div class="dropdown-divider"></div><button type="button" class="dropdown-item" data-toggle="modal" data-target="#change_passwordModal"><b>Change Password</b></button>'
             str += '<div class="dropdown-divider"></div><button class="dropdown-item" type="button" onclick="location.href=\'/logout/\'"><b>Logout</b></button>'
             document.getElementById("fac_info").innerHTML = str
+        }
+
+        function myNotesGet() {
+            textarea = document.getElementById('mynotes_textarea')
+            var xhttp = new XMLHttpRequest()
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == XMLHttpRequest.DONE) {
+                    if (this.status == 200) {
+                        textarea.value = JSON.parse(this.responseText)["mynotes"]
+                    }
+                }
+            }
+            xhttp.open("GET", "/api/" + getCookie("username") + "/mynotes/", true);
+            xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
+            xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+            xhttp.setRequestHeader("sessionid", getCookie("sessionid"));
+            xhttp.send()
+        }
+
+        function myNotesPost() {
+            textarea = document.getElementById('mynotes_textarea')
+            var xhttp = new XMLHttpRequest()
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == XMLHttpRequest.DONE) {
+                    if (this.status == 200) {
+                        textarea.value = JSON.parse(this.responseText)["mynotes"]
+                    }
+                }
+            }
+            xhttp.open("POST", "/api/" + getCookie("username") + "/mynotes/", true);
+            xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
+            xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+            xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+            xhttp.setRequestHeader("sessionid", getCookie("sessionid"));
+            var obj = { "mynotes": textarea.value }
+            xhttp.send(JSON.stringify(obj))
+            $('#notepadModal').modal('hide')
         }
 
         function refreshToken() {
@@ -654,6 +691,30 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
         crossorigin="anonymous"></script>
+    <div class="modal fade" id="notepadModal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">My NotePad</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <textarea class="form-control bg-dark text-light" style="width: 20em; height: 30em;"
+                            aria-label="With textarea" id="mynotes_textarea">
+                        </textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="myNotesPost()">NoteDown</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal fade" id="change_passwordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -675,7 +736,9 @@
                             <input type="password" placeholder="confirm_password" class="form-control" />
                             <br>
                             <button type="submit" class="btn btn-primary" onclick="change_password()">Save
-                                Changes</button><br>
+                                Changes
+                            </button>
+                            <br>
                             <br>
                             <br>
                             <h6 class="text-muted">

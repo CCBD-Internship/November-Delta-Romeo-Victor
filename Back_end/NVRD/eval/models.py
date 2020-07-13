@@ -29,6 +29,7 @@ class Faculty(models.Model):
         "Associate Professor", "Associate Professor"), ("Professor", "Professor")], default="Professor")
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+    mynotes = BleachField(blank=True,null=True,max_length=1000,default="my notes!!, can write a memo upto 1000 characters")
 
     class Meta:
         managed = True

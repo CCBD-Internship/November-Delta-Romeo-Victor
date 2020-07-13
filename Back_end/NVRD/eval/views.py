@@ -455,8 +455,11 @@ class Faculty_List(APIView):
                     included_facs = [i.fac_id.fac_id for i in active_faculty]
                     faculty_as_object = faculty_as_object.exclude(
                         fac_id__in=included_facs)
-                content = Faculty_Serializer(faculty_as_object, many=True)
-                return Response(content.data)
+                content = list(faculty_as_object.values())
+                for i in content:
+                    i["dept"]=i.pop("dept_id")
+                    i.pop("mynotes")
+                return Response(content)
             else:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         except:
@@ -1977,6 +1980,30 @@ class GeneralMarksView(APIView):
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
+class MyNotes_List(APIView):
+
+    parser_classes = [JSONParser]
+
+    def get(self, request, user):
+        try:
+            if(user == User.objects.get(username=request.user.username).get_username()):
+                return Response({"mynotes":str(Faculty.objects.get(fac_id=user).mynotes)},status=status.HTTP_200_OK)
+            else:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    def post(self, request, user):
+        try:
+            if(user == User.objects.get(username=request.user.username).get_username()):
+                f=Faculty.objects.get(fac_id=user)
+                f.mynotes=request.data["mynotes"]
+                f.save()
+                return Response({"mynotes":str(f.mynotes)},status=status.HTTP_200_OK)
+            else:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 class GenerateFacultyPanel(APIView):
 

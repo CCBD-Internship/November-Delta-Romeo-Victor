@@ -51,6 +51,7 @@ urlpatterns = [
     path('api/<str:user>/team-bulk/', views.Team_Student_CSV.as_view()),
     path('api/<str:user>/department/', views.Dept_List.as_view(), name='index'),
     path('api/<str:user>/aboutme/', views.AboutMe_List.as_view()),
+    path('api/<str:user>/mynotes/', views.MyNotes_List.as_view()),
     path('api/<str:user>/<str:panel_year_code>-<str:panel_id>/team-faculty-review/',
          views.TeamFacultyReview_List.as_view()),
     path('<str:user>/home/', views.home),
