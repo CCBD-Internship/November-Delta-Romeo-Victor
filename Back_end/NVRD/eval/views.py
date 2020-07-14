@@ -396,23 +396,26 @@ class my_student(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
-        try:
-            a = Student.objects.filter(srn=request.data["username"]).exists()
-            b = Student.objects.filter(
-                srn=request.data["username"]).first().team_id
-            if(a and b):
+        # try:            
+            if(Student.objects.filter(srn=request.data["username"]).exists() and Student.objects.filter(srn=request.data["username"]).first().team_id):
+                a = Student.objects.filter(srn=request.data["username"]).first()
+                b = Student.objects.filter(srn=request.data["username"]).first().team_id
                 if(password_match(request.data["username"], request.data["password"])):
-
                     team_details = Team_Serializer(b)
-                    student_details = Student_Serializer(
-                        Student.objects.filter(srn=request.data["username"]).first())
-                    my_comments = "things"
+                    student_details = Student_Serializer(a)
+                    my_comments = {1:[],2:[],3:[],4:[],5:[]}
+                    for x,y in zip([Review1,Review2,Review3,Review4,Review5],range(1,6)):
+                        for j in x.objects.filter(srn=a):
+                            if j.is_evaluated:
+                                my_comments[y].append({"designation":j.fac_id.fac_type,"fac_name":j.fac_id.name,"comments":j.public_comments, "is_guide":team_details["guide"]==j.fac_id.fac_id})
                     data = {"srn": request.data["username"], "team": team_details.data,
                             "student": student_details.data, "comments": my_comments}
                     return Response(data, status=status.HTTP_200_OK)
             return Response(status=status.HTTP_403_FORBIDDEN)
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        # except:
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    # def put(self, request):
 
 
 class File_List(APIView):
