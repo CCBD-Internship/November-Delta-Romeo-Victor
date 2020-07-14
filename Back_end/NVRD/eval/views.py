@@ -386,21 +386,34 @@ def individual_review_dict_download(l, rno):
     return avg
 
 
+def password_match(user, p):
+    return True
+
+
 class my_student(APIView):
+
     parser_classes = [JSONParser]
     permission_classes = (AllowAny,)
 
-    def post(self,request):
+    def post(self, request):
         try:
-            print(request.data)
-            if(Student.objects.filter(srn=request.data["username"]).exists()):
-                if(password_match()):
-                    
-                    data={"srn":request.data["username"],"team":team_details,"student":student_details,"comments":my_comments}
-                    return Response(data,status=status.HTTP_200_OK)
+            a = Student.objects.filter(srn=request.data["username"]).exists()
+            b = Student.objects.filter(
+                srn=request.data["username"]).first().team_id
+            if(a and b):
+                if(password_match(request.data["username"], request.data["password"])):
+
+                    team_details = Team_Serializer(b)
+                    student_details = Student_Serializer(
+                        Student.objects.filter(srn=request.data["username"]).first())
+                    my_comments = "things"
+                    data = {"srn": request.data["username"], "team": team_details.data,
+                            "student": student_details.data, "comments": my_comments}
+                    return Response(data, status=status.HTTP_200_OK)
             return Response(status=status.HTTP_403_FORBIDDEN)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 class File_List(APIView):
 

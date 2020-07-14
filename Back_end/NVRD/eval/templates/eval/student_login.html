@@ -109,6 +109,8 @@
             </div>
         </div>
     </div>
+    <div id="content" style="display:none">
+        PLACEHOLDER
     </div>
     <script>
         function getCookie(cname) {
@@ -131,6 +133,7 @@
                 if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
                     document.getElementById("password_enter").style.display = "none";
                     document.getElementById("content").style.display = "inline";
+                    console.log(this)
                 }
             }
             let username = document.getElementById("student_username").value
