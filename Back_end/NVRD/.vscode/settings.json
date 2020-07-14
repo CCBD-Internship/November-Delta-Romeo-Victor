@@ -1,4 +1,4 @@
 {
     "python.formatting.provider": "autopep8",
-    "python.pythonPath": "/home/niksram/anaconda3/envs/ccbd/bin/python"
+    "python.pythonPath": "/usr/bin/python3"
 }

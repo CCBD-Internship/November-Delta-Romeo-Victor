@@ -69,6 +69,10 @@ import csv
 #         pass    # do your thing here
 
 
+def student_page(request):
+    return render(request, 'eval/student_login.html')
+
+
 @login_required(login_url='')
 def home(request, user):
     if request.COOKIES.get('username'):
@@ -148,6 +152,7 @@ def logoutUser(request):
     response.delete_cookie('refresh')
     response.delete_cookie('username')
     return response
+
 
 @login_required(login_url='')
 def coordinator_teamHTML(request, panel_id, panel_year_code, user):
@@ -359,7 +364,7 @@ def compute_total_download(d):
     for i in d:
         marks_scored += i["marks_scored"]
         total_marks += i["total_marks"]
-    return [marks_scored, round(marks_scored/total_marks*100,2)]
+    return [marks_scored, round(marks_scored/total_marks*100, 2)]
 
 
 def individual_review_dict_download(l, rno):
@@ -381,6 +386,22 @@ def individual_review_dict_download(l, rno):
     return avg
 
 
+class my_student(APIView):
+    parser_classes = [JSONParser]
+    permission_classes = (AllowAny,)
+
+    def post(self,request):
+        try:
+            print(request.data)
+            if(Student.objects.filter(srn=request.data["username"]).exists()):
+                if(password_match()):
+                    
+                    data={"srn":request.data["username"],"team":team_details,"student":student_details,"comments":my_comments}
+                    return Response(data,status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
 class File_List(APIView):
 
     parser_classes = [JSONParser]
@@ -394,7 +415,7 @@ class File_List(APIView):
                     response['Content-Disposition'] = 'attachment; filename="results.csv"'
                     writer = csv.writer(response)
                     writer.writerow(['SRN', 'Name', 'Review 1(40)', 'Review 2(40)',
-                                    'Review 3(35)', 'Review 4(40)', 'Review 5(40)', 'Total(195)', 'Percentage'])
+                                     'Review 3(35)', 'Review 4(40)', 'Review 5(40)', 'Total(195)', 'Percentage'])
                     # based on srns in a list in request
                     # request contains a list of srns
                     for srns in request.data:
@@ -411,10 +432,10 @@ class File_List(APIView):
                                 [r1.values(), r2.values(), r3.values(), r4.values(), r5.values()], [1, 2, 3, 4, 5])]
                             writer.writerow(
                                 [i.srn, i.name, *mark1, *compute_total_download(marks)])
-                
+
                     return response
                 else:
-                    return Response({"detail":"User is not an Admin"},status=status.HTTP_403_FORBIDDEN)
+                    return Response({"detail": "User is not an Admin"}, status=status.HTTP_403_FORBIDDEN)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
         except:
@@ -441,7 +462,8 @@ class Faculty_List(APIView):
 
     def get(self, request, user):
         try:
-            fid = User.objects.get(username=request.user.username).get_username()
+            fid = User.objects.get(
+                username=request.user.username).get_username()
             prof = Faculty.objects.get(fac_id=fid)
             if(prof.is_admin and prof.fac_id == user):
                 faculty_as_object = Faculty.objects.filter(is_active=True)
@@ -457,7 +479,7 @@ class Faculty_List(APIView):
                         fac_id__in=included_facs)
                 content = list(faculty_as_object.values())
                 for i in content:
-                    i["dept"]=i.pop("dept_id")
+                    i["dept"] = i.pop("dept_id")
                     i.pop("mynotes")
                 return Response(content)
             else:
@@ -783,7 +805,7 @@ class Panel_List(APIView):
                 # admin
                 if(Faculty.objects.get(fac_id=user).is_admin == True):
                     if(panel_id == None and panel_year_code == None):
-                        panel_as_object = Panel.objects.all().order_by("-panel_year_code","panel_id")
+                        panel_as_object = Panel.objects.all().order_by("-panel_year_code", "panel_id")
                     else:
                         panel_as_object = Panel.objects.filter(
                             panel_id=panel_id, panel_year_code=panel_year_code).order_by("-ctime")
@@ -1461,35 +1483,35 @@ class TeamFacultyReview_List(APIView):
                                     team_id=team_pk)
                                 for studs in students:
                                     Review1(srn=studs, fac_id=f, concept_of_the_work=0, methodology_proposed=0, literature_survey=0, knowledge_on_the_project=0,
-                                            public_comments="not yet scored",private_comments="private_comments", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
+                                            public_comments="not yet scored", private_comments="private_comments", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
                             elif i["review_number"].value == 2:
                                 team_pk = i["team_id"].value
                                 students = Student.objects.filter(
                                     team_id=team_pk)
                                 for studs in students:
                                     Review2(srn=studs, fac_id=f, requirements_specification=0, user_interface_use_cases=0, understanding_of_technology_platform_middleware=0, viva_voce=0,
-                                            public_comments="not yet scored",private_comments="private_comments", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
+                                            public_comments="not yet scored", private_comments="private_comments", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
                             elif i["review_number"].value == 3:
                                 team_pk = i["team_id"].value
                                 students = Student.objects.filter(
                                     team_id=team_pk)
                                 for studs in students:
                                     Review3(srn=studs, fac_id=f, design_philosophy_methodology=0, user_interface_design_backend_design_and_design_for_any_algorithms=0, suitably_of_design_in_comparison_to_the_technology_proposed=0, progress_of_the_project_work=0, viva_voce=0,
-                                            public_comments="not yet scored",private_comments="private_comments", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
+                                            public_comments="not yet scored", private_comments="private_comments", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
                             elif i["review_number"].value == 4:
                                 team_pk = i["team_id"].value
                                 students = Student.objects.filter(
                                     team_id=team_pk)
                                 for studs in students:
                                     Review4(srn=studs, fac_id=f, project_work_results=0, quality_of_demo=0, project_report=0, viva_voce=0,
-                                            public_comments="not yet scored",private_comments="private_comments", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
+                                            public_comments="not yet scored", private_comments="private_comments", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
                             elif i["review_number"].value == 5:
                                 team_pk = i["team_id"].value
                                 students = Student.objects.filter(
                                     team_id=team_pk)
                                 for studs in students:
                                     Review5(srn=studs, fac_id=f, project_work_results=0, quality_of_demo=0, project_report=0, viva_voce=0,
-                                            public_comments="not yet scored",private_comments="private_comments", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
+                                            public_comments="not yet scored", private_comments="private_comments", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
                     return Response({"detail": "OK"}, status=status.HTTP_200_OK)
                 else:
                     return Response(fail, status=status.HTTP_400_BAD_REQUEST)
@@ -1859,21 +1881,21 @@ class EvaluatorMarksView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-def individual_review_dict(l, rno,weight):
+def individual_review_dict(l, rno, weight):
     marks_scored = 0
     c = 0
     for i in l:
         if i["is_evaluated"]:
-            ind_marks=0
+            ind_marks = 0
             for j in i:
                 if type(i[j]) == int:
                     ind_marks += i[j]
-            if(weight!=100 and Student.objects.filter(team_id__in=[j.id for j in Team.objects.filter(guide=i["fac_id_id"])],srn=i["srn_id"]).exists()):
-                marks_scored+=(ind_marks*weight/100)
-                c+=(1*weight/100)
+            if(weight != 100 and Student.objects.filter(team_id__in=[j.id for j in Team.objects.filter(guide=i["fac_id_id"])], srn=i["srn_id"]).exists()):
+                marks_scored += (ind_marks*weight/100)
+                c += (1*weight/100)
             else:
-                marks_scored+=ind_marks
-                c+=1
+                marks_scored += ind_marks
+                c += 1
     total_marks = 40
     if (rno == 3):
         total_marks = 35
@@ -1901,7 +1923,8 @@ class GeneralMarksView(APIView):
         try:
             if(user == User.objects.get(username=request.user.username).get_username()):
                 if(Faculty.objects.get(fac_id=user).is_admin == True):
-                    student_as_object = Student.objects.exclude(team_id=None).order_by("-srn")
+                    student_as_object = Student.objects.exclude(
+                        team_id=None).order_by("-srn")
                     if "srn" in request.GET:
                         student_as_object = student_as_object.filter(
                             srn__contains=request.GET["srn"])
@@ -1961,7 +1984,8 @@ class GeneralMarksView(APIView):
                                     if(j in [str(z) for z in range(1, 6)]):
                                         k.pop("id")
                                         k.pop("private_comments")
-                                        k["comments"]=k.pop("public_comments")
+                                        k["comments"] = k.pop(
+                                            "public_comments")
                                         k["fac_id"] = k.pop("fac_id_id")
                                         fac = Faculty.objects.get(
                                             fac_id=k["fac_id"])
@@ -1980,6 +2004,7 @@ class GeneralMarksView(APIView):
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
+
 class MyNotes_List(APIView):
 
     parser_classes = [JSONParser]
@@ -1987,23 +2012,24 @@ class MyNotes_List(APIView):
     def get(self, request, user):
         try:
             if(user == User.objects.get(username=request.user.username).get_username()):
-                return Response({"mynotes":str(Faculty.objects.get(fac_id=user).mynotes)},status=status.HTTP_200_OK)
+                return Response({"mynotes": str(Faculty.objects.get(fac_id=user).mynotes)}, status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-    
+
     def post(self, request, user):
         try:
             if(user == User.objects.get(username=request.user.username).get_username()):
-                f=Faculty.objects.get(fac_id=user)
-                f.mynotes=request.data["mynotes"]
+                f = Faculty.objects.get(fac_id=user)
+                f.mynotes = request.data["mynotes"]
                 f.save()
-                return Response({"mynotes":str(f.mynotes)},status=status.HTTP_200_OK)
+                return Response({"mynotes": str(f.mynotes)}, status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 class GenerateFacultyPanel(APIView):
 

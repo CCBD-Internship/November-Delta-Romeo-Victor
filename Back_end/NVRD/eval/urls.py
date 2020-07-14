@@ -106,6 +106,8 @@ urlpatterns += [
          views.evaluator_facpanelHTML),
     path('<str:user>/home/evaluator/<str:panel_year_code>-<str:panel_id>/review-<int:review_number>/evaluations/HTML/',
          views.evaluator_evaluationsHTML),
+     path('student/',views.student_page),
+     path('my_student/',views.my_student.as_view())
 ]
 
 # frontend JS
