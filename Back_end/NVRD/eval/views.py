@@ -69,7 +69,7 @@ import csv
 #         pass    # do your thing here
 
 
-def student_page(request):
+def student_login(request):
     return render(request, 'eval/student_login.html')
 
 
@@ -390,33 +390,59 @@ def password_match(user, p):
     return True
 
 
+def student_logout(request):
+    del request.session["SRN"]
+    del request.session["password"]
+    return HttpResponse(status=200)
+
+
+def student_validate(request):
+    # try:
+        if(request.method == 'POST'):
+            c = True  #check if open
+            stuff=json.loads(request.body.decode('UTF-8'))
+            if(Student.objects.filter(srn=stuff["username"]).exists() and Student.objects.filter(srn=stuff["username"]).first().team_id and c):
+                response = HttpResponse()
+                request.session["SRN"] = stuff["username"]
+                request.session["password"] = stuff["password"]
+                request.session.set_expiry(60*60)
+                return response
+            else:
+                return HttpResponse("Invalid",status=404)
+        return HttpResponse("Invalid",status=403)
+    # except:
+    #     return HttpResponse("Invalid",status=404)
+
+
+def student_page(request):
+    return render(request, "eval/student_page.html")
+
+
 class my_student(APIView):
 
     parser_classes = [JSONParser]
     permission_classes = (AllowAny,)
 
-    def post(self, request):
-        # try:            
-            if(Student.objects.filter(srn=request.data["username"]).exists() and Student.objects.filter(srn=request.data["username"]).first().team_id):
-                a = Student.objects.filter(srn=request.data["username"]).first()
-                b = Student.objects.filter(srn=request.data["username"]).first().team_id
-                if(password_match(request.data["username"], request.data["password"])):
-                    team_details = Team_Serializer(b)
-                    student_details = Student_Serializer(a)
+    def get(self, request):
+        # try:
+            c = True #check if open
+            if(Student.objects.filter(srn=request.session["SRN"]).exists() and Student.objects.filter(srn=request.session["SRN"]).first().team_id and c):
+                if(password_match(request.session["SRN"], request.session["password"])):
+                    a=Student.objects.filter(srn=request.session["SRN"]).first()
+                    team_details = Team_Serializer(Student.objects.filter(srn=request.session["SRN"]).first().team_id)
+                    student_details = Student_Serializer(
+                        Student.objects.filter(srn=request.session["SRN"]).first())
                     my_comments = {1:[],2:[],3:[],4:[],5:[]}
                     for x,y in zip([Review1,Review2,Review3,Review4,Review5],range(1,6)):
                         for j in x.objects.filter(srn=a):
                             if j.is_evaluated:
                                 my_comments[y].append({"designation":j.fac_id.fac_type,"fac_name":j.fac_id.name,"comments":j.public_comments, "is_guide":team_details["guide"]==j.fac_id.fac_id})
-                    data = {"srn": request.data["username"], "team": team_details.data,
+                    data = {"srn": request.session["SRN"], "team": team_details.data,
                             "student": student_details.data, "comments": my_comments}
                     return Response(data, status=status.HTTP_200_OK)
             return Response(status=status.HTTP_403_FORBIDDEN)
         # except:
         #     return Response(status=status.HTTP_400_BAD_REQUEST)
-
-    # def put(self, request):
-
 
 class File_List(APIView):
 

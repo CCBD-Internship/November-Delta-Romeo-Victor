@@ -106,8 +106,6 @@ urlpatterns += [
          views.evaluator_facpanelHTML),
     path('<str:user>/home/evaluator/<str:panel_year_code>-<str:panel_id>/review-<int:review_number>/evaluations/HTML/',
          views.evaluator_evaluationsHTML),
-     path('student/',views.student_page),
-     path('my_student/',views.my_student.as_view())
 ]
 
 # frontend JS
@@ -142,4 +140,13 @@ urlpatterns += [
     path('<str:user>/home/evaluator/<str:panel_year_code>-<str:panel_id>/review-<int:review_number>/evaluations/JS/',
          views.evaluator_evaluationsJS),
 
+]
+
+
+urlpatterns+=[
+     path('my_student_login/',views.student_login),
+     path('my_student_page/',views.student_page),
+     path('my_student_validate/',views.student_validate),
+     path('my_student_values/',views.my_student.as_view()),
+     path('my_student_logout/',views.student_logout),
 ]
