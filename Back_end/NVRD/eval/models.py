@@ -17,6 +17,10 @@ class Department(models.Model):
     class Meta:
         managed = True
 
+class Open_Close(models.Model):
+    oc_type = BleachField(primary_key=True,max_length=50,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')
+    open_time = models.DateTimeField()
+    close_time = models.DateTimeField()
 
 class Faculty(models.Model):
     fac_id = BleachField(primary_key=True, max_length=50,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])

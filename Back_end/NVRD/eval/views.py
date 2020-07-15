@@ -387,13 +387,16 @@ def individual_review_dict_download(l, rno):
 
 
 def password_match(user, p):
-    return True
+    print(hex(hash(user)).split('x')[1])
+    return hex(hash(user)).split('x')[1]==p
 
 
 def student_logout(request):
-    del request.session["SRN"]
-    del request.session["password"]
-    return HttpResponse(status=200)
+    if("SRN" in request.session):
+        del request.session["SRN"]
+    if("password" in request.session):
+        del request.session["password"]
+    return redirect('/my_student_login')
 
 
 def student_validate(request):
@@ -2072,6 +2075,7 @@ class MyNotes_List(APIView):
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
+class Open_Close_List(APIView):
 
 class GenerateFacultyPanel(APIView):
 
