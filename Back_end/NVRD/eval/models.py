@@ -12,19 +12,28 @@ from django_bleach.models import BleachField
 
 
 class Department(models.Model):
-    dept = BleachField(primary_key=True, max_length=50,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+    dept = BleachField(primary_key=True, max_length=50, validators=[
+                       RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
 
     class Meta:
         managed = True
 
+
 class Open_Close(models.Model):
-    oc_type = BleachField(primary_key=True,max_length=50,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')
+    oc_type = BleachField(primary_key=True, max_length=50, validators=[
+                          RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
     open_time = models.DateTimeField()
     close_time = models.DateTimeField()
 
+    class Meta:
+        managed = True
+
+
 class Faculty(models.Model):
-    fac_id = BleachField(primary_key=True, max_length=50,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
-    name = BleachField(max_length=100,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+    fac_id = BleachField(primary_key=True, max_length=50, validators=[
+                         RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+    name = BleachField(max_length=100, validators=[RegexValidator(
+        regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
     email = models.EmailField()
     phone = BleachField(max_length=10, validators=[RegexValidator(
         regex='^[0-9]{10}$', message='Invalid Phone Number')])
@@ -33,7 +42,8 @@ class Faculty(models.Model):
         "Associate Professor", "Associate Professor"), ("Professor", "Professor")], default="Professor")
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
-    mynotes = BleachField(blank=True,null=True,max_length=1000,default="my notes!!, can write a memo upto 1000 characters")
+    mynotes = BleachField(blank=True, null=True, max_length=1000,
+                          default="my notes!!, can write a memo upto 1000 characters")
 
     class Meta:
         managed = True
@@ -60,11 +70,13 @@ class FacultyPanel(models.Model):
 class Panel(models.Model):
 
     panel_year_code = BleachField(
-        db_column="panel_year_code", max_length=10,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
-    panel_id = BleachField(db_column="panel_id", max_length=10,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+        db_column="panel_year_code", max_length=10, validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+    panel_id = BleachField(db_column="panel_id", max_length=10, validators=[
+                           RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
     # panel_name = BleachField(
     #     db_column="panel_name", max_length=100, blank=True, null=True)
-    panel_name=BleachField(max_length=100, blank=True, null=True,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+    panel_name = BleachField(max_length=100, blank=True, null=True, validators=[
+                             RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
     is_active = models.BooleanField(default=True)
     ctime = models.DateTimeField(default=timezone.now)
     id = models.AutoField(db_column="id", primary_key=True)
@@ -80,7 +92,8 @@ class PanelReview(models.Model):
     panel_id = models.ForeignKey('Panel', models.CASCADE, db_column="panel_id")
     open_time = models.DateTimeField()
     close_time = models.DateTimeField()
-    id = BleachField(max_length=23, db_column="id", primary_key=True,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+    id = BleachField(max_length=23, db_column="id", primary_key=True, validators=[
+                     RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
 
     class Meta:
         managed = True
@@ -98,7 +111,8 @@ class Review1(models.Model):
     private_comments = BleachField(max_length=200, blank=True, null=True)
     public_comments = BleachField(max_length=200, blank=True, null=True)
     is_evaluated = models.BooleanField(default=False)
-    id = BleachField(max_length=200, primary_key=True,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+    id = BleachField(max_length=200, primary_key=True, validators=[
+                     RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
 
     class Meta:
         managed = True
@@ -126,7 +140,8 @@ class Review2(models.Model):
     private_comments = BleachField(max_length=200, blank=True, null=True)
     public_comments = BleachField(max_length=200, blank=True, null=True)
     is_evaluated = models.BooleanField(default=False)
-    id = BleachField(max_length=200, primary_key=True,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+    id = BleachField(max_length=200, primary_key=True, validators=[
+                     RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
 
     class Meta:
         managed = True
@@ -187,7 +202,8 @@ class Review4(models.Model):
     private_comments = BleachField(max_length=200, blank=True, null=True)
     public_comments = BleachField(max_length=200, blank=True, null=True)
     is_evaluated = models.BooleanField(default=False)
-    id = BleachField(max_length=200, primary_key=True,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+    id = BleachField(max_length=200, primary_key=True, validators=[
+                     RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
 
     class Meta:
         managed = True
@@ -215,7 +231,8 @@ class Review5(models.Model):
     private_comments = BleachField(max_length=200, blank=True, null=True)
     public_comments = BleachField(max_length=200, blank=True, null=True)
     is_evaluated = models.BooleanField(default=False)
-    id = BleachField(max_length=200, primary_key=True,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+    id = BleachField(max_length=200, primary_key=True, validators=[
+                     RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
 
     class Meta:
         managed = True
@@ -234,8 +251,9 @@ class Review5(models.Model):
 
 class Student(models.Model):
     srn = BleachField(primary_key=True, max_length=20, validators=[
-                           RegexValidator(regex='^PES', message='SRN incorrect')])
-    name = BleachField(max_length=100,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+        RegexValidator(regex='^PES', message='SRN incorrect')])
+    name = BleachField(max_length=100, validators=[RegexValidator(
+        regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
     email = models.EmailField()
     phone = BleachField(max_length=10, validators=[RegexValidator(
         regex='^[0-9]{10}$', message='Invalid Phone number')])
@@ -248,10 +266,13 @@ class Student(models.Model):
 
 class Team(models.Model):
     team_year_code = BleachField(
-        db_column="team_year_code", max_length=10,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
-    team_id = BleachField(db_column="team_id", max_length=10,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
-    team_name = BleachField(max_length=100, blank=True, null=True,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
-    description = BleachField(max_length=200, blank=True, null=True,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+        db_column="team_year_code", max_length=10, validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+    team_id = BleachField(db_column="team_id", max_length=10, validators=[
+                          RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+    team_name = BleachField(max_length=100, blank=True, null=True, validators=[
+                            RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+    description = BleachField(max_length=200, blank=True, null=True, validators=[
+                              RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
     guide = models.ForeignKey(
         Faculty, models.SET_NULL, blank=True, null=True)
     panel_id = models.ForeignKey(Panel, models.SET_NULL, blank=True, null=True)
@@ -267,7 +288,8 @@ class TeamFacultyReview(models.Model):
     fac_id = models.ForeignKey(
         Faculty, models.SET_NULL, null=True, blank=True)
     review_number = models.IntegerField()
-    remark = BleachField(max_length=200, blank=True, null=True,validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+    remark = BleachField(max_length=200, blank=True, null=True, validators=[
+                         RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
     id = models.AutoField(db_column="id", primary_key=True)
 
     class Meta:

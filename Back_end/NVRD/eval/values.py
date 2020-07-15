@@ -27,3 +27,6 @@ for i in Faculty.objects.all():
         User.objects.create_user(last_name=i.name,username=i.fac_id,password=i.fac_id,email=None)
     if(not Token.objects.filter(user=User.objects.get(username=i.fac_id)).exists()):
         token = Token.objects.create(user=User.objects.get(username=i.fac_id))
+
+oc=Open_Close(oc_type="student_portal",open_time=timezone.now(),close_time=timezone.now())
+oc.save()

@@ -21,33 +21,35 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.http import FileResponse
 # from django.core import serializers
-from .models import Department
-from .models import Faculty
-from .models import FacultyPanel
-from .models import Panel
-from .models import PanelReview
-from .models import Review1
-from .models import Review2
-from .models import Review3
-from .models import Review4
-from .models import Review5
-from .models import Student
-from .models import Team
-from .models import TeamFacultyReview
+# from .models import Department
+# from .models import Faculty
+# from .models import FacultyPanel
+# from .models import Panel
+# from .models import PanelReview
+# from .models import Review1
+# from .models import Review2
+# from .models import Review3
+# from .models import Review4
+# from .models import Review5
+# from .models import Student
+# from .models import Team
+# from .models import TeamFacultyReview
+from .models import *
 
-from .serializers import Department_Serializer
-from .serializers import Faculty_Serializer
-from .serializers import FacultyPanel_Serializer
-from .serializers import Panel_Serializer
-from .serializers import PanelReview_Serializer
-from .serializers import Review1_Serializer
-from .serializers import Review2_Serializer
-from .serializers import Review3_Serializer
-from .serializers import Review4_Serializer
-from .serializers import Review5_Serializer
-from .serializers import Student_Serializer
-from .serializers import Team_Serializer
-from .serializers import TeamFacultyReview_Serializer
+# from .serializers import Department_Serializer
+# from .serializers import Faculty_Serializer
+# from .serializers import FacultyPanel_Serializer
+# from .serializers import Panel_Serializer
+# from .serializers import PanelReview_Serializer
+# from .serializers import Review1_Serializer
+# from .serializers import Review2_Serializer
+# from .serializers import Review3_Serializer
+# from .serializers import Review4_Serializer
+# from .serializers import Review5_Serializer
+# from .serializers import Student_Serializer
+# from .serializers import Team_Serializer
+# from .serializers import TeamFacultyReview_Serializer
+from .serializers import *
 
 import json
 import datetime
@@ -387,8 +389,10 @@ def individual_review_dict_download(l, rno):
 
 
 def password_match(user, p):
+    print(user)
     print(hex(hash(user)).split('x')[1])
-    return hex(hash(user)).split('x')[1]==p
+    # return hex(hash(user)).split('x')[1] == p
+    return True
 
 
 def student_logout(request):
@@ -402,19 +406,26 @@ def student_logout(request):
 def student_validate(request):
     # try:
         if(request.method == 'POST'):
-            c = True  #check if open
-            stuff=json.loads(request.body.decode('UTF-8'))
-            if(Student.objects.filter(srn=stuff["username"]).exists() and Student.objects.filter(srn=stuff["username"]).first().team_id and c):
-                response = HttpResponse()
-                request.session["SRN"] = stuff["username"]
-                request.session["password"] = stuff["password"]
-                request.session.set_expiry(60*60)
-                return response
+            stuff = json.loads(request.body.decode('UTF-8'))
+            if(Student.objects.filter(srn=stuff["username"]).exists() and Student.objects.filter(srn=stuff["username"]).first().team_id):
+                student_portal=Open_Close.objects.get(oc_type="student_portal")
+                if(timezone.now()>=student_portal.open_time and timezone.now()<=student_portal.close_time):
+                    if(password_match(stuff["username"],stuff["password"])):
+                        response = HttpResponse()
+                        request.session["SRN"] = stuff["username"]
+                        request.session["password"] = stuff["password"]
+                        request.session.set_expiry(60*60)
+                        return response
+                    else:
+                        # print('hi')
+                        return HttpResponse("incorrect SRN or password",status=403)
+                else:
+                    return HttpResponse("Portal Not Open",status=403)
             else:
-                return HttpResponse("Invalid",status=404)
-        return HttpResponse("Invalid",status=403)
+                return HttpResponse("Invalid", status=404)
+        return HttpResponse("Invalid", status=403)
     # except:
-    #     return HttpResponse("Invalid",status=404)
+    #     return HttpResponse("Invalid", status=404)
 
 
 def student_page(request):
@@ -427,25 +438,35 @@ class my_student(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request):
-        # try:
-            c = True #check if open
-            if(Student.objects.filter(srn=request.session["SRN"]).exists() and Student.objects.filter(srn=request.session["SRN"]).first().team_id and c):
-                if(password_match(request.session["SRN"], request.session["password"])):
-                    a=Student.objects.filter(srn=request.session["SRN"]).first()
-                    team_details = Team_Serializer(Student.objects.filter(srn=request.session["SRN"]).first().team_id)
-                    student_details = Student_Serializer(
-                        Student.objects.filter(srn=request.session["SRN"]).first())
-                    my_comments = {1:[],2:[],3:[],4:[],5:[]}
-                    for x,y in zip([Review1,Review2,Review3,Review4,Review5],range(1,6)):
-                        for j in x.objects.filter(srn=a):
-                            if j.is_evaluated:
-                                my_comments[y].append({"designation":j.fac_id.fac_type,"fac_name":j.fac_id.name,"comments":j.public_comments, "is_guide":team_details["guide"]==j.fac_id.fac_id})
-                    data = {"srn": request.session["SRN"], "team": team_details.data,
-                            "student": student_details.data, "comments": my_comments}
-                    return Response(data, status=status.HTTP_200_OK)
+        try:
+            c = True  # check if open
+            if(Student.objects.filter(srn=request.session["SRN"]).exists() and Student.objects.filter(srn=request.session["SRN"]).first().team_id):
+                student_portal=Open_Close.objects.get(oc_type="student_portal")
+                if(timezone.now()>=student_portal.open_time and timezone.now()<=student_portal.close_time):
+                    if(password_match(request.session["SRN"], request.session["password"])):
+                        a = Student.objects.filter(
+                            srn=request.session["SRN"]).first()
+                        team_details = Team_Serializer(Student.objects.filter(
+                            srn=request.session["SRN"]).first().team_id)
+                        student_details = Student_Serializer(
+                            Student.objects.filter(srn=request.session["SRN"]).first())
+                        my_comments = {1: [], 2: [], 3: [], 4: [], 5: []}
+                        for x, y in zip([Review1, Review2, Review3, Review4, Review5], range(1, 6)):
+                            for j in x.objects.filter(srn=a):
+                                if j.is_evaluated:
+                                    my_comments[y].append({"designation": j.fac_id.fac_type, "fac_name": j.fac_id.name,
+                                                        "comments": j.public_comments, "is_guide": team_details["guide"] == j.fac_id.fac_id})
+                        data = {"srn": request.session["SRN"], "team": team_details.data,
+                                "student": student_details.data, "comments": my_comments}
+                        return Response(data, status=status.HTTP_200_OK)
+                    else:
+                        return Response({"detail":"incorrect SRN or password"}, status=status.HTTP_403_FORBIDDEN)
+                else:
+                    return Response({"detail":"Portal Not Open"}, status=status.HTTP_403_FORBIDDEN)
             return Response(status=status.HTTP_403_FORBIDDEN)
-        # except:
-        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 class File_List(APIView):
 
@@ -2075,7 +2096,38 @@ class MyNotes_List(APIView):
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-class Open_Close_List(APIView):
+
+class StudentPortal_List(APIView):
+
+    def get(self, request, user):
+        try:
+            if(user == User.objects.get(username=request.user.username).get_username()):
+                if(Faculty.objects.get(fac_id=user).is_admin == True):
+                    student_portal=Open_Close.objects.get(oc_type="student_portal")
+                    return Response({"open_time":student_portal.open_time,"close_time":student_portal.close_time},status=status.HTTP_200_OK)
+                else:
+                    return Response(status=status.HTTP_403_FORBIDDEN)
+            else:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request, user):
+        try:
+            if(user == User.objects.get(username=request.user.username).get_username()):
+                if(Faculty.objects.get(fac_id=user).is_admin == True):
+                    student_portal=Open_Close.objects.get(oc_type="student_portal")
+                    student_portal.open_time=request.data["open_time"]
+                    student_portal.close_time=request.data["close_time"]
+                    student_portal.save()
+                    return Response(status=status.HTTP_202_ACCEPTED)
+                else:
+                    return Response(status=status.HTTP_403_FORBIDDEN)
+            else:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 class GenerateFacultyPanel(APIView):
 
