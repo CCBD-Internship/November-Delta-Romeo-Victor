@@ -57,7 +57,9 @@ from NVRD.settings import SIMPLE_JWT
 import jwt
 import csv
 import hashlib
-
+from PIL import Image
+import base64
+import io
 # Create your views here.
 
 # from django_cron import CronJobBase, Schedule
@@ -390,13 +392,14 @@ def individual_review_dict_download(l, rno):
 
 
 def password_generate(user):
-    my_hash=(hashlib.sha256(user.encode()).hexdigest())
-    my_hash=str(hex(int(my_hash,16)+10))[-16:-1]
+    my_hash = (hashlib.sha256(user.encode()).hexdigest())
+    my_hash = str(hex(int(my_hash, 16)+10))[-16:-1]
     return(my_hash)
 
-def password_match(user,p):
-    my_hash=(hashlib.sha256(user.encode()).hexdigest())
-    my_hash=str(hex(int(my_hash,16)+10))[-16:-1]
+
+def password_match(user, p):
+    my_hash = (hashlib.sha256(user.encode()).hexdigest())
+    my_hash = str(hex(int(my_hash, 16)+10))[-16:-1]
     return(True)
 
 
@@ -409,28 +412,28 @@ def student_logout(request):
 
 
 def student_validate(request):
-    # try:
+    try:
         if(request.method == 'POST'):
             stuff = json.loads(request.body.decode('UTF-8'))
             if(Student.objects.filter(srn=stuff["username"]).exists() and Student.objects.filter(srn=stuff["username"]).first().team_id):
-                student_portal=Open_Close.objects.get(oc_type="student_portal")
-                if(timezone.now()>=student_portal.open_time and timezone.now()<=student_portal.close_time):
-                    if(password_match(stuff["username"],stuff["password"])):
+                student_portal = Open_Close.objects.get(
+                    oc_type="student_portal")
+                if(timezone.now() >= student_portal.open_time and timezone.now() <= student_portal.close_time):
+                    if(password_match(stuff["username"], stuff["password"])):
                         response = HttpResponse()
                         request.session["SRN"] = stuff["username"]
                         request.session["password"] = stuff["password"]
                         request.session.set_expiry(60*60)
                         return response
                     else:
-                        # print('hi')
-                        return HttpResponse("incorrect SRN or password",status=403)
+                        return HttpResponse("incorrect SRN or password", status=403)
                 else:
-                    return HttpResponse("Portal Not Open",status=403)
+                    return HttpResponse("Portal Not Open", status=403)
             else:
                 return HttpResponse("Invalid", status=404)
         return HttpResponse("Invalid", status=403)
-    # except:
-    #     return HttpResponse("Invalid", status=404)
+    except:
+        return HttpResponse("Invalid", status=404)
 
 
 def student_page(request):
@@ -443,63 +446,79 @@ class my_student(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request):
-        try:
+        # try:
             # c = True  # check if open
             if(Student.objects.filter(srn=request.session["SRN"]).exists() and Student.objects.filter(srn=request.session["SRN"]).first().team_id):
-                student_portal=Open_Close.objects.get(oc_type="student_portal")
-                if(timezone.now()>=student_portal.open_time and timezone.now()<=student_portal.close_time):
+                student_portal = Open_Close.objects.get(
+                    oc_type="student_portal")
+                if(timezone.now() >= student_portal.open_time and timezone.now() <= student_portal.close_time):
                     if(password_match(request.session["SRN"], request.session["password"])):
                         a = Student.objects.filter(
                             srn=request.session["SRN"]).first()
                         team_details = Team_Serializer(Student.objects.filter(
                             srn=request.session["SRN"]).first().team_id).data
-                        f=Faculty.objects.get(fac_id=team_details["guide"])
-                        team_details["guide_name"]=f.name
-                        team_details["guide_designation"]=f.fac_type
+                        f = Faculty.objects.get(fac_id=team_details["guide"])
+                        team_details["guide_name"] = f.name
+                        team_details["guide_designation"] = f.fac_type
                         student_details = Student_Serializer(
                             Student.objects.filter(srn=request.session["SRN"]).first())
                         my_comments = {1: [], 2: [], 3: [], 4: [], 5: []}
+                        photo=Profile_Photo_Serializer(Profile_Photo.objects.get(srn=request.session["SRN"]))
                         for x, y in zip([Review1, Review2, Review3, Review4, Review5], range(1, 6)):
                             for j in x.objects.filter(srn=a):
                                 if j.is_evaluated:
                                     my_comments[y].append({"designation": j.fac_id.fac_type, "fac_name": j.fac_id.name,
-                                                        "comments": j.public_comments, "is_guide": team_details["guide"] == j.fac_id.fac_id})
+                                                           "comments": j.public_comments, "is_guide": team_details["guide"] == j.fac_id.fac_id})
                         data = {"srn": request.session["SRN"], "team": team_details,
-                                "student": student_details.data, "comments": my_comments}
+                                "student": student_details.data, "comments": my_comments,"photo":photo.data["image"]}
                         return Response(data, status=status.HTTP_200_OK)
                     else:
-                        return Response({"detail":"incorrect SRN or password"}, status=status.HTTP_403_FORBIDDEN)
+                        return Response({"detail": "incorrect SRN or password"}, status=status.HTTP_403_FORBIDDEN)
                 else:
-                    return Response({"detail":"Portal Not Open"}, status=status.HTTP_403_FORBIDDEN)
-            return Response(status=status.HTTP_403_FORBIDDEN)
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-    
-    def put(self, request):
-        # try:
-            # c = True  # check if open
-            if(Student.objects.filter(srn=request.session["SRN"]).exists() and Student.objects.filter(srn=request.session["SRN"]).first().team_id):
-                student_portal=Open_Close.objects.get(oc_type="student_portal")
-                if(timezone.now()>=student_portal.open_time and timezone.now()<=student_portal.close_time):
-
-                    if(password_match(request.session["SRN"], request.session["password"])):
-    
-                        if(request.data["type"]=="description"):
-        
-                            t=Student.objects.get(srn=request.session["SRN"]).team_id
-                            t.description=request.data["description"]
-                            t.save()
-                            return Response({"description":t.description}, status=status.HTTP_200_OK)
-                        elif(request.data["type"]=="image"):
-                            pass
-                    else:
-                        return Response({"detail":"incorrect SRN or password"}, status=status.HTTP_403_FORBIDDEN)
-                else:
-                    return Response({"detail":"Portal Not Open"}, status=status.HTTP_403_FORBIDDEN)
+                    return Response({"detail": "Portal Not Open"}, status=status.HTTP_403_FORBIDDEN)
             return Response(status=status.HTTP_403_FORBIDDEN)
         # except:
         #     return Response(status=status.HTTP_400_BAD_REQUEST)
 
+    def put(self, request):
+        # try:
+        # c = True  # check if open
+        if(Student.objects.filter(srn=request.session["SRN"]).exists() and Student.objects.filter(srn=request.session["SRN"]).first().team_id):
+            student_portal = Open_Close.objects.get(
+                oc_type="student_portal")
+            if(timezone.now() >= student_portal.open_time and timezone.now() <= student_portal.close_time):
+                if(password_match(request.session["SRN"], request.session["password"])):
+                    if(request.data["type"] == "description"):
+                        t = Student.objects.get(
+                            srn=request.session["SRN"]).team_id
+                        t.description = request.data["description"]
+                        t.save()
+                        return Response({"description": t.description}, status=status.HTTP_200_OK)
+                    elif(request.data["type"] == "photo"):
+                        msg = request.data["description"].split(',')[-1]
+                        msg = base64.b64decode(msg)
+                        buf = io.BytesIO(msg)
+                        img = Image.open(buf)
+                        a = Profile_Photo.objects.get(srn=Student.objects.get(srn=request.session["SRN"]))
+                        img.save()
+                        a.image = img
+                        a.save()
+                        return Response(status=status.HTTP_200_OK)
+                else:
+                    return Response({"detail": "incorrect SRN or password"}, status=status.HTTP_403_FORBIDDEN)
+            else:
+                return Response({"detail": "Portal Not Open"}, status=status.HTTP_403_FORBIDDEN)
+        return Response(status=status.HTTP_403_FORBIDDEN)
+        # except:
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+def Photo_upload(request):
+    if request.method == 'PUT':
+        print(request.FILES)
+        return HttpResponse(status=200)
+    if request.method == 'GET':
+        pass
 
 
 class File_List(APIView):
@@ -1215,6 +1234,8 @@ class Student_List(APIView):
                     if(response_list == []):
                         for i in serial_list:
                             i.save()
+                            a=Profile_Photo(srn=Student.objects.get(srn=i.validated_list['srn']))
+                            a.save()
                         return Response({"detail": "insert successful", "assumption": null_set_list}, status=status.HTTP_201_CREATED)
                     else:
                         response_list.extend(null_set_list)
@@ -1753,6 +1774,8 @@ class Team_Student_CSV(APIView):
                 if(response_list == []):
                     for i in correct:
                         i.save()
+                        a=Profile_Photo(srn=Student.objects.get(srn=i.validated_list['srn']))
+                        a.save()
                     return Response({"detail": "insert successful", "assumption": null_set_list}, status=status.HTTP_201_CREATED)
                 else:
                     response_list.extend(null_set_list)
@@ -1800,7 +1823,7 @@ class AboutMe_List(APIView):
 class TokenBlackList(APIView):
 
     parser_classes = [JSONParser]
-    #permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def post(self, request):
         try:
@@ -2137,8 +2160,9 @@ class StudentPortal_List(APIView):
         try:
             if(user == User.objects.get(username=request.user.username).get_username()):
                 if(Faculty.objects.get(fac_id=user).is_admin == True):
-                    student_portal=Open_Close.objects.get(oc_type="student_portal")
-                    return Response({"open_time":student_portal.open_time,"close_time":student_portal.close_time},status=status.HTTP_200_OK)
+                    student_portal = Open_Close.objects.get(
+                        oc_type="student_portal")
+                    return Response({"open_time": student_portal.open_time, "close_time": student_portal.close_time}, status=status.HTTP_200_OK)
                 else:
                     return Response(status=status.HTTP_403_FORBIDDEN)
             else:
@@ -2150,9 +2174,10 @@ class StudentPortal_List(APIView):
         try:
             if(user == User.objects.get(username=request.user.username).get_username()):
                 if(Faculty.objects.get(fac_id=user).is_admin == True):
-                    student_portal=Open_Close.objects.get(oc_type="student_portal")
-                    student_portal.open_time=request.data["open_time"]
-                    student_portal.close_time=request.data["close_time"]
+                    student_portal = Open_Close.objects.get(
+                        oc_type="student_portal")
+                    student_portal.open_time = request.data["open_time"]
+                    student_portal.close_time = request.data["close_time"]
                     student_portal.save()
                     return Response(status=status.HTTP_202_ACCEPTED)
                 else:

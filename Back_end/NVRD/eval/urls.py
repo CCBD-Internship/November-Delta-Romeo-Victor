@@ -149,4 +149,5 @@ urlpatterns+=[
      path('my_student_validate/',views.student_validate),
      path('my_student_values/',views.my_student.as_view()),
      path('my_student_logout/',views.student_logout),
+     path('my_photo_upload',views.Photo_upload)
 ]

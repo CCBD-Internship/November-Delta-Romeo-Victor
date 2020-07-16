@@ -28,10 +28,6 @@ class Open_Close(models.Model):
     class Meta:
         managed = True
 
-class Profile_Photo(models.Model):
-    srn=models.ForeignKey('Student', models.CASCADE)
-    image=models.ImageField(width_field=512,height_field=512,default="/static/default_user.png",upload_to="student_images")
-
 
 class Faculty(models.Model):
     fac_id = BleachField(primary_key=True, max_length=50, validators=[
@@ -305,6 +301,14 @@ class TeamFacultyReview(models.Model):
         ]
         managed = True
         unique_together = (('team_id', 'fac_id', 'review_number'),)
+
+
+class Profile_Photo(models.Model):
+    srn = models.OneToOneField(Student,
+                               on_delete=models.CASCADE,
+                               primary_key=True,)
+    image = models.ImageField(
+        default="static/default_user.png", upload_to="student_images")
 
 # from django.contrib.auth.models import User
 # from eval.models import *
