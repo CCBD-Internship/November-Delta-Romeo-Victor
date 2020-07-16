@@ -1,0 +1,121 @@
+<style>
+    .blink_me_sp {
+        animation: blinkersp 4000ms linear infinite;
+    }
+
+    @keyframes blinkersp {
+        50% {
+            opacity: .6;
+        }
+    }
+</style>
+
+<div class="navbar navbar-dark justify-content-end">
+    <button type="button" class="btn btn-lg btn-info active float-right" data-toggle="modal" id="refresh"
+        onclick="student_portal_refresh_admin()"><svg width="1em" height="1em" viewBox="0 0 16 16"
+            class="bi bi-arrow-clockwise" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd"
+                d="M3.17 6.706a5 5 0 0 1 7.103-3.16.5.5 0 1 0 .454-.892A6 6 0 1 0 13.455 5.5a.5.5 0 0 0-.91.417 5 5 0 1 1-9.375.789z" />
+            <path fill-rule="evenodd"
+                d="M8.147.146a.5.5 0 0 1 .707 0l2.5 2.5a.5.5 0 0 1 0 .708l-2.5 2.5a.5.5 0 1 1-.707-.708L10.293 3 8.147.854a.5.5 0 0 1 0-.708z" />
+        </svg>
+    </button>
+</div>
+
+<div class="card-group w-50 align-center mx-auto" style="height:20em">
+    <div class="card bg-info" id="student_portal_board">
+        <div class="card-body" name="student_portal_maincard" onclick="student_portal_display_modal()">
+            <h1 class="card-title text-center align-middle" style="font-size:3rem;" name="SP">STUDENT PORTAL</h1>
+            <!-- <br>
+            <br>
+            <br>
+            <h5 id="student_portal_board_open" class="text-center">Open-Time</h5>
+            <h5 id="student_portal_board_open" class="text-center">Close-Time</h5> -->
+        </div>
+        <div class="card-footer text-center" name="student_portal" onclick="student_portal_time_modal()">
+            <svg id="student_portal" name="student_portal_1" style="display:inline-block" width="1.25em" height="1.25em" viewBox="0 0 16 16"
+                class="bi bi-clock" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm8-7A8 8 0 1 1 0 8a8 8 0 0 1 16 0z" />
+                <path fill-rule="evenodd"
+                    d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z" />
+            </svg>
+            <!-- <svg id="student_portal_C_1" style="display:inline-block" width="1.25em" height="1.25em" viewBox="0 0 16 16"
+                class="bi bi-clock float-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg"
+                transform="scale(-1,1)">
+                <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm8-7A8 8 0 1 1 0 8a8 8 0 0 1 16 0z" />
+                <path fill-rule="evenodd"
+                    d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z" />
+            </svg> -->
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="student_portal_time_modal" tabindex="-1" role="dialog" aria-labelledby="student_portal_time_modal"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="student_portal_time_title">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="student_portal_time_body">
+                <form id="student_portal_time_form">
+                    <div class="form-group">
+                        <label>Open-Time</label>
+                        <input type="datetime-local" class="form-control" id="student_portal_open_time" value="">
+                    </div>
+                    <div class="form-group">
+                        <label>Close-Time</label>
+                        <input type="datetime-local" class="form-control" id="student_portal_close_time" value="">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="student_portal_time_form_submit" onclick="student_portal_submit()">Save changes</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="student_portal_display_modal" tabindex="-1" role="dialog" aria-labelledby="student_portal_display_modal"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="student_portal_display_title">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="student_portal_display_body">
+                <div class="card">
+                    <div class="card-body text-success">
+                        <h5 class="card-title">Open Time</h5>
+                        <p class="card-text" id="student_portal_display_open_time">With supporting text below as a natural lead-in
+                            to additional content.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body text-danger">
+                        <h5 class="card-title">Close Time</h5>
+                        <p class="card-text" id="student_portal_display_close_time">With supporting text below as a natural lead-in
+                            to additional content.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+<br>
+
+<div class="card border-light w-75 align-center mx-auto">
+    <div class="card-body text-light">
+        <pre><code><h5 class="card-title" id="student_portal_status_title"></h5></code></pre>
+        <pre><code></code><p class="card-text" id="student_portal_status_body"></p></code></pre>
+    </div>
+</div>

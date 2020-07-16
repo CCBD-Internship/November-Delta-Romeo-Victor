@@ -57,6 +57,7 @@ urlpatterns = [
     path('<str:user>/home/', views.home),
     path('api/<str:user>/generate-faculty-panel/',
          views.GenerateFacultyPanel.as_view()),
+    path('api/<str:user>/student-portal/', views.StudentPortal_List.as_view()),
     path('', views.loginpage),
     path('logout/', views.logoutUser, name="logout"),
     path('<str:user>/refresh/', views.refresh),
@@ -91,6 +92,8 @@ urlpatterns += [
     path('<str:user>/home/admin/panel-members/HTML/',
          views.admin_faculty_panelHTML),
     path('<str:user>/home/admin/student/HTML/', views.admin_studentHTML),
+    path('<str:user>/home/admin/student-portal/HTML/',
+         views.admin_student_portalHTML),
     path('<str:user>/home/admin/team/HTML/', views.admin_teamHTML),
     path('<str:user>/home/admin/marks-view/HTML/', views.admin_marks_viewHTML),
     path('<str:user>/home/admin/panel/HTML/', views.admin_panelHTML),
@@ -123,6 +126,8 @@ urlpatterns += [
     path('<str:user>/home/admin/faculty/JS/', views.admin_facultyJS),
     path('<str:user>/home/admin/panel-members/JS/', views.admin_faculty_panelJS),
     path('<str:user>/home/admin/student/JS/', views.admin_studentJS),
+    path('<str:user>/home/admin/student-portal/JS/',
+         views.admin_student_portalJS),
     path('<str:user>/home/admin/team/JS/', views.admin_teamJS),
     path('<str:user>/home/admin/marks-view/JS/', views.admin_marks_viewJS),
     path('<str:user>/home/admin/panel/JS/', views.admin_panelJS),
@@ -143,11 +148,11 @@ urlpatterns += [
 ]
 
 
-urlpatterns+=[
-     path('my_student_login/',views.student_login),
-     path('my_student_page/',views.student_page),
-     path('my_student_validate/',views.student_validate),
-     path('my_student_values/',views.my_student.as_view()),
-     path('my_student_logout/',views.student_logout),
-     path('my_photo_upload',views.Photo_upload)
+urlpatterns += [
+    path('my_student_login/', views.student_login),
+    path('my_student_page/', views.student_page),
+    path('my_student_validate/', views.student_validate),
+    path('my_student_values/', views.my_student.as_view()),
+    path('my_student_logout/', views.student_logout),
+    path('my_photo_upload', views.Photo_upload)
 ]

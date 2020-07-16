@@ -232,6 +232,16 @@ def admin_studentHTML(request, user):
 def admin_studentJS(request, user):
     return render(request, "eval/scripts/admin_student.js")
 
+@login_required(login_url='')
+@ensure_csrf_cookie
+def admin_student_portalHTML(request, user):
+    return render(request, "eval/containers/admin_student_portal.html")
+
+
+@login_required(login_url='')
+@ensure_csrf_cookie
+def admin_student_portalJS(request, user):
+    return render(request, "eval/scripts/admin_student_portal.js")
 
 @login_required(login_url='')
 @ensure_csrf_cookie
@@ -2179,7 +2189,7 @@ class StudentPortal_List(APIView):
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def post(self, request, user):
+    def put(self, request, user):
         try:
             if(user == User.objects.get(username=request.user.username).get_username()):
                 if(Faculty.objects.get(fac_id=user).is_admin == True):

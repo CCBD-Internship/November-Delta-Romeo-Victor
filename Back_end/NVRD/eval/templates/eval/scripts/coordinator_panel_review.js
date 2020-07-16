@@ -127,15 +127,3 @@ function PRC_display_status(e) {
         elem.textContent = "Evaluation window was closed on " + close_time.toLocaleDateString() + " at " + close_time.toLocaleTimeString()
     }
 }
-
-function diff_hours(dt2, dt1) {
-
-    var diff = (dt2.getTime() - dt1.getTime()) / 1000;
-    var days = diff / (24 * 60 * 60)
-    diff %= (24 * 60 * 60)
-    var hour = diff / (60 * 60);
-    diff %= (60 * 60);
-    var minute = diff / 60;
-    return [Math.floor(days), Math.floor(hour), Math.abs(Math.round(minute))];
-
-}

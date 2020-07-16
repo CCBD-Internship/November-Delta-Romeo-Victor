@@ -30,6 +30,17 @@
     <script id='coordinator_JS'></script>
     <script id='evaluator_JS'></script>
     <script type="text/javascript" id='main_JS'>
+        function diff_hours(dt2, dt1) {
+
+            var diff = (dt2.getTime() - dt1.getTime()) / 1000;
+            var days = diff / (24 * 60 * 60)
+            diff %= (24 * 60 * 60)
+            var hour = diff / (60 * 60);
+            diff %= (60 * 60);
+            var minute = diff / 60;
+            return [Math.floor(days), Math.floor(hour), Math.abs(Math.round(minute))];
+        
+        }
         function loadJS(url) {
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function () {
@@ -68,7 +79,7 @@
         var Tree = { "Admin": [], "Coordinator": [], "Evaluator": [] }
         var evalview = { "Review-1": { "Team": [], "Student": [], "Evaluations": [] }, "Review-2": { "Team": [], "Student": [], "Evaluations": [] }, "Review-3": { "Team": [], "Student": [], "Evaluations": [] }, "Review-4": { "Team": [], "Student": [], "Evaluations": [] }, "Review-5": { "Team": [], "Student": [], "Evaluations": [] }, "Team": [], "Student": [], "Panel-Members": [] }
         var coordview = { "Schedular": [], "Panel-Members": [], "Review-Manager": [], "Team": [], "Student": [] }
-        var adminview = { "Faculty": [], "Panel": [], "Panel-Members": [], "Team": [], "Student": [], "Marks-View": [] }
+        var adminview = { "Faculty": [], "Panel": [], "Panel-Members": [], "Team": [], "Student": [], "Marks-View": [], "Student-Portal": [] }
         var User;
         var Panels;
         var Admin_BC = []
