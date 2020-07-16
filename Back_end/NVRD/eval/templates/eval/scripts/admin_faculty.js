@@ -50,8 +50,16 @@ function faculty_search_A() {
                 svgstr += '</svg>'
                 for (let i in data) {
                     str += '<tr>'
-                    for (let j in data[i]) {
-                        str += ("<td>" + data[i][j] + "</td>")
+                    for (let j of ["fac_id", "fac_type", "name", "email", "phone", "is_active", "is_admin", "dept"]) {
+                        if (j == "is_active" || j == "is_admin") {
+                            if (data[i][j] == true)
+                                str += ("<td>" + '&#9989;' + "</td>")
+                            else
+                                str += ("<td>" + '&#10060;' + "</td>")
+                        }
+                        else {
+                            str += ("<td>" + data[i][j] + "</td>")
+                        }
                     }
                     str += '<td scope="col"><button type="button" class="btn btn-dark active btn" data-toggle="modal" data-target="#modal_admin_faculty_put" onclick="admin_faculty_put_form(this)">' + svgstr + '</button></td></tr>'
                 }
@@ -61,10 +69,22 @@ function faculty_search_A() {
     }
     refreshLoader(xhttp)
     var fac_id = document.getElementById("faculty_search_fac_id_A").value
+    var fac_name = document.getElementById("faculty_search_fac_name_A").value
+    var isactive = document.getElementById("faculty_active").checked.toString()
     var str = "/api/" + getCookie("username") + "/faculty/"
+    var url=''
     if (fac_id != "")
-        str += ("?fac_id=" + fac_id)
-    xhttp.open("GET", str, true);
+        url += ("?fac_id=" + fac_id)
+    if (fac_name)
+        if (url)
+            url += "&fac_name=" + fac_name
+        else
+            url += "?fac_name=" + fac_name
+    if (url)
+        url += "&active=" + isactive[0].toUpperCase() + isactive.slice(1,)
+    else
+        url += "?active=" + isactive[0].toUpperCase() + isactive.slice(1,)
+    xhttp.open("GET", str+url, true);
     xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     xhttp.send();
@@ -143,24 +163,32 @@ function admin_faculty_put_form(arg) {
     var head = arg.parentNode.parentNode.children
     var modal = document.getElementById("admin_faculty_details_put").children
     document.getElementById("response_admin_faculty_put").innerHTML = ""
-    insert_dept_options_A('dept-fac_put_A')
+    insert_dept_options_A('dept-fac_put_A', 1)
     modal[1].value = head[0].innerHTML
     modal[3].value = head[2].innerHTML
     modal[5].value = head[3].innerHTML
     modal[7].value = head[4].innerHTML
+    for (let i = 0; i < modal[9].children.length; i++) {
+        if (modal[9].children[i] == head[7].innerHTML) {
+            modal[9].children[i].setAttribute("selected", "selected")
+        }
+    }
     modal[11].value = head[1].innerHTML
     modal[14].checked = head[5].innerHTML == "✅"
     modal[17].checked = head[6].innerHTML == "✅"
 }
 
-function insert_dept_options_A(ele_id) {
+function insert_dept_options_A(ele_id, bool) {
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             let data = JSON.parse(this.responseText)
             deptSelect = document.getElementById(ele_id);
             let str = ""
-            str += '<option selected="selected" disabled="disabled" class="form-control">Department</option>'
+            if (!bool) {
+                console.log(1)
+                str += '<option selected="selected" disabled="disabled" class="form-control">Department</option>'
+            }
             for (let i = 0; i < data.length; i++) {
                 str += '<option value=\"' + data[i]['dept'] + '\">' + data[i]['dept'] + '</option>'
             }
@@ -223,7 +251,7 @@ function faculty_post_Admin() {
                 x.value = null
                 x = x.nextElementSibling
             }
-            insert_dept_options_A('dept-fac_post_A')
+            insert_dept_options_A('dept-fac_post_A', 0)
             faculty_refresh_A()
         }
     }

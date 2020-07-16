@@ -585,10 +585,19 @@ class Faculty_List(APIView):
                 username=request.user.username).get_username()
             prof = Faculty.objects.get(fac_id=fid)
             if(prof.is_admin and prof.fac_id == user):
-                faculty_as_object = Faculty.objects.filter(is_active=True)
+                faculty_as_object = Faculty.objects.filter().order_by("fac_id")
+                if "active" in request.GET:
+                    faculty_as_object = faculty_as_object.filter(
+                        is_active=request.GET['active'])
+                else:
+                    faculty_as_object = faculty_as_object.filter(
+                        is_active=True)
                 if "fac_id" in request.GET:
                     faculty_as_object = faculty_as_object.filter(
                         fac_id__contains=request.GET['fac_id'])
+                if "fac_name" in request.GET:
+                    faculty_as_object = faculty_as_object.filter(
+                        name__contains=request.GET['fac_name'])
                 if 'inactive' in request.GET:
                     active_panels = Panel.objects.filter(is_active=True)
                     active_faculty = FacultyPanel.objects.filter(
@@ -1234,7 +1243,7 @@ class Student_List(APIView):
                     if(response_list == []):
                         for i in serial_list:
                             i.save()
-                            a=Profile_Photo(srn=Student.objects.get(srn=i.validated_list['srn']))
+                            a=Profile_Photo(srn=Student.objects.get(srn=i.validated_data['srn']))
                             a.save()
                         return Response({"detail": "insert successful", "assumption": null_set_list}, status=status.HTTP_201_CREATED)
                     else:
@@ -1729,7 +1738,7 @@ class Team_Student_CSV(APIView):
     parser_classes = [JSONParser]
 
     def post(self, request, user):
-        try:
+        # try:
             if(user == User.objects.get(username=request.user.username).get_username()):
                 response_list = []
                 null_set_list = []
@@ -1774,7 +1783,7 @@ class Team_Student_CSV(APIView):
                 if(response_list == []):
                     for i in correct:
                         i.save()
-                        a=Profile_Photo(srn=Student.objects.get(srn=i.validated_list['srn']))
+                        a=Profile_Photo(srn=Student.objects.get(srn=i.validated_data['srn']))
                         a.save()
                     return Response({"detail": "insert successful", "assumption": null_set_list}, status=status.HTTP_201_CREATED)
                 else:
@@ -1786,8 +1795,8 @@ class Team_Student_CSV(APIView):
                     return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
-        except:
-            return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+        # except:
+        #     return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
 
 # (TokenObtainPairView,TokenRefreshView)
 
