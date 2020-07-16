@@ -56,6 +56,7 @@ import datetime
 from NVRD.settings import SIMPLE_JWT
 import jwt
 import csv
+import hashlib
 
 # Create your views here.
 
@@ -388,11 +389,15 @@ def individual_review_dict_download(l, rno):
     return avg
 
 
-def password_match(user, p):
-    print(user)
-    print(hex(hash(user)).split('x')[1])
-    # return hex(hash(user)).split('x')[1] == p
-    return True
+def password_generate(user):
+    my_hash=(hashlib.sha256(user.encode()).hexdigest())
+    my_hash=str(hex(int(my_hash,16)+10))[-16:-1]
+    return(my_hash)
+
+def password_match(user,p):
+    my_hash=(hashlib.sha256(user.encode()).hexdigest())
+    my_hash=str(hex(int(my_hash,16)+10))[-16:-1]
+    return(True)
 
 
 def student_logout(request):
@@ -439,7 +444,7 @@ class my_student(APIView):
 
     def get(self, request):
         try:
-            c = True  # check if open
+            # c = True  # check if open
             if(Student.objects.filter(srn=request.session["SRN"]).exists() and Student.objects.filter(srn=request.session["SRN"]).first().team_id):
                 student_portal=Open_Close.objects.get(oc_type="student_portal")
                 if(timezone.now()>=student_portal.open_time and timezone.now()<=student_portal.close_time):
@@ -447,7 +452,10 @@ class my_student(APIView):
                         a = Student.objects.filter(
                             srn=request.session["SRN"]).first()
                         team_details = Team_Serializer(Student.objects.filter(
-                            srn=request.session["SRN"]).first().team_id)
+                            srn=request.session["SRN"]).first().team_id).data
+                        f=Faculty.objects.get(fac_id=team_details["guide"])
+                        team_details["guide_name"]=f.name
+                        team_details["guide_designation"]=f.fac_type
                         student_details = Student_Serializer(
                             Student.objects.filter(srn=request.session["SRN"]).first())
                         my_comments = {1: [], 2: [], 3: [], 4: [], 5: []}
@@ -456,7 +464,7 @@ class my_student(APIView):
                                 if j.is_evaluated:
                                     my_comments[y].append({"designation": j.fac_id.fac_type, "fac_name": j.fac_id.name,
                                                         "comments": j.public_comments, "is_guide": team_details["guide"] == j.fac_id.fac_id})
-                        data = {"srn": request.session["SRN"], "team": team_details.data,
+                        data = {"srn": request.session["SRN"], "team": team_details,
                                 "student": student_details.data, "comments": my_comments}
                         return Response(data, status=status.HTTP_200_OK)
                     else:
@@ -466,6 +474,32 @@ class my_student(APIView):
             return Response(status=status.HTTP_403_FORBIDDEN)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    def put(self, request):
+        # try:
+            # c = True  # check if open
+            if(Student.objects.filter(srn=request.session["SRN"]).exists() and Student.objects.filter(srn=request.session["SRN"]).first().team_id):
+                student_portal=Open_Close.objects.get(oc_type="student_portal")
+                if(timezone.now()>=student_portal.open_time and timezone.now()<=student_portal.close_time):
+
+                    if(password_match(request.session["SRN"], request.session["password"])):
+    
+                        if(request.data["type"]=="description"):
+        
+                            t=Student.objects.get(srn=request.session["SRN"]).team_id
+                            t.description=request.data["description"]
+                            t.save()
+                            return Response({"description":t.description}, status=status.HTTP_200_OK)
+                        elif(request.data["type"]=="image"):
+                            pass
+                    else:
+                        return Response({"detail":"incorrect SRN or password"}, status=status.HTTP_403_FORBIDDEN)
+                else:
+                    return Response({"detail":"Portal Not Open"}, status=status.HTTP_403_FORBIDDEN)
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        # except:
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class File_List(APIView):

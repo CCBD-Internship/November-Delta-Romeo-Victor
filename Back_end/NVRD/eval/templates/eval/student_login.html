@@ -144,6 +144,16 @@
                                     document.getElementById("content").style.display = "inline";
                                     let data = JSON.parse(this.responseText)
                                     console.log(data)
+                                    document.getElementById("student_name").innerHTML = "Name: " + data["student"]["name"]
+                                    document.getElementById("student_srn").innerHTML = "SRN: " + data["student"]["srn"]
+                                    document.getElementById("student_email").innerHTML = "Email: " + data["student"]["email"]
+                                    document.getElementById("student_phone").innerHTML = "Phone: " + data["student"]["phone"]
+                                    document.getElementById("student_dept").innerHTML = "Dept: " + data["student"]["dept"]
+                                    document.getElementById("team_name").innerHTML = "Team-Name: " + data["team"]["team_name"]
+                                    document.getElementById("team_year_code").innerHTML = "Team-Year-code: " + data["team"]["team_year_code"]
+                                    document.getElementById("team_id").innerHTML = "Team-ID: " + data["team"]["team_id"]
+                                    document.getElementById("team_guide").innerHTML = "Guide: " + '<i>'+data["team"]["guide_designation"]+'</i>'+' '+data["team"]["guide_name"]
+                                    document.getElementById("team_description").value = data["team"]["description"]
                                     for (let i in data["comments"]) {
                                         let str = ''
                                         for (let j in data["comments"][i]) {
@@ -175,7 +185,24 @@
             xhttp.open("POST", "/my_student_validate/", true);
             xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");
             xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
-            xhttp.send(JSON.stringify({"username": username, "password": password }));
+            xhttp.send(JSON.stringify({ "username": username, "password": password }));
+        }
+
+        function logouter(){
+            console.log('hi')
+            window.location.href='/my_student_logout/'
+        }
+        function saveDescription(){
+            var xhttp = new XMLHttpRequest()
+            xhttp.onreadystatechange=function(){
+                if(this.readyState == XMLHttpRequest.DONE && this.status == 200){
+                    document.getElementById("team_description").value=JSON.parse(this.responseText)["description"]
+                }
+            }
+            xhttp.open("PUT", "/my_student_values/", true);
+            xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+            xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+            xhttp.send(JSON.stringify({"type":"description","description":document.getElementById("team_description").value}));
         }
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"

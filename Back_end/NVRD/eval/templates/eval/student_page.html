@@ -1,5 +1,50 @@
+{%load static%}
+<button type="button" class="btn btn-danger float-right" onclick="logouter()">LOGOUT</button>
+<br>
+<br>
+<br>
+<div class="container">
+    <div class="card text-center w-25 mx-auto">
+        <img src="{% static 'default_user.png' %}" class="card-img-top">
+        <div class="card-body">
+            <h5 class="card-title" id="student_name"></h5>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item" id="student_srn"></li>
+            <li class="list-group-item" id="student_email"></li>
+            <li class="list-group-item" id="student_phone"></li>
+            <li class="list-group-item" id="student_dept"></li>
+        </ul>
+        <div class="card-body">
+            <a href="#" class="card-link">Upload Photo</a>
+        </div>
+    </div>
+    <br>
+    <br>
+    <div class="card text-center w-75 mx-auto">
+        <div class="card-body">
+            <h5 class="card-title" id="team_name"></h5>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item" id="team_year_code"></li>
+            <li class="list-group-item" id="team_id"></li>
+            <li class="list-group-item" id="team_guide"></li>
+            <li class="list-group-item">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Description</label>
+                    <input type="text" class="form-control bg-white text-center" id="team_description">
+                </div>
+            </li>
+        </ul>
+        <div class="card-body">
+            <button class="btn btn-link" onclick="saveDescription()">Save Description</button>
+        </div>
+    </div>
+</div>
+<br>
+<br>
 <div class="accordion w-75 mx-auto" id="accordionExample">
-    <div class="card bg-info">
+    <div class="card">
         <div class="card-header" id="headingOne">
             <h2 class="mb-0">
                 <button class="btn btn-link btn-block text-left text-light" type="button" data-toggle="collapse"
@@ -14,11 +59,11 @@
             </div>
         </div>
     </div>
-    <div class="card bg-info">
+    <div class="card">
         <div class="card-header" id="headingTwo">
             <h2 class="mb-0">
-                <button class="btn btn-link btn-block text-left text-light collapsed" type="button" data-toggle="collapse"
-                    data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                <button class="btn btn-link btn-block text-left text-light collapsed" type="button"
+                    data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                     Review-2
                 </button>
             </h2>
@@ -30,11 +75,12 @@
             </div>
         </div>
     </div>
-    <div class="card bg-info">
+    <div class="card">
         <div class="card-header" id="headingThree">
             <h2 class="mb-0">
-                <button class="btn btn-link btn-block text-left text-light collapsed" type="button" data-toggle="collapse"
-                    data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                <button class="btn btn-link btn-block text-left text-light collapsed" type="button"
+                    data-toggle="collapse" data-target="#collapseThree" aria-expanded="false"
+                    aria-controls="collapseThree">
                     Review-3
                 </button>
             </h2>
@@ -46,11 +92,12 @@
             </div>
         </div>
     </div>
-    <div class="card bg-info">
+    <div class="card">
         <div class="card-header" id="headingFour">
             <h2 class="mb-0">
-                <button class="btn btn-link btn-block text-left text-light collapsed" type="button" data-toggle="collapse"
-                    data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                <button class="btn btn-link btn-block text-left text-light collapsed" type="button"
+                    data-toggle="collapse" data-target="#collapseFour" aria-expanded="false"
+                    aria-controls="collapseFour">
                     Review-4
                 </button>
             </h2>
@@ -62,11 +109,12 @@
             </div>
         </div>
     </div>
-    <div class="card bg-info">
+    <div class="card">
         <div class="card-header" id="headingFive">
             <h2 class="mb-0">
-                <button class="btn btn-link btn-block text-left text-light collapsed" type="button" data-toggle="collapse"
-                    data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                <button class="btn btn-link btn-block text-left text-light collapsed" type="button"
+                    data-toggle="collapse" data-target="#collapseFive" aria-expanded="false"
+                    aria-controls="collapseFive">
                     Review-5
                 </button>
             </h2>
@@ -79,4 +127,3 @@
         </div>
     </div>
 </div>
-<a href="/my_student_logout/">LOGOUT</a>

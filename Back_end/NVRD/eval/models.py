@@ -28,6 +28,10 @@ class Open_Close(models.Model):
     class Meta:
         managed = True
 
+class Profile_Photo(models.Model):
+    srn=models.ForeignKey('Student', models.CASCADE)
+    image=models.ImageField(width_field=512,height_field=512,default="/static/default_user.png",upload_to="student_images")
+
 
 class Faculty(models.Model):
     fac_id = BleachField(primary_key=True, max_length=50, validators=[
