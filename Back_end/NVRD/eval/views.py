@@ -53,13 +53,14 @@ from .serializers import *
 from django.core.files.base import ContentFile
 import json
 import datetime
-from NVRD.settings import SIMPLE_JWT
+from NVRD.settings import SIMPLE_JWT,BASE_DIR
 import jwt
 import csv
 import hashlib
 from PIL import Image
 import base64
 import io
+import os
 # Create your views here.
 
 # from django_cron import CronJobBase, Schedule
@@ -452,13 +453,20 @@ def student_page(request):
     return render(request, "eval/student_page.html")
 
 
+def get_image_name(imgname):
+    # imgname = 'whatever.xyz'
+    fullname = os.path.join(BASE_DIR+'/eval/student_images/', imgname)
+    if os.path.exists(fullname):
+        os.remove(fullname)
+    return imgname
+
 class my_student(APIView):
 
     parser_classes = [JSONParser]
     permission_classes = (AllowAny,)
 
     def get(self, request):
-        try:
+        # try:
             c = True  # check if open
             if(Student.objects.filter(srn=request.session["SRN"]).exists() and Student.objects.filter(srn=request.session["SRN"]).first().team_id):
                 student_portal = Open_Close.objects.get(
@@ -491,11 +499,11 @@ class my_student(APIView):
                 else:
                     return Response({"detail": "Portal Not Open"}, status=status.HTTP_403_FORBIDDEN)
             return Response(status=status.HTTP_403_FORBIDDEN)
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        # except:
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request):
-        try:
+        # try:
             if(Student.objects.filter(srn=request.session["SRN"]).exists() and Student.objects.filter(srn=request.session["SRN"]).first().team_id):
                 student_portal = Open_Close.objects.get(
                     oc_type="student_portal")
@@ -512,7 +520,7 @@ class my_student(APIView):
                             msg = base64.b64decode(msg)
                             a = Profile_Photo.objects.get(
                                 srn=Student.objects.get(srn=request.session["SRN"]))
-                            fname = request.session["SRN"]+".jpg"
+                            fname = get_image_name(request.session["SRN"]+".jpg")
                             a.image.save(fname, ContentFile(msg))
                             a.save()
                             return Response(status=status.HTTP_200_OK)
@@ -521,8 +529,8 @@ class my_student(APIView):
                 else:
                     return Response({"detail": "Portal Not Open"}, status=status.HTTP_403_FORBIDDEN)
             return Response(status=status.HTTP_403_FORBIDDEN)
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        # except:
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 def Photo_upload(request):

@@ -9,6 +9,7 @@ from django.db import models
 from django.utils import timezone
 from django.core.validators import RegexValidator
 from django_bleach.models import BleachField
+# from .storage import *
 
 
 class Department(models.Model):
@@ -302,13 +303,15 @@ class TeamFacultyReview(models.Model):
         managed = True
         unique_together = (('team_id', 'fac_id', 'review_number'),)
 
+def image_path(instance, filename):
+    return os.path.join('some_dir', str(instance.some_identifier), 'filename.ext')
 
 class Profile_Photo(models.Model):
     srn = models.OneToOneField(Student,
                                on_delete=models.CASCADE,
                                primary_key=True,)
     image = models.ImageField(
-        default="static/default_user.png", upload_to="eval/student_images")
+        default="static/default_user.png" ,upload_to="eval/student_images")
 
 # from django.contrib.auth.models import User
 # from eval.models import *

@@ -216,6 +216,7 @@
                     xhttp.onreadystatechange = function () {
                         if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
                             document.getElementById("my_student_photo").src = reader.result
+                            $('#my_student_photo_upload').modal('hide')
                         }
                     }
                     xhttp.open("PUT", "/my_student_values/", true);
