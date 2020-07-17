@@ -20,35 +20,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.http import FileResponse
-# from django.core import serializers
-# from .models import Department
-# from .models import Faculty
-# from .models import FacultyPanel
-# from .models import Panel
-# from .models import PanelReview
-# from .models import Review1
-# from .models import Review2
-# from .models import Review3
-# from .models import Review4
-# from .models import Review5
-# from .models import Student
-# from .models import Team
-# from .models import TeamFacultyReview
 from .models import *
-
-# from .serializers import Department_Serializer
-# from .serializers import Faculty_Serializer
-# from .serializers import FacultyPanel_Serializer
-# from .serializers import Panel_Serializer
-# from .serializers import PanelReview_Serializer
-# from .serializers import Review1_Serializer
-# from .serializers import Review2_Serializer
-# from .serializers import Review3_Serializer
-# from .serializers import Review4_Serializer
-# from .serializers import Review5_Serializer
-# from .serializers import Student_Serializer
-# from .serializers import Team_Serializer
-# from .serializers import TeamFacultyReview_Serializer
 from .serializers import *
 from django.core.files.base import ContentFile
 import json
@@ -466,7 +438,7 @@ class my_student(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request):
-        # try:
+        try:
             c = True  # check if open
             if(Student.objects.filter(srn=request.session["SRN"]).exists() and Student.objects.filter(srn=request.session["SRN"]).first().team_id):
                 student_portal = Open_Close.objects.get(
@@ -499,11 +471,11 @@ class my_student(APIView):
                 else:
                     return Response({"detail": "Portal Not Open"}, status=status.HTTP_403_FORBIDDEN)
             return Response(status=status.HTTP_403_FORBIDDEN)
-        # except:
-        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request):
-        # try:
+        try:
             if(Student.objects.filter(srn=request.session["SRN"]).exists() and Student.objects.filter(srn=request.session["SRN"]).first().team_id):
                 student_portal = Open_Close.objects.get(
                     oc_type="student_portal")
@@ -529,8 +501,8 @@ class my_student(APIView):
                 else:
                     return Response({"detail": "Portal Not Open"}, status=status.HTTP_403_FORBIDDEN)
             return Response(status=status.HTTP_403_FORBIDDEN)
-        # except:
-        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 def Photo_upload(request):
@@ -1759,66 +1731,66 @@ class Team_Student_CSV(APIView):
     parser_classes = [JSONParser]
 
     def post(self, request, user):
-        # try:
-        if(user == User.objects.get(username=request.user.username).get_username()):
-            response_list = []
-            null_set_list = []
-            team_list = []
-            correct = []
-            for i in request.data:
-                if("panel_id" in i and "panel_year_code" in i and "guide" in i and i["panel_id"] != None and i["panel_year_code"] != None and FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(is_active=True, panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]), fac_id=i["guide"]).exists()):
-                    p = FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(
-                        is_active=True, panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]), fac_id=i["guide"]).first().panel_id
-                    i["panel_id"] = p.id
-                elif("guide" in i and FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(is_active=True), fac_id=i["guide"]).exists()):
-                    p = FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(
-                        is_active=True), fac_id=i["guide"]).order_by("-id").first().panel_id
-                    i["panel_id"] = p.id
-                else:
-                    i["panel_id"] = None
-                    null_set_list.append(
-                        {"value": [i], "detail": "panel set to NULL,either panel does not or guide does not exist in panel"})
-                team_data = {"team_name": i["team_name"], "description": i["description"],
-                             "guide": i["guide"], "panel_id": i["panel_id"], "team_id": add_one_team(i["team_year_code"]), "team_year_code": i["team_year_code"]}
-                team_list.append(team_data)
-                team_serial = Team_Serializer(data=team_data)
-                dept = i["dept"]
-                t = None
-                if team_serial.is_valid():
-                    team_serial.save()
-                    t = Team.objects.filter(
-                        team_id=team_data["team_id"], team_year_code=team_data["team_year_code"]).first()
-                else:
-                    response_list.append(
-                        {"value": [i], "detail": team_serial.errors})
-                for k in i["student"]:
-                    if(t):
-                        k["team_id"] = t.id
-                    k["dept"] = dept
-                    student_serial = Student_Serializer(data=k)
-                    if student_serial.is_valid():
-                        correct.append(student_serial)
+        try:
+            if(user == User.objects.get(username=request.user.username).get_username()):
+                response_list = []
+                null_set_list = []
+                team_list = []
+                correct = []
+                for i in request.data:
+                    if("panel_id" in i and "panel_year_code" in i and "guide" in i and i["panel_id"] != None and i["panel_year_code"] != None and FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(is_active=True, panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]), fac_id=i["guide"]).exists()):
+                        p = FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(
+                            is_active=True, panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]), fac_id=i["guide"]).first().panel_id
+                        i["panel_id"] = p.id
+                    elif("guide" in i and FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(is_active=True), fac_id=i["guide"]).exists()):
+                        p = FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(
+                            is_active=True), fac_id=i["guide"]).order_by("-id").first().panel_id
+                        i["panel_id"] = p.id
+                    else:
+                        i["panel_id"] = None
+                        null_set_list.append(
+                            {"value": [i], "detail": "panel set to NULL,either panel does not or guide does not exist in panel"})
+                    team_data = {"team_name": i["team_name"], "description": i["description"],
+                                 "guide": i["guide"], "panel_id": i["panel_id"], "team_id": add_one_team(i["team_year_code"]), "team_year_code": i["team_year_code"]}
+                    team_list.append(team_data)
+                    team_serial = Team_Serializer(data=team_data)
+                    dept = i["dept"]
+                    t = None
+                    if team_serial.is_valid():
+                        team_serial.save()
+                        t = Team.objects.filter(
+                            team_id=team_data["team_id"], team_year_code=team_data["team_year_code"]).first()
                     else:
                         response_list.append(
-                            {"value": [i, k], "detail": student_serial.errors})
-            if(response_list == []):
-                for i in correct:
-                    i.save()
-                    a = Profile_Photo(srn=Student.objects.get(
-                        srn=i.validated_data['srn']))
-                    a.save()
-                return Response({"detail": "insert successful", "assumption": null_set_list}, status=status.HTTP_201_CREATED)
+                            {"value": [i], "detail": team_serial.errors})
+                    for k in i["student"]:
+                        if(t):
+                            k["team_id"] = t.id
+                        k["dept"] = dept
+                        student_serial = Student_Serializer(data=k)
+                        if student_serial.is_valid():
+                            correct.append(student_serial)
+                        else:
+                            response_list.append(
+                                {"value": [i, k], "detail": student_serial.errors})
+                if(response_list == []):
+                    for i in correct:
+                        i.save()
+                        a = Profile_Photo(srn=Student.objects.get(
+                            srn=i.validated_data['srn']))
+                        a.save()
+                    return Response({"detail": "insert successful", "assumption": null_set_list}, status=status.HTTP_201_CREATED)
+                else:
+                    response_list.extend(null_set_list)
+                    # delete teams
+                    for i in team_list:
+                        Team.objects.filter(
+                            team_year_code=i["team_year_code"], team_id=i["team_id"]).delete()
+                    return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
             else:
-                response_list.extend(null_set_list)
-                # delete teams
-                for i in team_list:
-                    Team.objects.filter(
-                        team_year_code=i["team_year_code"], team_id=i["team_id"]).delete()
-                return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response(status=status.HTTP_403_FORBIDDEN)
-        # except:
-        #     return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+                return Response(status=status.HTTP_403_FORBIDDEN)
+        except:
+            return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
 
 # (TokenObtainPairView,TokenRefreshView)
 
