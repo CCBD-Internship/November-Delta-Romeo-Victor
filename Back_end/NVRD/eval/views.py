@@ -50,7 +50,7 @@ from .models import *
 # from .serializers import Team_Serializer
 # from .serializers import TeamFacultyReview_Serializer
 from .serializers import *
-
+from django.core.files.base import ContentFile
 import json
 import datetime
 from NVRD.settings import SIMPLE_JWT
@@ -232,6 +232,7 @@ def admin_studentHTML(request, user):
 def admin_studentJS(request, user):
     return render(request, "eval/scripts/admin_student.js")
 
+
 @login_required(login_url='')
 @ensure_csrf_cookie
 def admin_student_portalHTML(request, user):
@@ -242,6 +243,7 @@ def admin_student_portalHTML(request, user):
 @ensure_csrf_cookie
 def admin_student_portalJS(request, user):
     return render(request, "eval/scripts/admin_student_portal.js")
+
 
 @login_required(login_url='')
 @ensure_csrf_cookie
@@ -456,8 +458,8 @@ class my_student(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request):
-        # try:
-            # c = True  # check if open
+        try:
+            c = True  # check if open
             if(Student.objects.filter(srn=request.session["SRN"]).exists() and Student.objects.filter(srn=request.session["SRN"]).first().team_id):
                 student_portal = Open_Close.objects.get(
                     oc_type="student_portal")
@@ -473,54 +475,54 @@ class my_student(APIView):
                         student_details = Student_Serializer(
                             Student.objects.filter(srn=request.session["SRN"]).first())
                         my_comments = {1: [], 2: [], 3: [], 4: [], 5: []}
-                        photo=Profile_Photo_Serializer(Profile_Photo.objects.get(srn=request.session["SRN"]))
+                        myp = Profile_Photo.objects.get(
+                            srn=request.session["SRN"])
+                        aaa = (base64.b64encode(myp.image.read()))
                         for x, y in zip([Review1, Review2, Review3, Review4, Review5], range(1, 6)):
                             for j in x.objects.filter(srn=a):
                                 if j.is_evaluated:
                                     my_comments[y].append({"designation": j.fac_id.fac_type, "fac_name": j.fac_id.name,
                                                            "comments": j.public_comments, "is_guide": team_details["guide"] == j.fac_id.fac_id})
                         data = {"srn": request.session["SRN"], "team": team_details,
-                                "student": student_details.data, "comments": my_comments,"photo":photo.data["image"]}
+                                "student": student_details.data, "comments": my_comments, "photo": aaa}
                         return Response(data, status=status.HTTP_200_OK)
                     else:
                         return Response({"detail": "incorrect SRN or password"}, status=status.HTTP_403_FORBIDDEN)
                 else:
                     return Response({"detail": "Portal Not Open"}, status=status.HTTP_403_FORBIDDEN)
             return Response(status=status.HTTP_403_FORBIDDEN)
-        # except:
-        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request):
-        # try:
-        # c = True  # check if open
-        if(Student.objects.filter(srn=request.session["SRN"]).exists() and Student.objects.filter(srn=request.session["SRN"]).first().team_id):
-            student_portal = Open_Close.objects.get(
-                oc_type="student_portal")
-            if(timezone.now() >= student_portal.open_time and timezone.now() <= student_portal.close_time):
-                if(password_match(request.session["SRN"], request.session["password"])):
-                    if(request.data["type"] == "description"):
-                        t = Student.objects.get(
-                            srn=request.session["SRN"]).team_id
-                        t.description = request.data["description"]
-                        t.save()
-                        return Response({"description": t.description}, status=status.HTTP_200_OK)
-                    elif(request.data["type"] == "photo"):
-                        msg = request.data["description"].split(',')[-1]
-                        msg = base64.b64decode(msg)
-                        buf = io.BytesIO(msg)
-                        img = Image.open(buf)
-                        a = Profile_Photo.objects.get(srn=Student.objects.get(srn=request.session["SRN"]))
-                        img.save()
-                        a.image = img
-                        a.save()
-                        return Response(status=status.HTTP_200_OK)
+        try:
+            if(Student.objects.filter(srn=request.session["SRN"]).exists() and Student.objects.filter(srn=request.session["SRN"]).first().team_id):
+                student_portal = Open_Close.objects.get(
+                    oc_type="student_portal")
+                if(timezone.now() >= student_portal.open_time and timezone.now() <= student_portal.close_time):
+                    if(password_match(request.session["SRN"], request.session["password"])):
+                        if(request.data["type"] == "description"):
+                            t = Student.objects.get(
+                                srn=request.session["SRN"]).team_id
+                            t.description = request.data["description"]
+                            t.save()
+                            return Response({"description": t.description}, status=status.HTTP_200_OK)
+                        elif(request.data["type"] == "photo"):
+                            msg = request.data["description"].split(',')[-1]
+                            msg = base64.b64decode(msg)
+                            a = Profile_Photo.objects.get(
+                                srn=Student.objects.get(srn=request.session["SRN"]))
+                            fname = request.session["SRN"]+".jpg"
+                            a.image.save(fname, ContentFile(msg))
+                            a.save()
+                            return Response(status=status.HTTP_200_OK)
+                    else:
+                        return Response({"detail": "incorrect SRN or password"}, status=status.HTTP_403_FORBIDDEN)
                 else:
-                    return Response({"detail": "incorrect SRN or password"}, status=status.HTTP_403_FORBIDDEN)
-            else:
-                return Response({"detail": "Portal Not Open"}, status=status.HTTP_403_FORBIDDEN)
-        return Response(status=status.HTTP_403_FORBIDDEN)
-        # except:
-        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"detail": "Portal Not Open"}, status=status.HTTP_403_FORBIDDEN)
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 def Photo_upload(request):
@@ -1253,7 +1255,8 @@ class Student_List(APIView):
                     if(response_list == []):
                         for i in serial_list:
                             i.save()
-                            a=Profile_Photo(srn=Student.objects.get(srn=i.validated_data['srn']))
+                            a = Profile_Photo(srn=Student.objects.get(
+                                srn=i.validated_data['srn']))
                             a.save()
                         return Response({"detail": "insert successful", "assumption": null_set_list}, status=status.HTTP_201_CREATED)
                     else:
@@ -1749,62 +1752,63 @@ class Team_Student_CSV(APIView):
 
     def post(self, request, user):
         # try:
-            if(user == User.objects.get(username=request.user.username).get_username()):
-                response_list = []
-                null_set_list = []
-                team_list = []
-                correct = []
-                for i in request.data:
-                    if("panel_id" in i and "panel_year_code" in i and "guide" in i and i["panel_id"] != None and i["panel_year_code"] != None and FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(is_active=True, panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]), fac_id=i["guide"]).exists()):
-                        p = FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(
-                            is_active=True, panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]), fac_id=i["guide"]).first().panel_id
-                        i["panel_id"] = p.id
-                    elif("guide" in i and FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(is_active=True), fac_id=i["guide"]).exists()):
-                        p = FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(
-                            is_active=True), fac_id=i["guide"]).order_by("-id").first().panel_id
-                        i["panel_id"] = p.id
-                    else:
-                        i["panel_id"] = None
-                        null_set_list.append(
-                            {"value": [i], "detail": "panel set to NULL,either panel does not or guide does not exist in panel"})
-                    team_data = {"team_name": i["team_name"], "description": i["description"],
-                                 "guide": i["guide"], "panel_id": i["panel_id"], "team_id": add_one_team(i["team_year_code"]), "team_year_code": i["team_year_code"]}
-                    team_list.append(team_data)
-                    team_serial = Team_Serializer(data=team_data)
-                    dept = i["dept"]
-                    t = None
-                    if team_serial.is_valid():
-                        team_serial.save()
-                        t = Team.objects.filter(
-                            team_id=team_data["team_id"], team_year_code=team_data["team_year_code"]).first()
+        if(user == User.objects.get(username=request.user.username).get_username()):
+            response_list = []
+            null_set_list = []
+            team_list = []
+            correct = []
+            for i in request.data:
+                if("panel_id" in i and "panel_year_code" in i and "guide" in i and i["panel_id"] != None and i["panel_year_code"] != None and FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(is_active=True, panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]), fac_id=i["guide"]).exists()):
+                    p = FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(
+                        is_active=True, panel_year_code=i["panel_year_code"], panel_id=i["panel_id"]), fac_id=i["guide"]).first().panel_id
+                    i["panel_id"] = p.id
+                elif("guide" in i and FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(is_active=True), fac_id=i["guide"]).exists()):
+                    p = FacultyPanel.objects.filter(panel_id__in=Panel.objects.filter(
+                        is_active=True), fac_id=i["guide"]).order_by("-id").first().panel_id
+                    i["panel_id"] = p.id
+                else:
+                    i["panel_id"] = None
+                    null_set_list.append(
+                        {"value": [i], "detail": "panel set to NULL,either panel does not or guide does not exist in panel"})
+                team_data = {"team_name": i["team_name"], "description": i["description"],
+                             "guide": i["guide"], "panel_id": i["panel_id"], "team_id": add_one_team(i["team_year_code"]), "team_year_code": i["team_year_code"]}
+                team_list.append(team_data)
+                team_serial = Team_Serializer(data=team_data)
+                dept = i["dept"]
+                t = None
+                if team_serial.is_valid():
+                    team_serial.save()
+                    t = Team.objects.filter(
+                        team_id=team_data["team_id"], team_year_code=team_data["team_year_code"]).first()
+                else:
+                    response_list.append(
+                        {"value": [i], "detail": team_serial.errors})
+                for k in i["student"]:
+                    if(t):
+                        k["team_id"] = t.id
+                    k["dept"] = dept
+                    student_serial = Student_Serializer(data=k)
+                    if student_serial.is_valid():
+                        correct.append(student_serial)
                     else:
                         response_list.append(
-                            {"value": [i], "detail": team_serial.errors})
-                    for k in i["student"]:
-                        if(t):
-                            k["team_id"] = t.id
-                        k["dept"] = dept
-                        student_serial = Student_Serializer(data=k)
-                        if student_serial.is_valid():
-                            correct.append(student_serial)
-                        else:
-                            response_list.append(
-                                {"value": [i, k], "detail": student_serial.errors})
-                if(response_list == []):
-                    for i in correct:
-                        i.save()
-                        a=Profile_Photo(srn=Student.objects.get(srn=i.validated_data['srn']))
-                        a.save()
-                    return Response({"detail": "insert successful", "assumption": null_set_list}, status=status.HTTP_201_CREATED)
-                else:
-                    response_list.extend(null_set_list)
-                    # delete teams
-                    for i in team_list:
-                        Team.objects.filter(
-                            team_year_code=i["team_year_code"], team_id=i["team_id"]).delete()
-                    return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+                            {"value": [i, k], "detail": student_serial.errors})
+            if(response_list == []):
+                for i in correct:
+                    i.save()
+                    a = Profile_Photo(srn=Student.objects.get(
+                        srn=i.validated_data['srn']))
+                    a.save()
+                return Response({"detail": "insert successful", "assumption": null_set_list}, status=status.HTTP_201_CREATED)
             else:
-                return Response(status=status.HTTP_403_FORBIDDEN)
+                response_list.extend(null_set_list)
+                # delete teams
+                for i in team_list:
+                    Team.objects.filter(
+                        team_year_code=i["team_year_code"], team_id=i["team_id"]).delete()
+                return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(status=status.HTTP_403_FORBIDDEN)
         # except:
         #     return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
 
@@ -1942,6 +1946,7 @@ class EvaluatorMarksView(APIView):
                     elif(review_number == 5):
                         r = list(Review5.objects.filter(
                             srn__in=s, fac_id=user).order_by("srn").values())
+                    photos={}
                     for i in r:
                         i["srn"] = i.pop("srn_id")
                         i["fac_id"] = i.pop("fac_id_id")
@@ -1950,7 +1955,9 @@ class EvaluatorMarksView(APIView):
                         i["name"] = student.name
                         i["email"] = student.email
                         i["phone"] = student.phone
-                    res.update({"individual_review": r})
+                        myp = Profile_Photo.objects.get(srn=i["srn"])
+                        photos[i["srn"]] = (base64.b64encode(myp.image.read()))
+                    res.update({"individual_review": r,"photo":photos})
                 return Response(res, status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)

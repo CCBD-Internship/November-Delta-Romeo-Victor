@@ -144,7 +144,6 @@
                                     document.getElementById("password_enter").style.display = "none";
                                     document.getElementById("content").style.display = "inline";
                                     let data = JSON.parse(this.responseText)
-                                    console.log(data)
                                     document.getElementById("student_name").innerHTML = "Name: " + data["student"]["name"]
                                     document.getElementById("student_srn").innerHTML = "SRN: " + data["student"]["srn"]
                                     document.getElementById("student_email").innerHTML = "Email: " + data["student"]["email"]
@@ -155,6 +154,7 @@
                                     document.getElementById("team_id").innerHTML = "Team-ID: " + data["team"]["team_id"]
                                     document.getElementById("team_guide").innerHTML = "Guide: " + '<i>' + data["team"]["guide_designation"] + '</i>' + ' ' + data["team"]["guide_name"]
                                     document.getElementById("team_description").value = data["team"]["description"]
+                                    document.getElementById("my_student_photo").src = "data:image/jpeg;base64,"+data["photo"]
                                     for (let i in data["comments"]) {
                                         let str = ''
                                         for (let j in data["comments"][i]) {
@@ -205,7 +205,7 @@
             xhttp.send(JSON.stringify({ "type": "description", "description": document.getElementById("team_description").value }));
         }
         function photo_upload() {
-            const selectedFile = document.getElementById('my_student_upload_photo').files[0];
+            const selectedFile = document.getElementById('my_student_upload_photo').files[0];  
             const reader = new FileReader();
             reader.onload = function () {
                 if (selectedFile.size> 2000000) {

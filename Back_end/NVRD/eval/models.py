@@ -308,7 +308,7 @@ class Profile_Photo(models.Model):
                                on_delete=models.CASCADE,
                                primary_key=True,)
     image = models.ImageField(
-        default="static/default_user.png", upload_to="student_images")
+        default="static/default_user.png", upload_to="eval/student_images")
 
 # from django.contrib.auth.models import User
 # from eval.models import *
