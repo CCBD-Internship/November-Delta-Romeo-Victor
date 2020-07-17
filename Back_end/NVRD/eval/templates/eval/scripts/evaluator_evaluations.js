@@ -107,7 +107,7 @@ function E_evaluations_opentip(e, t) {
                 var sum = 0;
                 for (let j of lst) {
                     if (max_vals[review_number][c] == -2) {
-                        tbody += ("<td name="+i['srn']+">" + i[j] + "</td>")
+                        tbody += ("<td name=" + i['srn'] + ">" + i[j] + "</td>")
                     }
                     else if (max_vals[review_number][c] == -1) {
                         tbody += ("<td>" + "<textarea class=\"form-control bg-transparent text-white text-center border-white\" style='min-width: 10em'>" + i[j] + "</textarea></td>")
@@ -132,8 +132,8 @@ function E_evaluations_opentip(e, t) {
             var tbody = document.getElementById("evaluation_views_table_body")
             for (var i = 0; i < tbody.children.length; i++) {
                 tbody.children[i].children[tbody.children[i].children.length - 1].firstElementChild.checked = data["individual_review"][i]["is_evaluated"]
-                for(j=0;j<=2;j++){
-                    tbody.children[i].children[j].addEventListener('click',student_photo_modal)
+                for (j = 0; j <= 2; j++) {
+                    tbody.children[i].children[j].addEventListener('click', student_photo_modal)
                 }
             }
 
@@ -371,13 +371,13 @@ function Evaluator_print() {
     document.getElementById("Evaluator_save_button").style = "display:inline-block"
 }
 
-function student_photo_modal(e){
-    document.getElementById('student_photo_modal_img').src="data:image/jpeg;base64,"+Evaluation_format["photo"][e.target.getAttribute('name')]
-    document.getElementById('student_photo_modal_srn').innerHTML=e.target.getAttribute('name')
-    for(i of Evaluation_format["individual_review"]){
+function student_photo_modal(e) {
+    document.getElementById('student_photo_modal_img').src = "data:image/jpeg;base64," + Evaluation_format["photo"][e.target.getAttribute('name')]
+    document.getElementById('student_photo_modal_srn').innerHTML = e.target.getAttribute('name')
+    for (i of Evaluation_format["individual_review"]) {
         console.log(i)
-        if(i["srn"]==e.target.getAttribute('name')){
-            document.getElementById('student_photo_modal_name').innerHTML=i["name"]
+        if (i["srn"] == e.target.getAttribute('name')) {
+            document.getElementById('student_photo_modal_name').innerHTML = i["name"]
         }
     }
     $("#student_photo_modal").modal('show')

@@ -25,7 +25,7 @@ from .serializers import *
 from django.core.files.base import ContentFile
 import json
 import datetime
-from NVRD.settings import SIMPLE_JWT,BASE_DIR
+from NVRD.settings import SIMPLE_JWT, BASE_DIR
 import jwt
 import csv
 import hashlib
@@ -389,11 +389,9 @@ def password_match(user, p):
 
 
 def student_logout(request):
-    if("SRN" in request.session):
-        del request.session["SRN"]
-    if("password" in request.session):
-        del request.session["password"]
-    return redirect('/my_student_login')
+    logout(request)
+    response = redirect('/my_student_login/')
+    return response
 
 
 def student_validate(request):
@@ -431,6 +429,7 @@ def get_image_name(imgname):
     if os.path.exists(fullname):
         os.remove(fullname)
     return imgname
+
 
 class my_student(APIView):
 
@@ -492,7 +491,8 @@ class my_student(APIView):
                             msg = base64.b64decode(msg)
                             a = Profile_Photo.objects.get(
                                 srn=Student.objects.get(srn=request.session["SRN"]))
-                            fname = get_image_name(request.session["SRN"]+".jpg")
+                            fname = get_image_name(
+                                request.session["SRN"]+".jpg")
                             a.image.save(fname, ContentFile(msg))
                             a.save()
                             return Response(status=status.HTTP_200_OK)
@@ -1926,7 +1926,7 @@ class EvaluatorMarksView(APIView):
                     elif(review_number == 5):
                         r = list(Review5.objects.filter(
                             srn__in=s, fac_id=user).order_by("srn").values())
-                    photos={}
+                    photos = {}
                     for i in r:
                         i["srn"] = i.pop("srn_id")
                         i["fac_id"] = i.pop("fac_id_id")
@@ -1937,7 +1937,7 @@ class EvaluatorMarksView(APIView):
                         i["phone"] = student.phone
                         myp = Profile_Photo.objects.get(srn=i["srn"])
                         photos[i["srn"]] = (base64.b64encode(myp.image.read()))
-                    res.update({"individual_review": r,"photo":photos})
+                    res.update({"individual_review": r, "photo": photos})
                 return Response(res, status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)

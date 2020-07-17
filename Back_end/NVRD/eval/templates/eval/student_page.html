@@ -3,130 +3,147 @@
 <br>
 <br>
 <br>
-<div class="container">
-    <div class="card text-center w-25 mx-auto">
-        <img src="{% static 'default_user.png' %}" class="card-img-top" id="my_student_photo">
-        <div class="card-body">
-            <h5 class="card-title" id="student_name"></h5>
-        </div>
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item" id="student_srn"></li>
-            <li class="list-group-item" id="student_email"></li>
-            <li class="list-group-item" id="student_phone"></li>
-            <li class="list-group-item" id="student_dept"></li>
-        </ul>
-        <div class="card-body">
-            <a href="#" class="card-link" data-toggle="modal" data-target="#my_student_photo_upload">Upload Photo</a>
-        </div>
+<div class="card text-center w-75 mx-auto" style="background-color: #0a1129;">
+    <div class="card-header" style="background-color: #0f2d90">
+        MY INFO
     </div>
-    <br>
-    <br>
-    <div class="card text-center w-75 mx-auto">
-        <div class="card-body">
-            <h5 class="card-title" id="team_name"></h5>
-        </div>
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item" id="team_year_code"></li>
-            <li class="list-group-item" id="team_id"></li>
-            <li class="list-group-item" id="team_guide"></li>
-            <li class="list-group-item">
-                <div class="form-group">
-                    <label for="exampleInputEmail1">Description</label>
-                    <input type="text" class="form-control bg-white text-center" id="team_description">
+    <div class="card-body">
+
+        <div class="container">
+            <div class="card text-center w-25 mx-auto">
+                <img src="{% static 'default_user.png' %}" class="card-img-top" id="my_student_photo">
+                <div class="card-body">
+                    <h5 class="card-title" id="student_name"></h5>
                 </div>
-            </li>
-        </ul>
-        <div class="card-body">
-            <button class="btn btn-link" onclick="saveDescription()">Save Description</button>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item" id="student_srn"></li>
+                    <li class="list-group-item" id="student_email"></li>
+                    <li class="list-group-item" id="student_phone"></li>
+                    <li class="list-group-item" id="student_dept"></li>
+                </ul>
+                <div class="card-body">
+                    <a href="#" class="card-link" data-toggle="modal" data-target="#my_student_photo_upload"
+                        style="color: #778cec;">Upload
+                        Photo</a>
+                </div>
+            </div>
+            <br>
+            <br>
+            <div class="card text-center w-75 mx-auto">
+                <div class="card-body">
+                    <h5 class="card-title" id="team_name"></h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item" id="team_year_code"></li>
+                    <li class="list-group-item" id="team_id"></li>
+                    <li class="list-group-item" id="team_guide"></li>
+                    <li class="list-group-item">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Description</label>
+                            <input type="text" class="form-control bg-white text-center" id="team_description">
+                        </div>
+                    </li>
+                </ul>
+                <div class="card-body">
+                    <button class="btn btn-link" onclick="saveDescription()" style="color: #778cec;">Save
+                        Description</button>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-<br>
-<br>
-<div class="accordion w-75 mx-auto" id="accordionExample">
-    <div class="card">
-        <div class="card-header" id="headingOne">
-            <h2 class="mb-0">
-                <button class="btn btn-link btn-block text-left text-light" type="button" data-toggle="collapse"
-                    data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Review-1
-                </button>
-            </h2>
+        <br>
+        <br>
+        <div class="accordion w-75 mx-auto" id="accordionExample">
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse"
+                            data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"
+                            style="color: #778cec;">
+                            Review-1
+                        </button>
+                    </h2>
+                </div>
+
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
+                    data-parent="#accordionExample">
+                    <div class="card-body">
+                        <div class="card-body" id="r1body">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingTwo">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse"
+                            data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo"
+                            style="color: #778cec;">
+                            Review-2
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <div class="card-body" id="r2body">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingThree">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse"
+                            data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree"
+                            style="color: #778cec;">
+                            Review-3
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <div class="card-body" id="r3body">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingFour">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse"
+                            data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour"
+                            style="color: #778cec;">
+                            Review-4
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <div class="card-body" id="r4body">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingFive">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse"
+                            data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive"
+                            style="color: #778cec;">
+                            Review-5
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <div class="card-body" id="r5body">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-            <div class="card-body">
-                <div class="card-body" id="r1body">
-                </div>
-            </div>
-        </div>
     </div>
-    <div class="card">
-        <div class="card-header" id="headingTwo">
-            <h2 class="mb-0">
-                <button class="btn btn-link btn-block text-left text-light collapsed" type="button"
-                    data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                    Review-2
-                </button>
-            </h2>
-        </div>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-            <div class="card-body">
-                <div class="card-body" id="r2body">
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-header" id="headingThree">
-            <h2 class="mb-0">
-                <button class="btn btn-link btn-block text-left text-light collapsed" type="button"
-                    data-toggle="collapse" data-target="#collapseThree" aria-expanded="false"
-                    aria-controls="collapseThree">
-                    Review-3
-                </button>
-            </h2>
-        </div>
-        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
-            <div class="card-body">
-                <div class="card-body" id="r3body">
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-header" id="headingFour">
-            <h2 class="mb-0">
-                <button class="btn btn-link btn-block text-left text-light collapsed" type="button"
-                    data-toggle="collapse" data-target="#collapseFour" aria-expanded="false"
-                    aria-controls="collapseFour">
-                    Review-4
-                </button>
-            </h2>
-        </div>
-        <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
-            <div class="card-body">
-                <div class="card-body" id="r4body">
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-header" id="headingFive">
-            <h2 class="mb-0">
-                <button class="btn btn-link btn-block text-left text-light collapsed" type="button"
-                    data-toggle="collapse" data-target="#collapseFive" aria-expanded="false"
-                    aria-controls="collapseFive">
-                    Review-5
-                </button>
-            </h2>
-        </div>
-        <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionExample">
-            <div class="card-body">
-                <div class="card-body" id="r5body">
-                </div>
-            </div>
-        </div>
+    <div class="card-footer text-muted" style="background-color: #0f2d90">
     </div>
 </div>
 <div class="modal fade bd-example-modal-xl" id="my_student_photo_upload" tabindex="-1" role="dialog"
