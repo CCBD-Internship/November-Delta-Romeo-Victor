@@ -62,10 +62,10 @@ function student_portal_status_display() {
     var close_time = new Date(student_portal_store["close_time"])
     var now = new Date()
     if (now.getTime() > open_time.getTime() && now.getTime() < close_time.getTime()) {
-        document.getElementById('student_portal_board').setAttribute('class', 'card bg-warning blink_me_sp')
+        document.getElementById('student_portal_board').setAttribute('class', 'card bg-success blink_me_sp')
     }
     else {
-        document.getElementById('student_portal_board').setAttribute('class', 'card bg-info')
+        document.getElementById('student_portal_board').setAttribute('class', 'card bg-danger')
     }
     elem = document.getElementById("student_portal_status_body")
     if (now.getTime() < open_time.getTime() && open_time.getTime() < close_time.getTime()) {
