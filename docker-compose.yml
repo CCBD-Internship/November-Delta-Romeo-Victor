@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  db:
+      image: postgres
+      container_name: nvrdb-postgres
+      environment:
+        - POSTGRES_DB=nvrdb
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+  web:
+    build: .
+    command: bash -c "python3 Back_end/NVRD/manage.py makemigrations && python3 Back_end/NVRD/manage.py migrate && python3 Back_end/NVRD/manage.py shell < Back_end/NVRD/eval/values.py && python3 Back_end/NVRD/manage.py runserver 0.0.0.0:8000"
+    container_name: django
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
