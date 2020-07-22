@@ -32,7 +32,7 @@ class Open_Close(models.Model):
 
 class Faculty(models.Model):
     fac_id = BleachField(primary_key=True, max_length=50, validators=[
-                         RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+                         RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input'),RegexValidator(regex='^[\-\s]*$', message='(-) and white-space not allowed')])
     name = BleachField(max_length=100, validators=[RegexValidator(
         regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
     email = models.EmailField()
@@ -71,7 +71,7 @@ class FacultyPanel(models.Model):
 class Panel(models.Model):
 
     panel_year_code = BleachField(
-        db_column="panel_year_code", max_length=10, validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+        db_column="panel_year_code", max_length=10, validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input'),RegexValidator(regex='^[\-\s]*$', message='(-) and white-space not allowed')])
     panel_id = BleachField(db_column="panel_id", max_length=10, validators=[
                            RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
     # panel_name = BleachField(
@@ -252,7 +252,7 @@ class Review5(models.Model):
 
 class Student(models.Model):
     srn = BleachField(primary_key=True, max_length=20, validators=[
-        RegexValidator(regex='^PES', message='SRN incorrect')])
+        RegexValidator(regex='^PES', message='SRN incorrect'), RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input'),RegexValidator(regex='^[\-\s]*$', message='(-) and white-space not allowed')])
     name = BleachField(max_length=100, validators=[RegexValidator(
         regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
     email = models.EmailField()
@@ -267,7 +267,7 @@ class Student(models.Model):
 
 class Team(models.Model):
     team_year_code = BleachField(
-        db_column="team_year_code", max_length=10, validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+        db_column="team_year_code", max_length=10, validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input'),RegexValidator(regex='^[\-\s]*$', message='(-) and white-space not allowed')])
     team_id = BleachField(db_column="team_id", max_length=10, validators=[
                           RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
     team_name = BleachField(max_length=100, blank=True, null=True, validators=[
@@ -289,8 +289,7 @@ class TeamFacultyReview(models.Model):
     fac_id = models.ForeignKey(
         Faculty, models.SET_NULL, null=True, blank=True)
     review_number = models.IntegerField()
-    remark = BleachField(max_length=200, blank=True, null=True, validators=[
-                         RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+    remark = BleachField(max_length=200, blank=True, null=True)
     id = models.AutoField(db_column="id", primary_key=True)
 
     class Meta:
@@ -303,15 +302,17 @@ class TeamFacultyReview(models.Model):
         managed = True
         unique_together = (('team_id', 'fac_id', 'review_number'),)
 
+
 def image_path(instance, filename):
     return os.path.join('some_dir', str(instance.some_identifier), 'filename.ext')
+
 
 class Profile_Photo(models.Model):
     srn = models.OneToOneField(Student,
                                on_delete=models.CASCADE,
                                primary_key=True,)
     image = models.ImageField(
-        default="static/default_user.png" ,upload_to="eval/student_images")
+        default="static/default_user.png", upload_to="eval/student_images")
 
 # from django.contrib.auth.models import User
 # from eval.models import *
