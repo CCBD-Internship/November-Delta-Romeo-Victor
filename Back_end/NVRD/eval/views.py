@@ -2232,3 +2232,27 @@ class GenerateFacultyPanel(APIView):
                 return Response(status=status.HTTP_403_FORBIDDEN)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class StudentPasswordGenerate(APIView):
+
+    parser_classes = [JSONParser]
+
+    def post(self, request, user):
+        try:
+            if(user == User.objects.get(username=request.user.username).get_username()):
+                if(Faculty.objects.get(fac_id=user).is_admin == True and User.objects.get(username=request.user.username).check_password(request.data["password"])):
+                    passwords={}
+                    for i in request.data["srns"]:
+                        s=Student.objects.filter(srn=i)
+                        if(s.exists()):
+                            passwords[i]={"name":s.first().name,"password":password_generate(i)}
+                        else:
+                            passwords[i]={"name":None,"password":None}
+                    return Response(passwords,status=status.HTTP_200_OK)
+                else:
+                    return Response(status=status.HTTP_403_FORBIDDEN)              
+            else:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)

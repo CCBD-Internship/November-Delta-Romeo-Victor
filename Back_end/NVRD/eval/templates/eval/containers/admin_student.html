@@ -1,6 +1,18 @@
 <!-- <div class="pull-right"> -->
 <nav class="navbar navbar-dark bg-info justify-content-end">
   <div class="btn-group">
+    <button type="button" class="btn btn-lg btn-primary active" id="pass-button_A"
+      onclick="pass_button_launch_A()">
+      <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-key" fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd"
+          d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11 9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4 4 0 0 1 0 8zm4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5z" />
+        <path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+      </svg>
+    </button>
+
+    <button type="button" style="visibility: hidden"></button>
+
     <button type="button" class="btn btn-lg btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
       aria-expanded="false">
       <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-search" fill="currentColor"
@@ -43,7 +55,8 @@
           d="M3.17 6.706a5 5 0 0 1 7.103-3.16.5.5 0 1 0 .454-.892A6 6 0 1 0 13.455 5.5a.5.5 0 0 0-.91.417 5 5 0 1 1-9.375.789z" />
         <path fill-rule="evenodd"
           d="M8.147.146a.5.5 0 0 1 .707 0l2.5 2.5a.5.5 0 0 1 0 .708l-2.5 2.5a.5.5 0 1 1-.707-.708L10.293 3 8.147.854a.5.5 0 0 1 0-.708z" />
-      </svg></button>
+      </svg>
+    </button>
 
     <button type="button" style="visibility: hidden"></button>
 
@@ -211,6 +224,32 @@
             <div class="toast-body" id="student_put_toast_admin_body"></div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="pass-modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Student Password Generate</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="px-4 py-3" id="student_pwgen_A" name="student_pwgen_form_A" onsubmit="event.preventDefault()"
+          novalidate>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" class="form-control" id="student_pwgen_pass_A" placeholder="password">
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="student_password_gen()">Generate</button>
       </div>
     </div>
   </div>

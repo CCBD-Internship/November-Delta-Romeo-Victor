@@ -311,6 +311,50 @@ function student_post_Admin() {
     xhttp.send(JSON.stringify([jsonarray]));
 }
 
+function pass_button_launch_A() {
+    var checkedBoxes = getCheckedBoxes_A("student_boxes_A")
+    if (checkedBoxes.length > 0) {
+        $('#pass-modal').modal('show')
+    }
+}
+
+function student_password_gen() {
+    var checkedBoxes = getCheckedBoxes_A("student_boxes_A")
+    let obj = { "srns": [], "password": document.getElementById("student_pwgen_pass_A").value }
+    document.getElementById("student_pwgen_pass_A").value = ''
+    for (let i = 0; i < checkedBoxes.length; i++) {
+        obj["srns"].push(checkedBoxes[i].parentElement.parentElement.firstElementChild.nextElementSibling.innerHTML)
+    }
+    var xhttp = new XMLHttpRequest()
+    xhttp.onreadystatechange = function () {
+        if (xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200) {
+            let mainstr = ["SRN", "Name", "Password"].join(",")+',\n'
+            let res = JSON.parse(this.responseText)
+            for (let i=0;i<Object.keys(res).length;i++) {
+                mainstr+=Object.keys(res)[i]+','+res[Object.keys(res)[i]]["name"]+','+res[Object.keys(res)[i]]["password"]+',\n'
+            }
+            download_pwgen("student_passwords.csv", mainstr);
+            $('#pass-modal').modal('hide')
+        }
+    }
+    refreshLoader(xhttp)
+    xhttp.open("POST", "/api/" + getCookie("username") + "/password-generate/", true);
+    xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
+    xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+    xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+    xhttp.send(JSON.stringify(obj))
+}
+
+function download_pwgen(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+}
+
 admin_refresh = function () {
     var a = 10
 }
