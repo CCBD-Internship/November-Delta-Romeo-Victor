@@ -328,10 +328,10 @@ function student_password_gen() {
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
         if (xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200) {
-            let mainstr = ["SRN", "Name", "Password"].join(",")+',\n'
+            let mainstr = ["SRN", "Name", "E-Mail","Password"].join(",")+',\n'
             let res = JSON.parse(this.responseText)
             for (let i=0;i<Object.keys(res).length;i++) {
-                mainstr+=Object.keys(res)[i]+','+res[Object.keys(res)[i]]["name"]+','+res[Object.keys(res)[i]]["password"]+',\n'
+                mainstr+=Object.keys(res)[i]+','+res[Object.keys(res)[i]]["name"]+','+res[Object.keys(res)[i]]["email"]+','+res[Object.keys(res)[i]]["password"]+',\n'
             }
             download_pwgen("student_passwords.csv", mainstr);
             $('#pass-modal').modal('hide')

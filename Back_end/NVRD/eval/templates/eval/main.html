@@ -302,7 +302,7 @@
             xhttp.onreadystatechange = function () {
                 if (this.readyState == XMLHttpRequest.DONE) {
                     if (this.status == 200) {
-                        console.log('Logged-In ' + (new Date()).toLocaleTimeString())
+                        let a=10
                     }
                     else {
                         window.location.replace('/logout/')
@@ -313,7 +313,7 @@
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
             xhttp.setRequestHeader("sessionid", getCookie("sessionid"));
-            xhttp.send("refresh=" + getCookie("refresh"))
+            xhttp.send()
         }
 
         function firstRefreshToken() {
@@ -321,7 +321,7 @@
             xhttp.onreadystatechange = function () {
                 if (this.readyState == XMLHttpRequest.DONE) {
                     if (this.status == 200) {
-                        console.log('Logged-In ' + (new Date()).toLocaleTimeString())
+                        console.log('Logged-In ')
                         setTree()
                     }
                     else {
@@ -333,11 +333,11 @@
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
             xhttp.setRequestHeader("sessionid", getCookie("sessionid"));
-            xhttp.send("refresh=" + getCookie("refresh"))
+            xhttp.send()
         }
 
         function setTree() {
-            setInterval(refreshToken, 1000 * 300);
+            setInterval(refreshToken, 1000 * 5 * 60);
             var xhttp = new XMLHttpRequest()
             xhttp.onreadystatechange = function () {
                 if (this.readyState == XMLHttpRequest.DONE) {
