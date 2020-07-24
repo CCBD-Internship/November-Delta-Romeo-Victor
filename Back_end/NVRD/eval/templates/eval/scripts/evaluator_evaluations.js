@@ -66,12 +66,13 @@ function E_evaluations_opentip(e, t) {
     document.getElementById('evaluation_views_card_body_review').textContent = curr_list[2]
     document.getElementById('evaluation_views_card_body_head').textContent = team_name
     document.getElementById('evaluation_views_card_body_description').textContent = team_desc
-    document.getElementById('evaluation_views_card_body_fac_id').textContent = getCookie('username')
+    document.getElementById('evaluation_views_card_body_fac_id').textContent = "Evaluator: " + User["name"]
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
         if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
             let data = JSON.parse(this.responseText)
             Evaluation_format = data
+            document.getElementById("evaluation_views_card_header_guide").textContent = "Guide: " + Evaluation_format["team"]["guide_id"]
             var thead = ''
             max_vals = {
                 1: [-2, -2, -2, 10, 10, 10, 10, 40, -1, -1, -3],
@@ -357,25 +358,30 @@ function update_total_marks(e, t) {
 function Evaluator_print() {
     submit_evaluation()
     document.getElementById("Evaluator_save_button").style = "display:none"
-    var my_head = '<head><style type="text/css" media="print">@page {size:landscape}</style></head>'
-    var sripts_init = '<script src="https://lh3.googleusercontent.com/proxy/4j0c0VApd8T3Tx9YvwWhVSUBt0_nTFP9RpMKgnbfVUej1WLbd1_DwcDDPJy2gapdMJCDrOg79Y3aRQ0GtU5DpWhuSb0AdrsUUQUhk8uduj54_Wr-7UFRG2VJtqlto2YXdwKPTzbhrnqYmPJcnc-pyekvqXMdBKwwWYHzJjeo1tH5s13gzv1UXjaRvq5eVZFDsA" crossorigin="anonymous"></script>'
-    var logo_div = "<div><img src='https://cdn.explara.com/pes-universit20190301125131.jpg' width=1300 height=180></div><br/>";
+    var my_head = '<title>Evaluation Print</title><link rel="stylesheet" type="text/css" href="https://bootswatch.com/4/darkly/bootstrap.css">'
+    var script_init = '<script src="https://lh3.googleusercontent.com/proxy/4j0c0VApd8T3Tx9YvwWhVSUBt0_nTFP9RpMKgnbfVUej1WLbd1_DwcDDPJy2gapdMJCDrOg79Y3aRQ0GtU5DpWhuSb0AdrsUUQUhk8uduj54_Wr-7UFRG2VJtqlto2YXdwKPTzbhrnqYmPJcnc-pyekvqXMdBKwwWYHzJjeo1tH5s13gzv1UXjaRvq5eVZFDsA" crossorigin="anonymous"></script>'
+    script_init += '<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"    crossorigin="anonymous"></script><script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"    integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"    crossorigin="anonymous"></script>'
+    var logo_div = "<center><img src='https://www.pes.edu/wp-content/uploads/2020/03/pes_logo1.png' style='width:auto;height:auto'></center><br/>";
+    var tab = open("", "")
     var req_div = document.getElementById('evaluation_views').innerHTML
-    var original_content = document.body.innerHTML
-    document.body.innerHTML = my_head
-    document.body.innerHTML += sripts_init
-    document.body.innerHTML += logo_div
-    document.body.innerHTML += req_div
-    window.print()
-    document.body.innerHTML = original_content
-    document.getElementById("Evaluator_save_button").style = "display:inline-block"
+    // var original_content = document.body.innerHTML
+    tab.document.head.innerHTML += my_head
+    tab.document.body.innerHTML +='<style type="text/css" media="print">@page {size:landscape}</style>'
+    tab.document.body.innerHTML += script_init
+    tab.document.body.innerHTML += logo_div
+    tab.document.body.innerHTML += req_div
+    setTimeout(function () {
+        tab.print();
+        // document.body.innerHTML = original_content;
+        tab.close()
+        document.getElementById("Evaluator_save_button").style = "display:inline-block";
+    }, 1000 * .5)
 }
 
 function student_photo_modal(e) {
     document.getElementById('student_photo_modal_img').src = "data:image/jpeg;base64," + Evaluation_format["photo"][e.target.getAttribute('name')]
     document.getElementById('student_photo_modal_srn').innerHTML = e.target.getAttribute('name')
     for (i of Evaluation_format["individual_review"]) {
-        console.log(i)
         if (i["srn"] == e.target.getAttribute('name')) {
             document.getElementById('student_photo_modal_name').innerHTML = i["name"]
         }

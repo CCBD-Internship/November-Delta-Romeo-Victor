@@ -32,7 +32,7 @@ class Open_Close(models.Model):
 
 class Faculty(models.Model):
     fac_id = BleachField(primary_key=True, max_length=50, validators=[
-                         RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input'),RegexValidator(regex='^[\-\s]*$', message='(-) and white-space not allowed')])
+                         RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input'),RegexValidator(regex='^[^\-\s]*$', message='(-) and white-space not allowed')])
     name = BleachField(max_length=100, validators=[RegexValidator(
         regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
     email = models.EmailField()
@@ -71,7 +71,7 @@ class FacultyPanel(models.Model):
 class Panel(models.Model):
 
     panel_year_code = BleachField(
-        db_column="panel_year_code", max_length=10, validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input'),RegexValidator(regex='^[\-\s]*$', message='(-) and white-space not allowed')])
+        db_column="panel_year_code", max_length=10, validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input'),RegexValidator(regex='^[^\-\s]*$', message='(-) and white-space not allowed')])
     panel_id = BleachField(db_column="panel_id", max_length=10, validators=[
                            RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
     # panel_name = BleachField(
@@ -252,7 +252,7 @@ class Review5(models.Model):
 
 class Student(models.Model):
     srn = BleachField(primary_key=True, max_length=20, validators=[
-        RegexValidator(regex='^PES', message='SRN incorrect'), RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input'),RegexValidator(regex='^[\-\s]*$', message='(-) and white-space not allowed')])
+        RegexValidator(regex='^PES', message='SRN incorrect'), RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input'),RegexValidator(regex='^[^\-\s]*$', message='(-) and white-space not allowed')])
     name = BleachField(max_length=100, validators=[RegexValidator(
         regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
     email = models.EmailField()
@@ -267,7 +267,7 @@ class Student(models.Model):
 
 class Team(models.Model):
     team_year_code = BleachField(
-        db_column="team_year_code", max_length=10, validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input'),RegexValidator(regex='^[\-\s]*$', message='(-) and white-space not allowed')])
+        db_column="team_year_code", max_length=10, validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input'),RegexValidator(regex='^[^\-\s]*$', message='(-) and white-space not allowed')])
     team_id = BleachField(db_column="team_id", max_length=10, validators=[
                           RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
     team_name = BleachField(max_length=100, blank=True, null=True, validators=[

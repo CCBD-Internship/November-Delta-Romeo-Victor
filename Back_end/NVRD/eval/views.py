@@ -1901,6 +1901,7 @@ class EvaluatorMarksView(APIView):
                     team_id=team_id, team_year_code=team_year_code)
                 t_serial = list(t.values())[0]
                 t_serial.pop("id")
+                t_serial["guide_id"]=Faculty.objects.get(fac_id=t_serial["guide_id"]).name
                 res = {"team": t_serial, "review_number": review_number}
                 if(TeamFacultyReview.objects.filter(team_id=t.first().id, fac_id=user, review_number=review_number).exists()):
                     tfr = TeamFacultyReview.objects.filter(
