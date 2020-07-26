@@ -1,18 +1,34 @@
-version: '3'
+version: "3"
 
 services:
   db:
-      image: postgres
-      container_name: nvrdb-postgres
-      environment:
-        - POSTGRES_DB=nvrdb
-        - POSTGRES_USER=postgres
-        - POSTGRES_PASSWORD=postgres
+    image: postgres
+    container_name: nvrd-postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=nvrdb
   web:
     build: .
-    command: bash -c "python3 Back_end/NVRD/manage.py makemigrations && python3 Back_end/NVRD/manage.py migrate && python3 Back_end/NVRD/manage.py shell < Back_end/NVRD/eval/values.py && python3 Back_end/NVRD/manage.py runserver 0.0.0.0:8000"
-    container_name: django
+    # command: bash -c "python3 Back_end/NVRD/manage.py makemigrations && python3 Back_end/NVRD/manage.py migrate && python3 Back_end/NVRD/manage.py shell < Back_end/NVRD/eval/values.py && cd Back_end/NVRD && gunicorn NVRD.wsgi:application --bind 0.0.0.0:8000"
+    command: bash -c "cd Back_end/NVRD && python3 manage.py makemigrations && python3 manage.py migrate && gunicorn NVRD.wsgi:application --bind 0.0.0.0:8000"
+    container_name: nvrd-django
+    env_file:
+      - .env.dev
     volumes:
       - .:/code
     ports:
       - "8000:8000"
+
+  nginx:
+    build: ./nginx
+    container_name: nvrd-nginx
+    ports:
+      - 1337:80
+    depends_on:
+      - web
+
+volumes:
+  postgres_data:

@@ -1,2 +1,3 @@
 Back_end/NVRD/NVRD/settings.py
-Back_end/NVRD/NVRD/.vscode/
+Back_end/NVRD/.vscode/
+.env.dev

@@ -1,4 +1,5 @@
 FROM python:3.6
+EXPOSE 8000
 ENV PYTHONUNBUFFERED 1
 RUN mkdir /code
 WORKDIR /code
