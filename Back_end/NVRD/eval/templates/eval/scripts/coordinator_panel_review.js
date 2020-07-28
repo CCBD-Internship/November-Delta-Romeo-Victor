@@ -127,3 +127,24 @@ function PRC_display_status(e) {
         elem.textContent = "Evaluation window was closed on " + close_time.toLocaleDateString() + " at " + close_time.toLocaleTimeString()
     }
 }
+function coord_sendmail(){
+    var msg=document.getElementById("coord_mailmsg").value
+    var safe=/^[a-zA-Z0-9-,.?;\n() ]*$/
+    if(!msg||!msg.match(safe))
+        return
+    var xhttp = new XMLHttpRequest()
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+            $("#send_mailmsg").modal('hide')
+        }
+    }
+    var curr_list = returnCurrentList()
+    var panel_year_code = curr_list[1].slice(0, curr_list[1].indexOf("-"))
+    var panel_id = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
+    refreshLoader(xhttp)
+    xhttp.open("POST", '/api/'+getCookie("username")+'/'+panel_year_code+'-'+panel_id+'/panel-review-mail/', true);
+    xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
+    xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+    xhttp.setRequestHeader("Content-type","application/json;charset UTF-8");
+    xhttp.send(JSON.stringify({"message":msg})) 
+}
