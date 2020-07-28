@@ -59,6 +59,7 @@ urlpatterns = [
          views.GenerateFacultyPanel.as_view()),
     path('api/<str:user>/student-portal/', views.StudentPortal_List.as_view()),
     path('api/<str:user>/password-generate/', views.StudentPasswordGenerate.as_view()),
+    path('api/<str:user>/<str:panel_year_code>-<str:panel_id>/panel-review-mail/',views.PanelReviewMail.as_view()),
     path('', views.loginpage),
     path('logout/', views.logoutUser, name="logout"),
     path('<str:user>/refresh/', views.refresh),
