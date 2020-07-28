@@ -23,9 +23,10 @@ from django.http import FileResponse
 from .models import *
 from .serializers import *
 from django.core.files.base import ContentFile
+from django.core.mail import send_mail,send_mass_mail
 import json
 import datetime
-from NVRD.settings import SIMPLE_JWT, BASE_DIR
+from NVRD.settings import SIMPLE_JWT, BASE_DIR, EMAIL_HOST_USER
 import jwt
 import csv
 import hashlib
@@ -379,11 +380,11 @@ def individual_review_dict_download(l, rno):
 
 def password_generate(user):
     my_hash = (hashlib.sha256(user.encode()).hexdigest())
-    return str(hex(int(my_hash, 16)+int(hashlib.sha256("NVRD_69420_Your_Choice_!!!".encode()).hexdigest(),16)))[-16:-1]
+    return str(hex(int(my_hash, 16)+int(hashlib.sha256("NVRD_69420_Your_Choice_!!!".encode()).hexdigest(), 16)))[-16:-1]
 
 
 def password_match(user, p):
-    return(password_generate(user)==p)
+    return(password_generate(user) == p)
 
 
 def student_logout(request):
@@ -570,7 +571,8 @@ class Faculty_List(APIView):
 
     def get(self, request, user):
         try:
-            fid = User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()
+            fid = User.objects.get(id=jwt_decode_handler(
+                request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()
             prof = Faculty.objects.get(fac_id=fid)
             if(prof.is_admin and prof.fac_id == user):
                 faculty_as_object = Faculty.objects.filter().order_by("fac_id")
@@ -622,6 +624,7 @@ class Faculty_List(APIView):
                                 i.save()
                                 User.objects.create_user(
                                     last_name=i["name"].value, username=i["fac_id"].value, password=i["fac_id"].value, email=i["email"].value)
+                                send_mail('PES Evaluation System ACCOUNT CREATED','Dear '+i["name"].value+'\n\nYour PES Evaluation System faculty account has been created\nUsername: '+i["fac_id"].value+'\nYour password is currently your username, so please change your password the next time you login',EMAIL_HOST_USER,[i["email"].value])
                         return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
                     else:
                         return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
@@ -1871,7 +1874,8 @@ class ChangePassword(APIView):
     def post(self, request, user):
         try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
-                U = User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"])
+                U = User.objects.get(id=jwt_decode_handler(
+                    request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"])
                 if("new_password" in request.data and "confirm_password" in request.data and "old_password" in request.data):
                     if(U.check_password(request.data["old_password"])):
                         if((request.data["new_password"] == request.data["confirm_password"]) and (request.data["new_password"] != "") and (request.data["new_password"] != "")):
@@ -1901,7 +1905,8 @@ class EvaluatorMarksView(APIView):
                     team_id=team_id, team_year_code=team_year_code)
                 t_serial = list(t.values())[0]
                 t_serial.pop("id")
-                t_serial["guide_id"]=Faculty.objects.get(fac_id=t_serial["guide_id"]).name
+                t_serial["guide_id"] = Faculty.objects.get(
+                    fac_id=t_serial["guide_id"]).name
                 res = {"team": t_serial, "review_number": review_number}
                 if(TeamFacultyReview.objects.filter(team_id=t.first().id, fac_id=user, review_number=review_number).exists()):
                     tfr = TeamFacultyReview.objects.filter(
@@ -2239,17 +2244,42 @@ class StudentPasswordGenerate(APIView):
         try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
                 if(Faculty.objects.get(fac_id=user).is_admin == True and User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).check_password(request.data["password"])):
-                    passwords={}
-                    for i in request.data["srns"]:
-                        s=Student.objects.filter(srn=i)
-                        if(s.exists()):
-                            passwords[i]={"name":s.first().name,"password":password_generate(i),"email":s.first().email}
-                        else:
-                            passwords[i]={"name":None,"password":None}
-                    return Response(passwords,status=status.HTTP_200_OK)
+                    if(request.data["type"] == "mail"):
+                        data_tuples=[]
+                        s = Student.objects.filter(srn__in=request.data["srns"])
+                        for i in s:
+                            data_tuples.append(("PES Evaluation System Student Credentials",i.srn+"\n\nDear "+i.name+",\n"+"Your password for the PES Final-Year-Project Student-Portal is :"+password_generate(i.srn)+"\nThe password cannot be changed and Faculty Administrator can access this password, hence donot use it elsewhere",EMAIL_HOST_USER,[i.email]))
+                        send_mass_mail(data_tuples,fail_silently=True)
+                        return Response({"detail": successful}, status=status.HTTP_200_OK)
+                    elif(request.data["type"] == "json"):
+                        passwords={}
+                        for i in request.data["srns"]:
+                            s=Student.objects.filter(srn=i)
+                            if(s.exists()):
+                                passwords[i]={"name":s.first().name,"password":password_generate(i),"email":s.first().email}
+                            else:
+                                passwords[i]={"name":None,"password":None}
+                        return Response(passwords, status=status.HTTP_200_OK)
+                    else:
+                        return Respose({"detail": "type should be either 'mail' or 'json'"}, status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    return Response(status=status.HTTP_403_FORBIDDEN)              
+                    return Response(status=status.HTTP_403_FORBIDDEN)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+# class PanelReviewMail(APIView):
+
+#     parser_classes = [JSONParser]
+
+#     def post(self, request, user, panel_year_code, panel_id):
+#         try:
+#             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
+#                 if(FacultyPanel.objects.filter(fac_id=Faculty.objects.get(fac_id=user),panel_id=Panel.objects.filter(panel_year_code=panel_year_code,panel_id=panel_id)).is_coordinator):
+#                     f=FacultyPanel.objects.filter(fac_id=Faculty.objects.get(fac_id=user),panel_id=Panel.objects.filter(panel_year_code=panel_year_code,panel_id=panel_id)).is_coordinator
+#             else:
+#                 return Response(status=status.HTTP_403_FORBIDDEN)
+#         except:
+#             return Response(status=status.HTTP_400_BAD_REQUEST)

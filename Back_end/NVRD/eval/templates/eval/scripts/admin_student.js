@@ -318,16 +318,16 @@ function pass_button_launch_A() {
     }
 }
 
-function student_password_gen() {
+function student_password_gen(type) {
     var checkedBoxes = getCheckedBoxes_A("student_boxes_A")
-    let obj = { "srns": [], "password": document.getElementById("student_pwgen_pass_A").value }
+    let obj = { "srns": [], "password": document.getElementById("student_pwgen_pass_A").value, "type":type }
     document.getElementById("student_pwgen_pass_A").value = ''
     for (let i = 0; i < checkedBoxes.length; i++) {
         obj["srns"].push(checkedBoxes[i].parentElement.parentElement.firstElementChild.nextElementSibling.innerHTML)
     }
     var xhttp = new XMLHttpRequest()
     xhttp.onreadystatechange = function () {
-        if (xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200) {
+        if (type=='json' && xhttp.readyState == XMLHttpRequest.DONE && xhttp.status == 200) {
             let mainstr = ["SRN", "Name", "E-Mail","Password"].join(",")+',\n'
             let res = JSON.parse(this.responseText)
             for (let i=0;i<Object.keys(res).length;i++) {
