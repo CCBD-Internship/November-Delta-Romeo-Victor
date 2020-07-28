@@ -10,6 +10,44 @@
     }
 </style>
 
+<div class="navbar navbar-dark">
+  <button type="button" class="btn btn-lg btn-success active float-left" data-toggle="modal"
+      data-target="#send_mailmsg"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-envelope-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd" d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555zM0 4.697v7.104l5.803-3.558L0 4.697zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757zm3.436-.586L16 11.801V4.697l-5.803 3.546z"/>
+      </svg>
+  </button>
+</div>
+
+
+
+<div class="modal fade" id="send_mailmsg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="text-align: center;" class="modal-title" id="exampleModalLabel_A">Mail Schedule</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div> 
+      <div class="modal-body">
+        <div class="form-group">
+          <form onsubmit="event.preventDefault()">
+            <label for="recipient-name" class="col-form-label"></label>
+            <textarea id="coord_mailmsg" rows="5" cols="55" placeholder="Type a Message"></textarea>
+            <br>
+            <button type="submit" class="btn btn-primary" onclick="coord_sendmail()">Send Mail</button>
+            &nbsp;
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 <div class="navbar navbar-dark justify-content-end">
     <button type="button" class="btn btn-lg btn-info active float-right" data-toggle="modal" id="refresh"
         onclick="panel_review_refresh_coordinator()"><svg width="1em" height="1em" viewBox="0 0 16 16"
