@@ -624,7 +624,7 @@ class Faculty_List(APIView):
                                 i.save()
                                 User.objects.create_user(
                                     last_name=i["name"].value, username=i["fac_id"].value, password=i["fac_id"].value, email=i["email"].value)
-                                send_mail('PES Evaluation System ACCOUNT CREATED', 'Dear '+i["name"].value+'\n\nYour PES Evaluation System faculty account has been created\nUsername: ' +
+                                send_mail('PES Evaluation System ACCOUNT CREATED', 'Dear '+i["name"].value+',\n\nYour PES Evaluation System faculty account has been created\nUsername: ' +
                                           i["fac_id"].value+'\nYour password is currently your username, so please change your password the next time you login', EMAIL_HOST_USER, [i["email"].value])
                         return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
                     else:
@@ -2281,33 +2281,33 @@ class PanelReviewMail(APIView):
     def post(self, request, user, panel_year_code, panel_id):
         try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
-                if(FacultyPanel.objects.filter(fac_id=Faculty.objects.get(fac_id=user), panel_id=Panel.objects.filter(panel_year_code=panel_year_code, panel_id=panel_id)).is_coordinator):
-                    pr = PanelReview.objects.filter(
-                        panel_year_code=panel_year_code, panel_id=panel_id)
+                if(FacultyPanel.objects.filter(fac_id=Faculty.objects.get(fac_id=user), panel_id=Panel.objects.filter(panel_year_code=panel_year_code, panel_id=panel_id).first()).first().is_coordinator):
                     pan = Panel.objects.filter(
                         panel_year_code=panel_year_code, panel_id=panel_id).first()
+                    pr = PanelReview.objects.filter(panel_id=pan)
                     coord = Faculty.objects.get(fac_id=user)
                     message = (pan.panel_year_code + '-'+pan.panel_id +
                                '\n'+pan.panel_name+'\n\n'+request.data["message"]+'\n\n')
                     for i in range(1, 6):
-                        c = pr.filter(review_number=rno).first()
+                        c = pr.filter(review_number=i).first()
                         if(timezone.now() > c.open_time and timezone.now() < c.close_time):
-                            message += ("Review "+i+":" +
-                                        "The review is currently open till "+c.close_time+"\n")
+                            message += ("Review "+str(i)+": " + "The review is currently open till "+str(c.close_time)+"\n") 
                         elif(timezone.now() < c.open_time and timezone.now() < c.close_time):
-                            message += ("Review "+i+":" +
-                                        "The review will open at"+c.open_time+"\n")
+                            message += ("Review "+str(i)+": " + \
+                                        "The review will open at "+str(c.open_time)+" and will close at "+str(c.close_time)+"\n")
                         else:
-                            message += ("Review "+i+":" +
+                            message += ("Review "+str(i)+": " + \
                                         "The review is closed now"+"\n")
-                    message += ('From '+coord.name+'\nPanel Coordinator')
+                    message += ('\nFrom '+coord.name+'\n(Panel Coordinator)')
                     f = FacultyPanel.objects.filter(
                         fac_id=Faculty.objects.get(fac_id=user), panel_id=pan)
                     data_tuples = []
                     for i in f:
+                        fac=i.fac_id
                         data_tuples.append(('PES Evaluation System '+pan.panel_year_code +
-                                            '-'+pan.panel_id+' Review Schedule', 'Dear '+i.name+'\n\n'+message, EMAIL_HOST_USER, [i.email]))
+                                            '-'+pan.panel_id+' Review Schedule', 'Dear '+fac.name+',\n\n'+message, EMAIL_HOST_USER, [fac.email]))
                     send_mass_mail(data_tuples, fail_silently=True)
+                    return Response({"detail":"success"},status=status.HTTP_200_OK)
                 else:
                     return Response(status=status.HTTP_403_FORBIDDEN)
             else:
