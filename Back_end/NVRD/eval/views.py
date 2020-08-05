@@ -625,7 +625,7 @@ class Faculty_List(APIView):
                                 User.objects.create_user(
                                     last_name=i["name"].value, username=i["fac_id"].value, password=i["fac_id"].value, email=i["email"].value)
                                 send_mail('PES Evaluation System ACCOUNT CREATED', 'Dear '+i["name"].value+',\n\nYour PES Evaluation System faculty account has been created\nUsername: ' +
-                                          i["fac_id"].value+'\nYour password is currently your username, so please change your password the next time you login', EMAIL_HOST_USER, [i["email"].value])
+                                          i["fac_id"].value+'\nPassword: '+i["fac_id"].value+'\nYour password is currently your username, so please change your password the next time you login', EMAIL_HOST_USER, [i["email"].value])
                         return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
                     else:
                         return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
