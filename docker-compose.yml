@@ -13,7 +13,7 @@ services:
   web:
     build: .
     # command: bash -c "python3 Back_end/NVRD/manage.py makemigrations && python3 Back_end/NVRD/manage.py migrate && python3 Back_end/NVRD/manage.py shell < Back_end/NVRD/eval/values.py && cd Back_end/NVRD && gunicorn NVRD.wsgi:application --bind 0.0.0.0:8000"
-    command: bash -c "cd Back_end/NVRD && python3 manage.py makemigrations && python3 manage.py migrate && gunicorn --workers=3 NVRD.wsgi:application --bind 0.0.0.0:8000"
+    command: bash -c "cd Back_end/NVRD && python3 manage.py makemigrations && python3 manage.py migrate && gunicorn --workers=2 NVRD.wsgi:application --bind 0.0.0.0:8000"
     container_name: nvrd-django
     env_file:
       - .env.dev
@@ -26,7 +26,7 @@ services:
     build: ./nginx
     container_name: nvrd-nginx
     ports:
-      - 1337:80
+      - 80:80
     depends_on:
       - web
 
