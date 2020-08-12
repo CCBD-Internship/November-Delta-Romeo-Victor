@@ -2302,8 +2302,7 @@ class PanelReviewMail(APIView):
                             message += ("Review "+str(i)+": " + \
                                         "The review is closed now"+"\n")
                     message += ('\nFrom '+coord.name+'\n(Panel Coordinator)')
-                    f = FacultyPanel.objects.filter(
-                        fac_id=Faculty.objects.get(fac_id=user), panel_id=pan)
+                    f = FacultyPanel.objects.filter(panel_id=pan)
                     data_tuples = []
                     for i in f:
                         fac=i.fac_id
