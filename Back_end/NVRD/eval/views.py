@@ -951,9 +951,10 @@ class Panel_List(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, user, panel_year_code=None, panel_id=None):
-        try:
+        # try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
                 if(panel_id == None and panel_year_code == None and Faculty.objects.get(fac_id=user).is_admin == True):
+                    print(request.data)
                     response_list = []
                     serial_list = []
                     for i in request.data:
@@ -966,8 +967,10 @@ class Panel_List(APIView):
                         else:
                             serial_list.append(serial)
                     if(response_list == []):
+                        panel_id_list=[]
                         for i in serial_list:
                             i.save()
+                            panel_id_list.append(i.validated_data["panel_id"])
                             p = Panel.objects.filter(
                                 panel_id=i["panel_id"].value, panel_year_code=i["panel_year_code"].value).first()
                             for k in range(1, 6):
@@ -975,15 +978,15 @@ class Panel_List(APIView):
                                 # )+datetime.timedelta(days=365), timezone.get_default_timezone()), id=i["panel_year_code"].value+'_'+i["panel_id"].value+'_'+str(k)).save()
                                 PanelReview(review_number=k, panel_id=p, open_time=p.ctime, close_time=p.ctime,
                                             id=i["panel_year_code"].value+'_'+i["panel_id"].value+'_'+str(k)).save()
-                        return Response({"detail": "insert successful"}, status=status.HTTP_201_CREATED)
+                        return Response({"detail": "insert successful","panel_id":panel_id_list}, status=status.HTTP_201_CREATED)
                     else:
                         return Response(response_list, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     return Response({"detail": "only project administrator can insert"}, status=status.HTTP_403_FORBIDDEN)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        # except:
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, user, panel_id=None, panel_year_code=None):
         try:

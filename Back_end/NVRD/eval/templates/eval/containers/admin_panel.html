@@ -1,5 +1,14 @@
 <nav class="navbar navbar-dark bg-info justify-content-end">
   <div class="btn-group">
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#panelUploadCsvModal_A">
+      <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-upload" fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd"
+          d="M.5 8a.5.5 0 0 1 .5.5V12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8.5a.5.5 0 0 1 1 0V12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8.5A.5.5 0 0 1 .5 8zM5 4.854a.5.5 0 0 0 .707 0L8 2.56l2.293 2.293A.5.5 0 1 0 11 4.146L8.354 1.5a.5.5 0 0 0-.708 0L5 4.146a.5.5 0 0 0 0 .708z" />
+        <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0v-8A.5.5 0 0 1 8 2z" />
+      </svg>
+    </button>
+    <button type="button" style="visibility: hidden"></button>
     <button type="button" class="btn btn-lg btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
       aria-expanded="false">
       <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-search" fill="currentColor"
@@ -178,6 +187,58 @@
             </div>
             <div class="toast-body" id="panel_put_toast_admin_body"></div>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade bd-example-modal-xl" id="panelUploadCsvModal_A" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="text-align: center;" class="modal-title" id="exampleModalLabel">Upload CSV</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center">
+        <input type="file" id="admin_panel_upload_file"
+          accept=".csv, .xlsx, .xls"
+          onchange="admin_panel_upload_csv(this)" /><br /><br />
+        <div class="card">
+          <button type="button" class="btn btn-secondary dropdown-toggle btn-info" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Rules
+          </button>
+          <div class="card-body dropdown-menu" id="rule_card">
+            <h5 class="card-title">Uploadable File Format</h5>
+            <p class="card-text">
+            <ul>
+              <li>File must be a CSV</li>
+              <li>First Professor in the list is assumed as Panel Coordinator</li>
+              <li>Format as follows</li>
+              <ol type="I">
+                <li>First Column - Panel-Year-Code</li>
+                <li>Consequent Columns - Faculty IDs'</li>
+              </ol>
+            </ul>
+            </p>
+          </div>
+        </div>
+        <div class="text-left"><pre><code id="admin_team_upload_response"></code></pre></div>
+        <!-- <button type="button" id="admin_team_upload_custom_file" onclick="">CHOOSE A FILE</button>
+          <span id="admin_team_upload_custom_text">No file chosen, yet.</span><br/><br/> -->
+        <div class="toast" id="team_csv_toast_admin" role="alert" style="position: absolute; top: 0; right: 0;"
+          aria-live="assertive" aria-atomic="true" data-animation="true" data-delay="10000">
+          <div class="toast-header">
+            <div id="team_csv_svg_A"></div>
+            <strong class="mr-auto" id="team_csv_toast_admin_header"></strong>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="toast-body" id="team_csv_toast_admin_body"></div>
         </div>
       </div>
     </div>

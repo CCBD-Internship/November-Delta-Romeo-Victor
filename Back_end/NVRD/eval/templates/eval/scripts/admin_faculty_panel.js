@@ -189,3 +189,98 @@ function admin_faculty_panel_put() {
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     xhttp.send(JSON.stringify([jsonarray]));
 }
+
+
+function admin_team_upload_csv(event) {
+    const selectedFile = document.getElementById('admin_team_upload_file').files[0];
+    const reader = new FileReader();
+    reader.onload = function () {
+        var result = []
+        var team_fields = ["team_year_code", "team_name", "description", "guide","dept"]
+        var stud_fields = ["srn", "name", "email", "phone"]
+        var linearray = reader.result.split('\n');
+        for (var i = 1; i < linearray.length; i++) {
+            if (linearray[i] != "") {
+                var dict = {};
+                var arr = linearray[i].split(',')
+                for (var j = 0; j < team_fields.length; j++) {
+                    dict[team_fields[j]] = (arr[j] == '' || arr[j] == 'null') ? null : arr[j]
+                }
+                dict["student"] = []
+                for (var j = 0; j < (arr.length - team_fields.length) / stud_fields.length; j++) {
+                    if (arr[j * stud_fields.length + team_fields.length] != '') {
+                        var stud_dict = {}
+                        for (var k = 0; k < stud_fields.length; k++) {
+                            stud_dict[stud_fields[k]] = arr[j * stud_fields.length + team_fields.length + k]
+                        }
+                        dict["student"].push(stud_dict)
+                    }
+                }
+                result.push(dict)
+            }
+        }
+        var xhttp = new XMLHttpRequest()
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == XMLHttpRequest.DONE) {
+                if (this.status == 201) {
+                    var svg_tick = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check-circle-fill" fill="green" xmlns="http://www.w3.org/2000/svg">'
+                    svg_tick += '<path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>'
+                    svg_tick += '</svg>'
+                    document.getElementById('team_csv_svg_A').innerHTML = svg_tick
+                    document.getElementById('team_csv_toast_admin_header').innerHTML = 'SUCCESS'
+                    document.getElementById('team_csv_toast_admin_body').innerHTML = "Assumptions made while inserting are listed below, Please Search to access inserted data"
+                    $('#team_csv_toast_admin').toast('show');
+                    var suc_data = JSON.parse(this.responseText)
+                    var resp = ''
+                    resp += '<table id="A_teamcsv_Table" class="table table-bordered">'
+                    resp += '<th>Team name</th><th>details</th>'
+                    for (var i = 0; i < suc_data["assumption"].length; ++i)
+                        resp += "<tr><td>" + suc_data["assumption"][i]["value"][0]["team_name"] + "</td><td>" + suc_data["assumption"][i]["detail"] + "</td></tr>"
+                    resp += '</table>'
+                    document.getElementById('admin_team_upload_response').innerHTML = resp
+                    document.getElementById('admin_team_upload_file').value=null
+                }
+                else {
+                    var svg_cross = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle-fill" fill="red" xmlns="http://www.w3.org/2000/svg">'
+                    svg_cross += '<path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-4.146-3.146a.5.5 0 0 0-.708-.708L8 7.293 4.854 4.146a.5.5 0 1 0-.708.708L7.293 8l-3.147 3.146a.5.5 0 0 0 .708.708L8 8.707l3.146 3.147a.5.5 0 0 0 .708-.708L8.707 8l3.147-3.146z"/>'
+                    svg_cross += '</svg>'
+                    document.getElementById('team_csv_svg_A').innerHTML = svg_cross
+                    document.getElementById('team_csv_toast_admin_header').innerHTML = 'FAILURE'
+                    document.getElementById('team_csv_toast_admin_body').innerHTML = "Errors are listed below"
+                    $('#team_csv_toast_admin').toast('show');
+                    str = ''
+                    var data = JSON.parse(this.responseText)
+                    str += '<table id="A_teamcsv_Table" class="table table-bordered">'
+                    str += '<th>Team</th><th>Field</th><th>details</th>'
+                    for (let i in data) {
+                        str += '<tr><td>' + (data[i]["value"][0]["team_year_code"] + '-' + data[i]["value"][0]["team_name"]) + '</td>'
+                        if (data[i].value[1])
+                            str += '<td>' + data[i].value[1]['srn'] + '</td>'
+                        else
+                            str += '<td></td>'
+                        if (typeof (data[i]["detail"]) == "string")
+                            str += "<td><br>" + data[i]["detail"] + "<br></td>"
+                        else {
+                            let k = Object.keys(data[i]["detail"])
+                            str += '<td>'
+                            for (let j = 0; j < k.length; ++j)
+                                str += k[j] + ":" + data[i]["detail"][k[j]] + "<br>"
+                            str += '</td>'
+                        }
+                        str += '</tr>'
+                    }
+                    str += '</table>'
+                    document.getElementById('admin_team_upload_response').innerHTML = str
+                    document.getElementById('admin_team_upload_file').value=null
+                }
+            }
+        }
+        refreshLoader(xhttp)
+        xhttp.open("POST", "/api/" + getCookie("username") + "/team-bulk/", true);
+        xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
+        xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+        xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+        xhttp.send(JSON.stringify(result));
+    }
+    reader.readAsText(selectedFile);
+}

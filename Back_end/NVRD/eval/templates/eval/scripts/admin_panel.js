@@ -55,7 +55,7 @@ function search_panels_A() {
                         str += ("<td>" + date.toLocaleString() + "</td>")
                     }
                     else if (j == "is_active")
-                         str += ("<td>" + (data[i][j] ? '&#9989;' : '&#10060;') + "</td>")
+                        str += ("<td>" + (data[i][j] ? '&#9989;' : '&#10060;') + "</td>")
                     else if (j == "id")
                         continue
                     else
@@ -273,4 +273,59 @@ function admin_panel_post() {
     xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");
     xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     xhttp.send(JSON.stringify(arr))
+}
+
+function admin_panel_upload_csv(event) {
+    const selectedFile = document.getElementById('admin_panel_upload_file').files[0];
+    const reader = new FileReader();
+    reader.onload = function () {
+        var panel_create_json = []
+        var panel_year_code = []
+        var linearray = reader.result.split('\n');
+        for (var i = 0; i < linearray.length; i++) {
+            if (linearray[i] != "") {
+                panel_year_code.push(linearray[i].split(",")[0])
+                panel_create_json.push({ "panel_year_code": linearray[i].split(",")[0], "panel_name": linearray[i].split(",")[1] })
+            }
+        }
+        var xhttp = new XMLHttpRequest()
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == XMLHttpRequest.DONE) {
+                if (this.status == 201) {
+                    var ids = JSON.parse(this.responseText)["panel_id"]
+                    var fac_pan_json = []
+                    for (var i = 0; i < linearray.length; i++) {
+                        if (linearray[i] != "") {
+                            var lst = linearray[i].split(',')
+                            for (var j = 2; j < lst.length; j++) {
+                                fac_pan_json.push({ "panel_year_code": panel_year_code[i], "panel_id": ids[i], "fac_id": lst[j], "is_coordinator": j == 2 ? 1 : 0 })
+                            }
+                        }
+                    }
+                    refreshLoader(xhttp)
+                    xhttp.onreadystatechange = function () {
+                        if (this.readyState == XMLHttpRequest.DONE) {
+                            if (this.status == 201) {
+                                admin_panel_refresh()
+                            }
+                            document.getElementById('admin_panel_upload_file').value = ""
+                        }
+                    }
+                    xhttp.open("POST", "/api/" + getCookie("username") + "/faculty-panel/", true);
+                    xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
+                    xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+                    xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+                    xhttp.send(JSON.stringify(fac_pan_json));
+                }
+            }
+            document.getElementById('admin_panel_upload_file').value = ""
+        }
+        refreshLoader(xhttp)
+        xhttp.open("POST", "/api/" + getCookie("username") + "/panel/", true);
+        xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
+        xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+        xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+        xhttp.send(JSON.stringify(panel_create_json));
+    }
+    reader.readAsText(selectedFile);
 }
