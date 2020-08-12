@@ -1559,7 +1559,7 @@ class TeamFacultyReview_List(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, user, panel_year_code, panel_id):
-        try:
+        # try:
             if(user == User.objects.get(id=jwt_decode_handler(request.META["HTTP_AUTHORIZATION"].split()[1])["user_id"]).get_username()):
                 accept = []
                 fail = []
@@ -1572,7 +1572,7 @@ class TeamFacultyReview_List(APIView):
                                 team_year_code=i["team_year_code"], team_id=i["team_id"]).first().guide.fac_id
                             t_id = Team.objects.filter(
                                 team_year_code=i["team_year_code"], team_id=i["team_id"], panel_id=p_id).first().id
-                            if TeamFacultyReview.objects.filter(team_id=t_id, fac_id=g_fid, review_number=i["review_number"]).exists() or g_fid == i["fac_id"]:
+                            if TeamFacultyReview.objects.filter(team_id=t_id, fac_id=g_fid, review_number=i["review_number"]).exists() or g_fid in [i["fac_id"] for i in request.data if t_id==Team.objects.filter(team_id=i["team_id"],team_year_code=i["team_year_code"]).first().id]:
                                 teach = i["fac_id"]
                                 if FacultyPanel.objects.filter(panel_id=p_id, fac_id=teach).exists():
                                     t_id = Team.objects.filter(
@@ -1643,8 +1643,8 @@ class TeamFacultyReview_List(APIView):
                     return Response(fail, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response(status=status.HTTP_403_FORBIDDEN)
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        # except:
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, user, panel_year_code, panel_id):
         try:

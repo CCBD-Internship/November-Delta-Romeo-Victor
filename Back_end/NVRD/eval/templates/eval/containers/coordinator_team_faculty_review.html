@@ -1,3 +1,14 @@
+<button type="button" class="btn btn-success float-right" data-toggle="modal" data-target="#TFRUploadCsvModal_A">
+  <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-upload" fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd"
+      d="M.5 8a.5.5 0 0 1 .5.5V12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8.5a.5.5 0 0 1 1 0V12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8.5A.5.5 0 0 1 .5 8zM5 4.854a.5.5 0 0 0 .707 0L8 2.56l2.293 2.293A.5.5 0 1 0 11 4.146L8.354 1.5a.5.5 0 0 0-.708 0L5 4.146a.5.5 0 0 0 0 .708z" />
+    <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0v-8A.5.5 0 0 1 8 2z" />
+  </svg>
+</button>
+<br>
+<br><br>
+
 <div id="NVRD_coord_team_fac_review_card">
   <!-- cards -->
 </div>
@@ -270,6 +281,46 @@
           </div>
           <div class="toast-body" id="C_TFR_post_toast_body"></div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade bd-example-modal-xl" id="TFRUploadCsvModal_A" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="text-align: center;" class="modal-title" id="exampleModalLabel">Upload CSV</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center">
+        <input type="file" id="admin_TFR_upload_file"
+          accept=".csv, .xlsx, .xls"
+          onchange="admin_TFR_upload_csv(this)" /><br /><br />
+        <div class="card">
+          <button type="button" class="btn btn-secondary dropdown-toggle btn-info" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Rules
+          </button>
+          <div class="card-body dropdown-menu" id="rule_card">
+            <h5 class="card-title">Uploadable File Format</h5>
+            <p class="card-text">
+            <ul>
+              <li>File must be a CSV</li>
+              <li>Format as follows</li>
+              <ol type="I">
+                <li>First Column - Team-Year-Code</li>
+                <li>Second Column - Team-ID</li>
+                <li>Third Column - Review-Number</li>
+                <li>Consequent Columns - Faculty-IDs (guide as the first entry)</li>
+              </ol>
+            </ul>
+            </p>
+          </div>
+        </div>
+        <div class="text-left"><pre><code id="admin_TFR_upload_response"></code></pre></div>
       </div>
     </div>
   </div>

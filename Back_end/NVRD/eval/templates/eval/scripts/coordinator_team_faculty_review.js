@@ -250,3 +250,38 @@ function closemy(e) {
     e.preventDefault()
 
 }
+
+function admin_TFR_upload_csv(event) {
+    const selectedFile = document.getElementById('admin_TFR_upload_file').files[0];
+    const reader = new FileReader();
+    reader.onload = function () {
+        var TFR_create_json = []
+        var linearray = reader.result.split('\n');
+        for (var i = 0; i < linearray.length; i++) {
+            if (linearray[i] != "") {
+                lst = linearray[i].split(',')
+                for (var j = 3; j < lst.length; j++) {
+                    TFR_create_json.push({ 'team_year_code': lst[0], 'team_id': lst[1], 'review_number': lst[2], 'fac_id': lst[j] })
+                }
+            }
+        }
+        console.log(JSON.stringify(TFR_create_json))
+        var xhttp = new XMLHttpRequest()
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == XMLHttpRequest.DONE) {
+                document.getElementById("admin_TFR_upload_file").value = null
+                console.log(this.responseText)
+            }
+        }
+        var curr_list = returnCurrentList()
+        var panel_year_code = curr_list[1].slice(0, curr_list[1].indexOf("-"))
+        var panel_id = curr_list[1].slice((curr_list[1].indexOf("-") + 1))
+        refreshLoader(xhttp)
+        xhttp.open("POST", "/api/" + getCookie("username") + "/" + panel_year_code + "-" + panel_id + "/team-faculty-review/", true);
+        xhttp.setRequestHeader("Authorization", "Bearer " + getCookie("token"));
+        xhttp.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+        xhttp.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+        xhttp.send(JSON.stringify(TFR_create_json));
+    }
+    reader.readAsText(selectedFile);
+}
