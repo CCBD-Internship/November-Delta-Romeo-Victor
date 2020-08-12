@@ -1519,6 +1519,31 @@ class Team_List(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+def marks_verify(panel_id, review_number, marks):
+    pr = PanelReview.objects.filter(
+        panel_id=panel_id, review_number=review_number).first()
+    template = json.loads(pr.template)
+    marks = json.loads(marks)
+    if(not len(template.keys)):
+        return 0
+    for i in template.keys():
+        if i not in marks:
+            return 0
+        elif not (int(marks[i]) >= template[i][0] and int(marks[i]) <= template[i][1]):
+            return 0
+    return 1
+
+
+def marks_generate(panel_id, review_number):
+    pr = PanelReview.objects.filter(
+        panel_id=panel_id, review_number=review_number).first()
+    template = json.loads(pr.template)
+    marks = dict()
+    for i in template.keys():
+        marks[i] = template[i][0]
+    return json.dumps(marks)
+
+
 class TeamFacultyReview_List(APIView):
     parser_classes = [JSONParser]
 
@@ -1597,44 +1622,18 @@ class TeamFacultyReview_List(APIView):
                 if fail == []:
                     for i in accept:
                         if i.is_valid:
+                            p = Panel.objects.filter(
+                                panel_id=panel_id, panel_year_code=panel_year_code).first()
                             i.save()
                             f = Faculty.objects.filter(
                                 fac_id=i["fac_id"].value).first()
-                            if i["review_number"].value == 1:
-                                team_pk = i["team_id"].value
-                                students = Student.objects.filter(
-                                    team_id=team_pk)
-                                for studs in students:
-                                    Review1(srn=studs, fac_id=f, concept_of_the_work=0, methodology_proposed=0, literature_survey=0, knowledge_on_the_project=0,
-                                            public_comments="not yet scored", private_comments="private_comments", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
-                            elif i["review_number"].value == 2:
-                                team_pk = i["team_id"].value
-                                students = Student.objects.filter(
-                                    team_id=team_pk)
-                                for studs in students:
-                                    Review2(srn=studs, fac_id=f, requirements_specification=0, user_interface_use_cases=0, understanding_of_technology_platform_middleware=0, viva_voce=0,
-                                            public_comments="not yet scored", private_comments="private_comments", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
-                            elif i["review_number"].value == 3:
-                                team_pk = i["team_id"].value
-                                students = Student.objects.filter(
-                                    team_id=team_pk)
-                                for studs in students:
-                                    Review3(srn=studs, fac_id=f, design_philosophy_methodology=0, user_interface_design_backend_design_and_design_for_any_algorithms=0, suitably_of_design_in_comparison_to_the_technology_proposed=0, progress_of_the_project_work=0, viva_voce=0,
-                                            public_comments="not yet scored", private_comments="private_comments", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
-                            elif i["review_number"].value == 4:
-                                team_pk = i["team_id"].value
-                                students = Student.objects.filter(
-                                    team_id=team_pk)
-                                for studs in students:
-                                    Review4(srn=studs, fac_id=f, project_work_results=0, quality_of_demo=0, project_report=0, viva_voce=0,
-                                            public_comments="not yet scored", private_comments="private_comments", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
-                            elif i["review_number"].value == 5:
-                                team_pk = i["team_id"].value
-                                students = Student.objects.filter(
-                                    team_id=team_pk)
-                                for studs in students:
-                                    Review5(srn=studs, fac_id=f, project_work_results=0, quality_of_demo=0, project_report=0, viva_voce=0,
-                                            public_comments="not yet scored", private_comments="private_comments", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
+                            team_pk = i["team_id"].value
+                            students = Student.objects.filter(
+                                team_id=team_pk)
+                            for studs in students:
+                                Reviews(srn=studs, fac_id=f, review_number=i["review_number"].value, marks=marks_generate(p, i["review_number"].value),
+                                        public_comments="not yet scored", private_comments="private_comments", id=str(studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).save()
+
                     return Response({"detail": "OK"}, status=status.HTTP_200_OK)
                 else:
                     return Response(fail, status=status.HTTP_400_BAD_REQUEST)
@@ -1679,43 +1678,16 @@ class TeamFacultyReview_List(APIView):
                             {"value": i, "detail": "user is not the panel coordinator"})
                 if fail == []:
                     for i in accept:
+                        tm_id=i["team_id"].value
+                        fac_id=i["fac_id"].value
+                        rno=i["review_number"].value
                         TeamFacultyReview.objects.filter(
-                            team_id=i["team_id"].value, fac_id=i["fac_id"].value, review_number=i["review_number"].value).first().delete()
-                        if i["review_number"].value == 1:
-                            team_pk = i["team_id"].value
-                            students = Student.objects.filter(
-                                team_id=team_pk)
-                            for studs in students:
-                                Review1(id=str(
-                                    studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).delete()
-                        elif i["review_number"].value == 2:
-                            team_pk = i["team_id"].value
-                            students = Student.objects.filter(
-                                team_id=team_pk)
-                            for studs in students:
-                                Review2(id=str(
-                                    studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).delete()
-                        elif i["review_number"].value == 3:
-                            team_pk = i["team_id"].value
-                            students = Student.objects.filter(
-                                team_id=team_pk)
-                            for studs in students:
-                                Review3(d=str(
-                                    studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).delete()
-                        elif i["review_number"].value == 4:
-                            team_pk = i["team_id"].value
-                            students = Student.objects.filter(
-                                team_id=team_pk)
-                            for studs in students:
-                                Review4(id=str(
-                                    studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).delete()
-                        elif i["review_number"].value == 5:
-                            team_pk = i["team_id"].value
-                            students = Student.objects.filter(
-                                team_id=team_pk)
-                            for studs in students:
-                                Review5(id=str(
-                                    studs.srn)+'_'+i["fac_id"].value+'_'+str(i["review_number"].value)).delete()
+                            team_id=tm_id, fac_id=fac_id, review_number=rno).first().delete()
+                        students = Student.objects.filter(
+                            team_id=tm_id)
+                        for studs in students:
+                            Reviews(
+                                srn=studs, fac_id=fac_id, review_number=rno).delete()
                     return Response({"detail": "OK"}, status=status.HTTP_200_OK)
                 else:
                     return Response(fail, status=status.HTTP_400_BAD_REQUEST)
@@ -2291,23 +2263,23 @@ class PanelReviewMail(APIView):
                     for i in range(1, 6):
                         c = pr.filter(review_number=i).first()
                         if(timezone.now() > c.open_time and timezone.now() < c.close_time):
-                            message += ("Review "+str(i)+": " + "The review is currently open till "+str(c.close_time)+"\n") 
+                            message += ("Review "+str(i)+": " +
+                                        "The review is currently open till "+str(c.close_time)+"\n")
                         elif(timezone.now() < c.open_time and timezone.now() < c.close_time):
-                            message += ("Review "+str(i)+": " + \
+                            message += ("Review "+str(i)+": " +
                                         "The review will open at "+str(c.open_time)+" and will close at "+str(c.close_time)+"\n")
                         else:
-                            message += ("Review "+str(i)+": " + \
+                            message += ("Review "+str(i)+": " +
                                         "The review is closed now"+"\n")
                     message += ('\nFrom '+coord.name+'\n(Panel Coordinator)')
-                    f = FacultyPanel.objects.filter(
-                        fac_id=Faculty.objects.get(fac_id=user), panel_id=pan)
+                    f = FacultyPanel.objects.filter(panel_id=pan)
                     data_tuples = []
                     for i in f:
-                        fac=i.fac_id
+                        fac = i.fac_id
                         data_tuples.append(('PES Evaluation System '+pan.panel_year_code +
                                             '-'+pan.panel_id+' Review Schedule', 'Dear '+fac.name+',\n\n'+message, EMAIL_HOST_USER, [fac.email]))
                     send_mass_mail(data_tuples, fail_silently=True)
-                    return Response({"detail":"success"},status=status.HTTP_200_OK)
+                    return Response({"detail": "success"}, status=status.HTTP_200_OK)
                 else:
                     return Response(status=status.HTTP_403_FORBIDDEN)
             else:

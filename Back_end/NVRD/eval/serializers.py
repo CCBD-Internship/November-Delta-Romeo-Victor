@@ -42,33 +42,9 @@ class PanelReview_Serializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class Review1_Serializer(serializers.ModelSerializer):
+class Reviews_Serializer(serializers.ModelSerializer):
     class Meta:
-        model = Review1
-        fields = '__all__'
-
-
-class Review2_Serializer(serializers.ModelSerializer):
-    class Meta:
-        model = Review2
-        fields = '__all__'
-
-
-class Review3_Serializer(serializers.ModelSerializer):
-    class Meta:
-        model = Review3
-        fields = '__all__'
-
-
-class Review4_Serializer(serializers.ModelSerializer):
-    class Meta:
-        model = Review4
-        fields = '__all__'
-
-
-class Review5_Serializer(serializers.ModelSerializer):
-    class Meta:
-        model = Review5
+        model = Reviews
         fields = '__all__'
 
 

@@ -19,9 +19,12 @@ from rest_framework.authtoken.models import Token
 
 d = Department(dept="CSE")
 d.save()
-f = Faculty(fac_id="admin", dept=Department.objects.filter(dept="CSE").first(),
-            email="admin@gmail.com", phone="1234567890", name="admin",is_admin=True)
-f.save()
+fnames=["admin","eval1","eval2","coord1","coord2"]
+fadmins=[1,0,0,0,0]
+for i in range(len(fnames)):
+    f = Faculty(fac_id=fnames[i], dept=Department.objects.filter(dept="CSE").first(),
+            email="karob12273@mail2paste.com", phone="1234567890", name=fnames[i],is_admin=fadmins[i])
+    f.save()
 for i in Faculty.objects.all():
     if(not User.objects.filter(username=i.fac_id).exists()):
         User.objects.create_user(last_name=i.name,username=i.fac_id,password=i.fac_id,email=None)

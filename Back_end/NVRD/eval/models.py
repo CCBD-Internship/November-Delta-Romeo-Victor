@@ -9,6 +9,7 @@ from django.db import models
 from django.utils import timezone
 from django.core.validators import RegexValidator
 from django_bleach.models import BleachField
+from django.contrib.postgres.fields import JSONField
 # from .storage import *
 
 
@@ -32,7 +33,7 @@ class Open_Close(models.Model):
 
 class Faculty(models.Model):
     fac_id = BleachField(primary_key=True, max_length=50, validators=[
-                         RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input'),RegexValidator(regex='^[^\-\s]*$', message='(-) and white-space not allowed')])
+                         RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input'), RegexValidator(regex='^[^\-\s]*$', message='(-) and white-space not allowed')])
     name = BleachField(max_length=100, validators=[RegexValidator(
         regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
     email = models.EmailField()
@@ -71,7 +72,7 @@ class FacultyPanel(models.Model):
 class Panel(models.Model):
 
     panel_year_code = BleachField(
-        db_column="panel_year_code", max_length=10, validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input'),RegexValidator(regex='^[^\-\s]*$', message='(-) and white-space not allowed')])
+        db_column="panel_year_code", max_length=10, validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input'), RegexValidator(regex='^[^\-\s]*$', message='(-) and white-space not allowed')])
     panel_id = BleachField(db_column="panel_id", max_length=10, validators=[
                            RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
     # panel_name = BleachField(
@@ -93,6 +94,7 @@ class PanelReview(models.Model):
     panel_id = models.ForeignKey('Panel', models.CASCADE, db_column="panel_id")
     open_time = models.DateTimeField()
     close_time = models.DateTimeField()
+    template = JSONField(default=None,blank=True, null=True)
     id = BleachField(max_length=23, db_column="id", primary_key=True, validators=[
                      RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
 
@@ -101,158 +103,171 @@ class PanelReview(models.Model):
         unique_together = (('panel_id', 'review_number'),)
 
 
-class Review1(models.Model):
+class Reviews(models.Model):
     srn = models.ForeignKey('Student', models.CASCADE)
     fac_id = models.ForeignKey(
         Faculty, models.SET_NULL, null=True, blank=True)
-    concept_of_the_work = models.IntegerField()
-    methodology_proposed = models.IntegerField()
-    literature_survey = models.IntegerField()
-    knowledge_on_the_project = models.IntegerField()
+    review_number = models.IntegerField()
+    marks = JSONField()
     private_comments = BleachField(max_length=200, blank=True, null=True)
     public_comments = BleachField(max_length=200, blank=True, null=True)
     is_evaluated = models.BooleanField(default=False)
     id = BleachField(max_length=200, primary_key=True, validators=[
                      RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
 
-    class Meta:
-        managed = True
-        constraints = [
-            models.CheckConstraint(
-                name='1_concept_of_the_work', check=models.Q(concept_of_the_work__lte=10) & models.Q(concept_of_the_work__gte=0)),
-            models.CheckConstraint(
-                name='1_methodology_proposed', check=models.Q(methodology_proposed__lte=10) & models.Q(methodology_proposed__gte=0)),
-            models.CheckConstraint(
-                name='1_literature_survey', check=models.Q(literature_survey__lte=10) & models.Q(literature_survey__gte=0)),
-            models.CheckConstraint(
-                name='1_knowledge_on_the_project', check=models.Q(knowledge_on_the_project__lte=10) & models.Q(knowledge_on_the_project__gte=0))
-        ]
-        unique_together = (('srn', 'fac_id'),)
+
+# class Review1(models.Model):
+#     srn = models.ForeignKey('Student', models.CASCADE)
+#     fac_id = models.ForeignKey(
+#         Faculty, models.SET_NULL, null=True, blank=True)
+#     concept_of_the_work = models.IntegerField()
+#     methodology_proposed = models.IntegerField()
+#     literature_survey = models.IntegerField()
+#     knowledge_on_the_project = models.IntegerField()
+#     private_comments = BleachField(max_length=200, blank=True, null=True)
+#     public_comments = BleachField(max_length=200, blank=True, null=True)
+#     is_evaluated = models.BooleanField(default=False)
+#     id = BleachField(max_length=200, primary_key=True, validators=[
+#                      RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+
+#     class Meta:
+#         managed = True
+#         constraints = [
+#             models.CheckConstraint(
+#                 name='1_concept_of_the_work', check=models.Q(concept_of_the_work__lte=10) & models.Q(concept_of_the_work__gte=0)),
+#             models.CheckConstraint(
+#                 name='1_methodology_proposed', check=models.Q(methodology_proposed__lte=10) & models.Q(methodology_proposed__gte=0)),
+#             models.CheckConstraint(
+#                 name='1_literature_survey', check=models.Q(literature_survey__lte=10) & models.Q(literature_survey__gte=0)),
+#             models.CheckConstraint(
+#                 name='1_knowledge_on_the_project', check=models.Q(knowledge_on_the_project__lte=10) & models.Q(knowledge_on_the_project__gte=0))
+#         ]
+#         unique_together = (('srn', 'fac_id'),)
 
 
-class Review2(models.Model):
-    srn = models.ForeignKey('Student', models.CASCADE)
-    fac_id = models.ForeignKey(
-        Faculty, models.SET_NULL, null=True, blank=True)
-    requirements_specification = models.IntegerField()
-    user_interface_use_cases = models.IntegerField()
-    understanding_of_technology_platform_middleware = models.IntegerField()
-    viva_voce = models.IntegerField()
-    private_comments = BleachField(max_length=200, blank=True, null=True)
-    public_comments = BleachField(max_length=200, blank=True, null=True)
-    is_evaluated = models.BooleanField(default=False)
-    id = BleachField(max_length=200, primary_key=True, validators=[
-                     RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+# class Review2(models.Model):
+#     srn = models.ForeignKey('Student', models.CASCADE)
+#     fac_id = models.ForeignKey(
+#         Faculty, models.SET_NULL, null=True, blank=True)
+#     requirements_specification = models.IntegerField()
+#     user_interface_use_cases = models.IntegerField()
+#     understanding_of_technology_platform_middleware = models.IntegerField()
+#     viva_voce = models.IntegerField()
+#     private_comments = BleachField(max_length=200, blank=True, null=True)
+#     public_comments = BleachField(max_length=200, blank=True, null=True)
+#     is_evaluated = models.BooleanField(default=False)
+#     id = BleachField(max_length=200, primary_key=True, validators=[
+#                      RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
 
-    class Meta:
-        managed = True
-        constraints = [
-            models.CheckConstraint(
-                name='2_requirements_specification', check=models.Q(requirements_specification__lte=10) & models.Q(requirements_specification__gte=0)),
-            models.CheckConstraint(
-                name='2_user_interface_use_cases', check=models.Q(user_interface_use_cases__lte=10) & models.Q(user_interface_use_cases__gte=0)),
-            models.CheckConstraint(
-                name='2_understanding_of_technology_platform_middleware', check=models.Q(understanding_of_technology_platform_middleware__lte=10) & models.Q(understanding_of_technology_platform_middleware__gte=0)),
-            models.CheckConstraint(
-                name='2_viva_voce', check=models.Q(understanding_of_technology_platform_middleware__lte=10) & models.Q(understanding_of_technology_platform_middleware__gte=0))
-        ]
-        #db_table = 'review_2'
-        unique_together = (('srn', 'fac_id'),)
-
-
-class Review3(models.Model):
-    srn = models.ForeignKey('Student', models.CASCADE)
-    fac_id = models.ForeignKey(
-        Faculty, models.SET_NULL, null=True, blank=True)
-    design_philosophy_methodology = models.IntegerField()
-    user_interface_design_backend_design_and_design_for_any_algorithms = models.IntegerField(
-        db_column="user_interface_design_backend_algorithms")
-    suitably_of_design_in_comparison_to_the_technology_proposed = models.IntegerField()
-    progress_of_the_project_work = models.IntegerField()
-    viva_voce = models.IntegerField()
-    private_comments = BleachField(max_length=200, blank=True, null=True)
-    public_comments = BleachField(max_length=200, blank=True, null=True)
-    is_evaluated = models.BooleanField(default=False)
-    id = BleachField(max_length=200, primary_key=True)
-
-    class Meta:
-        managed = True
-        constraints = [
-            models.CheckConstraint(
-                name='3_design_philosophy_methodology', check=models.Q(design_philosophy_methodology__lte=10) & models.Q(design_philosophy_methodology__gte=0)),
-            models.CheckConstraint(
-                name='3_user_interface_design_backend_design_and_design_for_any_algorithms', check=models.Q(user_interface_design_backend_design_and_design_for_any_algorithms__lte=10) & models.Q(user_interface_design_backend_design_and_design_for_any_algorithms__gte=0)),
-            models.CheckConstraint(
-                name='3_suitably_of_design_in_comparison_to_the_technology_proposed', check=models.Q(suitably_of_design_in_comparison_to_the_technology_proposed__lte=5) & models.Q(suitably_of_design_in_comparison_to_the_technology_proposed__gte=0)),
-            models.CheckConstraint(
-                name='3_progress_of_the_project_work', check=models.Q(progress_of_the_project_work__lte=5) & models.Q(progress_of_the_project_work__gte=0)),
-            models.CheckConstraint(
-                name='3_viva_voce', check=models.Q(viva_voce__lte=5) & models.Q(viva_voce__gte=0))
-        ]
-        unique_together = (('srn', 'fac_id'),)
+#     class Meta:
+#         managed = True
+#         constraints = [
+#             models.CheckConstraint(
+#                 name='2_requirements_specification', check=models.Q(requirements_specification__lte=10) & models.Q(requirements_specification__gte=0)),
+#             models.CheckConstraint(
+#                 name='2_user_interface_use_cases', check=models.Q(user_interface_use_cases__lte=10) & models.Q(user_interface_use_cases__gte=0)),
+#             models.CheckConstraint(
+#                 name='2_understanding_of_technology_platform_middleware', check=models.Q(understanding_of_technology_platform_middleware__lte=10) & models.Q(understanding_of_technology_platform_middleware__gte=0)),
+#             models.CheckConstraint(
+#                 name='2_viva_voce', check=models.Q(understanding_of_technology_platform_middleware__lte=10) & models.Q(understanding_of_technology_platform_middleware__gte=0))
+#         ]
+#         #db_table = 'review_2'
+#         unique_together = (('srn', 'fac_id'),)
 
 
-class Review4(models.Model):
-    srn = models.ForeignKey('Student', models.CASCADE)
-    fac_id = models.ForeignKey(
-        Faculty, models.SET_NULL, null=True, blank=True)
-    project_work_results = models.IntegerField()
-    quality_of_demo = models.IntegerField()
-    project_report = models.IntegerField()
-    viva_voce = models.IntegerField()
-    private_comments = BleachField(max_length=200, blank=True, null=True)
-    public_comments = BleachField(max_length=200, blank=True, null=True)
-    is_evaluated = models.BooleanField(default=False)
-    id = BleachField(max_length=200, primary_key=True, validators=[
-                     RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+# class Review3(models.Model):
+#     srn = models.ForeignKey('Student', models.CASCADE)
+#     fac_id = models.ForeignKey(
+#         Faculty, models.SET_NULL, null=True, blank=True)
+#     design_philosophy_methodology = models.IntegerField()
+#     user_interface_design_backend_design_and_design_for_any_algorithms = models.IntegerField(
+#         db_column="user_interface_design_backend_algorithms")
+#     suitably_of_design_in_comparison_to_the_technology_proposed = models.IntegerField()
+#     progress_of_the_project_work = models.IntegerField()
+#     viva_voce = models.IntegerField()
+#     private_comments = BleachField(max_length=200, blank=True, null=True)
+#     public_comments = BleachField(max_length=200, blank=True, null=True)
+#     is_evaluated = models.BooleanField(default=False)
+#     id = BleachField(max_length=200, primary_key=True)
 
-    class Meta:
-        managed = True
-        constraints = [
-            models.CheckConstraint(
-                name='4_project_work_results', check=models.Q(project_work_results__lte=10) & models.Q(project_work_results__gte=0)),
-            models.CheckConstraint(
-                name='4_quality_of_demo', check=models.Q(quality_of_demo__lte=10) & models.Q(quality_of_demo__gte=0)),
-            models.CheckConstraint(
-                name='4_project_report', check=models.Q(project_report__lte=10) & models.Q(project_report__gte=0)),
-            models.CheckConstraint(
-                name='4_viva_voce', check=models.Q(viva_voce__lte=10) & models.Q(viva_voce__gte=0))
-        ]
-        unique_together = (('srn', 'fac_id'),)
+#     class Meta:
+#         managed = True
+#         constraints = [
+#             models.CheckConstraint(
+#                 name='3_design_philosophy_methodology', check=models.Q(design_philosophy_methodology__lte=10) & models.Q(design_philosophy_methodology__gte=0)),
+#             models.CheckConstraint(
+#                 name='3_user_interface_design_backend_design_and_design_for_any_algorithms', check=models.Q(user_interface_design_backend_design_and_design_for_any_algorithms__lte=10) & models.Q(user_interface_design_backend_design_and_design_for_any_algorithms__gte=0)),
+#             models.CheckConstraint(
+#                 name='3_suitably_of_design_in_comparison_to_the_technology_proposed', check=models.Q(suitably_of_design_in_comparison_to_the_technology_proposed__lte=5) & models.Q(suitably_of_design_in_comparison_to_the_technology_proposed__gte=0)),
+#             models.CheckConstraint(
+#                 name='3_progress_of_the_project_work', check=models.Q(progress_of_the_project_work__lte=5) & models.Q(progress_of_the_project_work__gte=0)),
+#             models.CheckConstraint(
+#                 name='3_viva_voce', check=models.Q(viva_voce__lte=5) & models.Q(viva_voce__gte=0))
+#         ]
+#         unique_together = (('srn', 'fac_id'),)
 
 
-class Review5(models.Model):
-    srn = models.ForeignKey('Student', models.CASCADE)
-    fac_id = models.ForeignKey(
-        Faculty, models.SET_NULL, null=True, blank=True, db_column="fac_id")
-    project_work_results = models.IntegerField()
-    quality_of_demo = models.IntegerField()
-    project_report = models.IntegerField()
-    viva_voce = models.IntegerField()
-    private_comments = BleachField(max_length=200, blank=True, null=True)
-    public_comments = BleachField(max_length=200, blank=True, null=True)
-    is_evaluated = models.BooleanField(default=False)
-    id = BleachField(max_length=200, primary_key=True, validators=[
-                     RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+# class Review4(models.Model):
+#     srn = models.ForeignKey('Student', models.CASCADE)
+#     fac_id = models.ForeignKey(
+#         Faculty, models.SET_NULL, null=True, blank=True)
+#     project_work_results = models.IntegerField()
+#     quality_of_demo = models.IntegerField()
+#     project_report = models.IntegerField()
+#     viva_voce = models.IntegerField()
+#     private_comments = BleachField(max_length=200, blank=True, null=True)
+#     public_comments = BleachField(max_length=200, blank=True, null=True)
+#     is_evaluated = models.BooleanField(default=False)
+#     id = BleachField(max_length=200, primary_key=True, validators=[
+#                      RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
 
-    class Meta:
-        managed = True
-        constraints = [
-            models.CheckConstraint(
-                name='5_project_work_results', check=models.Q(project_work_results__lte=10) & models.Q(project_work_results__gte=0)),
-            models.CheckConstraint(
-                name='5_quality_of_demo', check=models.Q(quality_of_demo__lte=10) & models.Q(quality_of_demo__gte=0)),
-            models.CheckConstraint(
-                name='5_project_report', check=models.Q(project_report__lte=10) & models.Q(project_report__gte=0)),
-            models.CheckConstraint(
-                name='5_viva_voce', check=models.Q(viva_voce__lte=10) & models.Q(viva_voce__gte=0))
-        ]
-        unique_together = (('srn', 'fac_id'),)
+#     class Meta:
+#         managed = True
+#         constraints = [
+#             models.CheckConstraint(
+#                 name='4_project_work_results', check=models.Q(project_work_results__lte=10) & models.Q(project_work_results__gte=0)),
+#             models.CheckConstraint(
+#                 name='4_quality_of_demo', check=models.Q(quality_of_demo__lte=10) & models.Q(quality_of_demo__gte=0)),
+#             models.CheckConstraint(
+#                 name='4_project_report', check=models.Q(project_report__lte=10) & models.Q(project_report__gte=0)),
+#             models.CheckConstraint(
+#                 name='4_viva_voce', check=models.Q(viva_voce__lte=10) & models.Q(viva_voce__gte=0))
+#         ]
+#         unique_together = (('srn', 'fac_id'),)
+
+
+# class Review5(models.Model):
+#     srn = models.ForeignKey('Student', models.CASCADE)
+#     fac_id = models.ForeignKey(
+#         Faculty, models.SET_NULL, null=True, blank=True, db_column="fac_id")
+#     project_work_results = models.IntegerField()
+#     quality_of_demo = models.IntegerField()
+#     project_report = models.IntegerField()
+#     viva_voce = models.IntegerField()
+#     private_comments = BleachField(max_length=200, blank=True, null=True)
+#     public_comments = BleachField(max_length=200, blank=True, null=True)
+#     is_evaluated = models.BooleanField(default=False)
+#     id = BleachField(max_length=200, primary_key=True, validators=[
+#                      RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
+
+#     class Meta:
+#         managed = True
+#         constraints = [
+#             models.CheckConstraint(
+#                 name='5_project_work_results', check=models.Q(project_work_results__lte=10) & models.Q(project_work_results__gte=0)),
+#             models.CheckConstraint(
+#                 name='5_quality_of_demo', check=models.Q(quality_of_demo__lte=10) & models.Q(quality_of_demo__gte=0)),
+#             models.CheckConstraint(
+#                 name='5_project_report', check=models.Q(project_report__lte=10) & models.Q(project_report__gte=0)),
+#             models.CheckConstraint(
+#                 name='5_viva_voce', check=models.Q(viva_voce__lte=10) & models.Q(viva_voce__gte=0))
+#         ]
+#         unique_together = (('srn', 'fac_id'),)
 
 
 class Student(models.Model):
     srn = BleachField(primary_key=True, max_length=20, validators=[
-        RegexValidator(regex='^PES', message='SRN incorrect'), RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input'),RegexValidator(regex='^[^\-\s]*$', message='(-) and white-space not allowed')])
+        RegexValidator(regex='^PES', message='SRN incorrect'), RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input'), RegexValidator(regex='^[^\-\s]*$', message='(-) and white-space not allowed')])
     name = BleachField(max_length=100, validators=[RegexValidator(
         regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
     email = models.EmailField()
@@ -267,7 +282,7 @@ class Student(models.Model):
 
 class Team(models.Model):
     team_year_code = BleachField(
-        db_column="team_year_code", max_length=10, validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input'),RegexValidator(regex='^[^\-\s]*$', message='(-) and white-space not allowed')])
+        db_column="team_year_code", max_length=10, validators=[RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input'), RegexValidator(regex='^[^\-\s]*$', message='(-) and white-space not allowed')])
     team_id = BleachField(db_column="team_id", max_length=10, validators=[
                           RegexValidator(regex='^[^\<\>]*$', message='Invalid Text-Field Input')])
     team_name = BleachField(max_length=100, blank=True, null=True, validators=[
