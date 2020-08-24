@@ -1,20 +1,3 @@
----
-title: Centre for Cloud Computing and Big Data 
-subtitle: |
-	| Cloud Based Evaluation Policies
-	| BC_457_903_957_972
-	| Project Report
-author: 
-	- Dhruva Kashyap
-	- Rakshith C
-	- Vikas Gowda
-	- Nikhil Ram
-toc: Contents
-toc-title: Table of Contents
-abstract: Our project for the 2020-summer internship at CCBD was to design a web application to ease the massive amount of physical paper work involved in evaluating Final-Year B.Tech Projects at the Computer Science Department at PES University.
----
-
-
 ## Introduction
 
 Our task was to build an evaluation system for the Computer Science Department at PES University. This evaluation system is to be used by faculties to evaluate final year projects as per the *evaluation procedure*. 
@@ -31,7 +14,7 @@ Our task was to build an evaluation system for the Computer Science Department a
 
 ## Structure of the solution
 
-![User Roles](./pics/13.jpeg){width=400 height=300}
+![User Roles](./README/pics/13.jpeg)
 
 1. The application at its core is designed based on a hierarchy. Each user can access and modify the content only within the boundaries set up by their role as described in Figure 1. The 3 Roles are Administrator, Coordinator and Evaluator  
 
@@ -46,7 +29,6 @@ Our task was to build an evaluation system for the Computer Science Department a
 >* The coordinator is incharge of setting up project reviews for all the teams in their panel.
 >* The coordinator needs to assign a list of faculties for each team for each project review who shall in turn evaluate the team.
 >* The coordinator must also set up opening and closing time for each project review within which the evaluators must evaluate the teams.
-\
 
 4. **Evaluator**
 
@@ -93,36 +75,6 @@ Our task was to build an evaluation system for the Computer Science Department a
 
 ## Requirements
 
-+-------------------------------+-----------+---------------------------+
-|Packages     					|Version	|Details  					|
-+===============================+==========:+===========================+
-|PostgreSQL						|12.4		|Database Used With Django	|
-+-------------------------------+---------------------------------------+
-|Python							|3.6		|							|
-+-------------------------------+---------------------------------------+
-|psycopg2-binary				|2.8.5 		|PostgreSQL API for python	|
-+-------------------------------+---------------------------------------+
-|Django							|3.0.8		|Python Framework			|
-+-------------------------------+---------------------------------------+
-|django-bleach  				|0.6.1		|To Prevent XSS	attcks		|
-+-------------------------------+---------------------------------------+
-|djangorestframework 			|3.11.0 	|REST API					|
-+-------------------------------+-----------+---------------------------+
-|djangorestframework-simplejwt 	|4.4.0		|For JWT Tokens				|
-+-------------------------------+-----------+---------------------------+
-|Pillow  						|7.2.0		|Image Processing			|
-+-------------------------------+-----------+---------------------------+
-|uWSGI  						|2.0.19.1	|To Deploy Django With Nginx|
-+-------------------------------+-----------+---------------------------+
-|Docker							|19.03.6	|							|
-+-------------------------------+-----------+---------------------------+
-|docker-compose 				|1.17.1		|Combine Containers			|
-+-------------------------------+-----------+---------------------------+
-|Gunicorn						|19.7.1		|Python WSGI HTTP Server	|
-+-------------------------------+-----------+---------------------------+
-|Nginx							|1.14.0		|Load Balancer for HTTP server|
-+-------------------------------+-----------+---------------------------+
-
 A more detailed list is available in the source code as `requirements.txt`
 
 They can be downloaded by running 
@@ -164,8 +116,7 @@ services:
       - POSTGRES_DB=nvrdb
   web:
     build: .
-    command: bash -c "cd Back_end/NVRD && python3 manage.py makemigrations && python3 
-		manage.py migrate && gunicorn --workers=2 NVRD.wsgi:application --bind 0.0.0.0:8000"
+    command: bash -c "cd Back_end/NVRD && python3 manage.py makemigrations && python3 manage.py migrate && gunicorn --workers=2 NVRD.wsgi:application --bind 0.0.0.0:8000"
     container_name: nvrd-django
     env_file:
       - .env.dev
@@ -185,7 +136,6 @@ services:
 volumes:
   postgres_data:
 ```
-\
 
 Run the following commands to start the server in the project directory. 
 Choose 0 when prompted to initialize the database with an admin user.
@@ -204,94 +154,7 @@ echo "NVRD containers are running"
 dbinit=$dbinit
 if ((dbinit==1)); then
 	sudo docker exec nvrd-django bash -c "python Back_end/NVRD/manage.py flush --noinput"
-	sudo docker exec nvrd-django bash -c "python Back_end/NVRD/manage.py shell 
-		< Back_end/NVRD/eval/values.py"
+	sudo docker exec nvrd-django bash -c "python Back_end/NVRD/manage.py shell < Back_end/NVRD/eval/values.py"
     echo "nvrdb initialsed"
 fi
 ```
-
-## The Actual Website
-
-The following are some images of our website.
-
-+-------------------------------------------------------------------------------------------------------------------------------+
-| Images           																					 							|
-+:=============================================================================================================================:+
-|																																|
-|																																|
-|																																|
-|																																|
-|![](./pics/1.png){width=500 height=500} 				|
-|																																|
-|Login	page for faculty																										|
-|																																|
-|																																|																																|
-+-------------------------------------------------------------------------------------------------------------------------------+
-|																																|
-|																																|
-|																																|
-|																																|
-|![](./pics/4.png){width=500 height=500} 				|
-|																																|
-|Faculty Home Page																																|
-|																																|
-|																																|
-+-------------------------------------------------------------------------------------------------------------------------------+
-|																																|
-|																																|
-|																																|
-|																																|
-|![](./pics/5.png){width=500 height=500} 	|
-|																																|
-|Marks View																														|
-|																																|
-|																																|
-+-------------------------------------------------------------------------------------------------------------------------------+
-|																																|
-|																																|
-|																																|
-|																																|
-|![](./pics/6.png){width=500 height=500} 	|
-|																																|
-|Student Portal																													|
-|																																|
-|																																|
-+-------------------------------------------------------------------------------------------------------------------------------+
-|																																|
-|																																|
-|																																|
-|																																|
-|![](./pics/7.png){width=500 height=500} 	|
-|																																|
-|Added Faculty to a panel																										|
-|																																|
-|																																|
-+-------------------------------------------------------------------------------------------------------------------------------+
-|																																|
-|																																|
-|																																|
-|																																|
-|![](./pics/9.png){width=500 height=500} 	|
-|																																|
-|Review Form																													|
-|																																|
-|																																|
-+-------------------------------------------------------------------------------------------------------------------------------+
-|																																|
-|																																|
-|																																|
-|![](./pics/11.png){width=500 height=500} 	|
-|																																|
-|Review Schedular for Panel Coordinators																						|
-|																																|
-|																																|
-+-------------------------------------------------------------------------------------------------------------------------------+
-|																																|
-|																																|
-|																																|
-|![](./pics/12.png){width=500 height=500} 	|
-|																																|
-|Evaluator Assigning Faculty for reviews																						|
-|																																|
-|																																|
-+-------------------------------------------------------------------------------------------------------------------------------+
