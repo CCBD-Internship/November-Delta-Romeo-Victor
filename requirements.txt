@@ -33,7 +33,7 @@ jsonschema==3.2.0
 packaging==20.4
 paramiko==2.7.1
 pathspec==0.5.9
-Pillow==8.1.1
+Pillow==8.2.0
 psycopg2-binary==2.8.5
 pycparser==2.20
 PyJWT==1.7.1
