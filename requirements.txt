@@ -31,7 +31,7 @@ importlib-metadata==1.7.0
 jmespath==0.10.0
 jsonschema==3.2.0
 packaging==20.4
-paramiko==2.7.1
+paramiko==2.10.1
 pathspec==0.5.9
 Pillow==8.3.2
 psycopg2-binary==2.8.5
